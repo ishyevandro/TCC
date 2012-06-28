@@ -66,12 +66,6 @@ void _arq::open (string abrir)
 		}
 		linha.clear();
 	}
-	int asd=0;
-	while (asd != cont_vetor)
-	{
-	    cout <<"VETOR "<<cont_vetor<<vetor_de_variaveis[asd].variavel<<endl;
-	    asd++;
-	}
 }
 
 int main (int argc, char **argv)
