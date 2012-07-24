@@ -96,7 +96,6 @@ public:
 #include <fstream>
 #include <boost/regex.h>
 #include "classe_arquivo.h"
-#include "classe_var.h"
 
 
 _arq::_arq()

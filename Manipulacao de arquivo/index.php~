@@ -1,6 +1,6 @@
 <?php
 
-    $i = 10;
+    $i = $k;
     $j=100;
     $string="STRING";
     $i=$string;
