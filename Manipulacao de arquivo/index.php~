@@ -1,5 +1,4 @@
 <?php
-
     $i = $_POST['porcaria nenhuma'];
     $j = $_GET['Muita porcaria'];
     $i = $k;

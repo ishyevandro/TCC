@@ -5,6 +5,9 @@
 #include <iostream>
 using namespace std;
 
+#define REG_P_G 0
+#define REG_$ 1
+
 class _reg{
 public:
     regex_t *first;
@@ -14,7 +17,7 @@ public:
     _reg();
     void reg_comp();
     int reg_exec(string, int&);
-    reg_get_or_post(string, string);
+    int reg_get_or_post(string, string);
 };
 #endif
 

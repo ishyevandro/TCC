@@ -14,7 +14,9 @@ public:
     int if_var_array(_var *, int , string);
     int get_line_to_analyse(string,_var *,int &, _reg);//analise de regex
     int add_function ();//fara parte da regex!
-    string string_of_var_to_reg(_var, int, string);
+    string string_of_var_to_reg(_var*, int, string);
+    
+    void imprime_vetor(_var *, int);
     
 };
 

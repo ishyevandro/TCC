@@ -20,7 +20,6 @@ void _arq::open (string abrir)
 	while (new_file.good())
 	{
 		getline (new_file, linha);
-		cout <<linha<<endl;
 		this->vetor_de_variaveis->get_line_to_analyse(linha, vetor_de_variaveis, vet_num, *reg); 
 		linha.clear();
 	}

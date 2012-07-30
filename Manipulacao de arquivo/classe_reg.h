@@ -5,6 +5,10 @@
 #include <iostream>
 using namespace std;
 
+#define REG_P_G 0
+#define REG_$ 1
+#define REG_OPERATOR 2
+
 class _reg{
 public:
     regex_t *first;
