@@ -6,8 +6,9 @@
 
 
 _arq::_arq()
-	:new_file(NULL), vetor_de_variaveis(NULL), vet_num(0){
+	:new_file(NULL), vetor_de_variaveis(NULL), reg(NULL),vet_num(0){
 	vetor_de_variaveis = new _var[20];
+	reg = new _reg;
 	}
 
 void _arq::open (string abrir)
@@ -19,7 +20,7 @@ void _arq::open (string abrir)
 	while (new_file.good())
 	{
 		getline (new_file, linha);
-		this->vetor_de_variaveis->get_line_to_analyse(linha, vetor_de_variaveis, vet_num); 
+		this->vetor_de_variaveis->get_line_to_analyse(linha, vetor_de_variaveis, vet_num, *reg); 
 		linha.clear();
 	}
 }

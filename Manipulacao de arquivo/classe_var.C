@@ -1,15 +1,17 @@
 #include <iostream>
 #include "classe_var.h"
 
+/*=====================================OPERADORES E CONSTRUTOR*/
 _var::_var()//construtor padrao
-	:n_var(0), pilha(NULL), expressoes(NULL){
-	this->expressoes = new _reg;
-	this->expressoes->reg_comp();
+	:n_var(0), pilha(NULL){
 	this->variavel.empty();
 	}
+
 	
 _var::_var(string x)//construtor com string da var passada.
 	:pilha(NULL), n_var(0),variavel(x){}
+
+
 
 _var& _var::operator= (const _var &recebe)//recebe uma variavel para ir para o vetor de funcao ou variavel
 {
@@ -26,6 +28,8 @@ _var& _var::operator= (const _var &recebe)//recebe uma variavel para ir para o v
     return *this;
 }
 
+/*====================================MANIPULACAO PRINCIPAL*/
+
 int _var::if_var_array (_var *vet, int size_array, string new_string){//insercao de variavel no vetor de variaveis
     int i=0;
     for(i = 0 ; i < size_array ; i++){
@@ -36,11 +40,31 @@ int _var::if_var_array (_var *vet, int size_array, string new_string){//insercao
     return 0;
 }
 
-int _var::get_line_to_analyse(string line,_var *vetor_de_variaveis, int &vet_num){
+string _var::string_of_var_to_reg (_var *vet, int size_array, string new_string){//construcao de expressao para verificar se as variaveis estao na linha
+    string ret;
+    ret.clear();
+    int i=0;
+    for(i = 0 ; i < size_array ; i++){
+        ret+= "(\\";
+        ret+= vet[i].variavel;
+        ret+= ")|";
+    }
+    return 0;
+}
+
+
+
+int _var::get_line_to_analyse(string line,_var *vetor_de_variaveis, int &vet_num,_reg reg){
     int n, pos;
     string subline, var;
+    subline.clear();
+    n = reg.reg_get_or_post(line, subline);
+    cout << n << endl;
+    if (n == 1)
+    cout << line<< endl;
+    /*
     while (n != -1){
-        n = this->expressoes->reg_exec(line, pos);
+        n = reg.reg_exec(line, pos);
         if (n != -1){
         line= line.substr(pos, line.length());
             var = line.substr(0, n);
@@ -48,7 +72,7 @@ int _var::get_line_to_analyse(string line,_var *vetor_de_variaveis, int &vet_num
                 cout<<var<<endl;
             line = line.substr(n, line.length());
         }
-    }
+    }*/
     return 1;
 }
 
