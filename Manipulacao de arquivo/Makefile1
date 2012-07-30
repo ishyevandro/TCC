@@ -1,0 +1,44 @@
+#
+# Jaguapiru Security - Makefile
+# -------------------
+#
+# Author: Evandro Ishy Medeiros <jaguapiruu@gmail.com>
+#
+#
+
+PROGNAME   = Jaguapiru_security
+VERSION    = 0.1b
+
+OBJFILES   = classe_arquivo.c classe_var.c classe_reg.c
+
+CFLAGS_GEN = -Wall -lboost_regex
+
+all: $(PROGNAME)
+
+$(PROGNAME): $(PROGNAME).c $(OBJFILES) $(INCFILES)
+	$(++) $(LDFLAGS) $(PROGNAME).c -o $(PROGNAME) $(CFLAGS_OPT) \
+	      $(OBJFILES) $(LIBS)
+	@echo
+	@echo "See dictionaries/README-FIRST to pick a dictionary for the tool."
+	@echo
+	@echo "Having problems with your scans? Be sure to visit:"
+	@echo "http://code.google.com/p/skipfish/wiki/KnownIssues"
+	@echo
+
+debug: $(PROGNAME).c $(OBJFILES) $(INCFILES)
+	$(CC) $(LDFLAGS) $(PROGNAME).c -o $(PROGNAME) $(CFLAGS_DBG) \
+	      $(OBJFILES) $(LIBS)
+
+clean:
+	rm -f $(PROGNAME) *.exe *.o *~ a.out core core.[1-9][0-9]* *.stackdump \
+	      LOG same_test
+	rm -rf tmpdir
+
+same_test: same_test.c $(OBJFILES) $(INCFILES)
+	$(CC) same_test.c -o same_test $(CFLAGS_DBG) $(OBJFILES) $(LDFLAGS) \
+	      $(LIBS)
+
+publish: clean
+	cd ..; rm -rf skipfish-$(VERSION); cp -pr skipfish skipfish-$(VERSION); \
+	  tar cfvz ~/www/skipfish.tgz skipfish-$(VERSION)
+	chmod 644 ~/www/skipfish.tgz
