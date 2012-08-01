@@ -48,7 +48,6 @@ string _var::string_of_var_to_reg(_var *vet, int size_array) {//construcao de ex
     string ret;
     ret.clear();
     int i = 0;
-    //imprime_vetor(vet, size_array);
     for (i = 0; i < size_array; i++) {
         ret += "(\\";
         ret += vet[i].variavel;
@@ -61,22 +60,22 @@ string _var::string_of_var_to_reg(_var *vet, int size_array) {//construcao de ex
 }
 
 /*RECEBE A LINHA PARA ANALISE*/
-int _var::get_line_to_analyse(string line, _var *vetor_de_variaveis, int &vet_num,_reg reg) {
+int _var::get_line_to_analyse(string line, _var *vetor_de_variaveis, int &vet_num, _reg reg) {
     int n, pos;
     string array_of_vars_in_array;
-    array_of_vars_in_array = string_of_var_to_reg(vetor_de_variaveis, vet_num); //forma string para passar para verificacao de post ou get ou variavel que possui uma dessas coisas
-
+    if (vet_num > 0)
+        array_of_vars_in_array = string_of_var_to_reg(vetor_de_variaveis, vet_num); //forma string para passar para verificacao de post ou get ou variavel que possui uma dessas coisas
     n = reg.mount_reg_get_or_post(line, array_of_vars_in_array); //compila e verifica se alguma variavel tem get ou post
-
     if (n == TRUE_VALUE) {
-        n = reg.reg_exec_first_string(line, pos);//pega a primeira string
+        remove_space(line);
+        n = reg.reg_exec_first_string(line, pos); //pega a primeira string
         if (n != FALSE_VALUE) {
             new_variable(line, pos, vetor_de_variaveis, vet_num, n);
             remove_space(line);
             type_of_operator(line, reg);
             while (n != FALSE_VALUE) {
                 //cout << "%" << line << "%" << endl;
-                n = reg.reg_exec(line, pos); //verificacoes posteriores verificar depois pra documentar corretamente
+                n = reg.reg_exec_to_line(line, pos); //verificacoes posteriores verificar depois pra documentar corretamente
                 remove_space(line);
                 if (n != FALSE_VALUE)
                     new_variable(line, pos, vetor_de_variaveis, vet_num, n);
@@ -109,14 +108,14 @@ void _var::imprime_vetor(_var *vet, int tam) {
 void _var::remove_space(string &line) {
     size_t found;
     found = line.find_first_not_of(" ");
-    line = line.substr((int)found, line.length());
+    line = line.substr((int) found, line.length());
 }
 
 /*VERIFICACAO DO TIPO DE OPERACAO*/
 int _var::type_of_operator(string line, _reg reg) {
     int type;
     type = reg.reg_to_operator(line);
-    cout<<type<<endl;
+    cout << type << endl;
     return type;
 }
 

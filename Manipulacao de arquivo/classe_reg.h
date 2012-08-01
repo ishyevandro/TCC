@@ -20,7 +20,7 @@ using namespace std;
 #define REG_OPERATOR_CAT 26
 #define MAX_REG 100
 
-class _reg{
+class _reg {
 public:
     regex_t *first;
     int num_reg;
@@ -28,7 +28,9 @@ public:
     regmatch_t result;
     _reg();
     void reg_comp();
-    int reg_exec(string, int&);
+    int reg_exec_all(string, int);
+    int reg_comp_all(string, int);
+    int reg_exec_to_line(string, int&);
     int reg_exec_first_string(string, int&);
     int mount_reg_get_or_post(string, string);
     int reg_to_operator(string);

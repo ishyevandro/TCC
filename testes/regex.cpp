@@ -10,22 +10,15 @@ int main (int argc,char **argv)
  regex_t rx;
  regmatch_t match;
  size_t nmatch = 1;
- if (regcomp (&rx, argv[1], REG_EXTENDED)!= 0)
+ if (regcomp (&rx, "([a-z]|[A-Z])", REG_EXTENDED) != 0)
     {
     perror("regcomp");
     return 0;
     }
- 
- while (!feof(stdin))
-    {
-    fgets(buffer,1024,stdin);
-     
-    if (regexec (&rx,buffer,1,&match,0)==0)
-       {
-       printf("Matched:(%s) at %d to %i",buffer,(int)match.rm_so, (int)match.rm_eo);
-       }
- 
-    }
-regfree (&rx);
+  if (regexec(&rx, " ANAA MARI A JESUS JOSE",(size_t)1,&match, 0)==0){//achar o inicio da variavel
+  cout<<(int)match.rm_so<<endl;
+
+}
+
 return 0;
 }

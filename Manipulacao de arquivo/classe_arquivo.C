@@ -20,7 +20,7 @@ void _arq::open(string abrir) {
         this->vetor_de_variaveis->get_line_to_analyse(linha, vetor_de_variaveis, vet_num, *reg);
         linha.clear();
     }
-    //this->vetor_de_variaveis->imprime_vetor(vetor_de_variaveis, vet_num);
+    this->vetor_de_variaveis->imprime_vetor(vetor_de_variaveis, vet_num);
 }
 
 int main(int argc, char **argv) {

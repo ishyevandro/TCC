@@ -1,5 +1,5 @@
 <?php
-    $i   -=   $_POST['porcaria nenhuma'];
+    $i-=$_POST['porcaria nenhuma'];
     $j   +=   $_GET['Muita porcaria'];
     $conn->funfando=    $j;
     $x    =    $k;
