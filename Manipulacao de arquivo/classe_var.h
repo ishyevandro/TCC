@@ -6,6 +6,7 @@ using namespace std;
 class _var{
 public:
     string variavel;
+    string functions;
     int n_var;
     _var *pilha;
     _var ();
@@ -15,6 +16,7 @@ public:
     int get_line_to_analyse(string,_var *,int &, _reg);//analise de regex
     int add_function ();//fara parte da regex!
     string string_of_var_to_reg(_var*, int);
+    void new_variable(string &, int &, _var *,int &, int); 
     
     void imprime_vetor(_var *, int);
     

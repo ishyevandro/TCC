@@ -1,0 +1,8 @@
+g++ -o ca classe_arquivo.C classe_var.C classe_reg.C -lboost_regex
+
+Dia 30/08
+  * Analise correta de uma linha.
+    ** Arrumar os operadores.
+    ** Zerar variavel quando ela receber novo valor.
+    ** Comecar a pensar em funcoes e arrumar a estrutura para as funcoes.
+     

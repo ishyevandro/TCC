@@ -1,10 +1,11 @@
 #include <iostream>
 #include "classe_var.h"
 
-/*=====================================OPERADORES E CONSTRUTOR*/
+/*=====================================OPERADORES E CONSTRUTOR===============================*/
 _var::_var()//construtor padrao
 	:n_var(0), pilha(NULL){
-	this->variavel.empty();
+	this->variavel.clear();
+	this->functions.clear();
 	}
 
 	
@@ -28,8 +29,9 @@ _var& _var::operator= (const _var &recebe)//recebe uma variavel para ir para o v
     return *this;
 }
 
-/*====================================MANIPULACAO PRINCIPAL*/
+/*====================================MANIPULACAO PRINCIPAL=========================*/
 
+/*VERIFICACAO DE VARIAVEL, VERIFICA SE A VARIAVEL JA ESTA NO VETOR DE VARIAVEIS*/
 int _var::if_var_array (_var *vet, int size_array, string new_string){//insercao de variavel no vetor de variaveis
     int i=0;
 
@@ -43,6 +45,7 @@ int _var::if_var_array (_var *vet, int size_array, string new_string){//insercao
     return 0;
 }
 
+/*FORMA A STRING DE VARIAVEIS PARA FORMACAO DE EXPRESSAO REGULAR*/
 string _var::string_of_var_to_reg (_var *vet, int size_array){//construcao de expressao para verificar se as variaveis estao na linha
     string ret;
     ret.clear();
@@ -60,31 +63,45 @@ string _var::string_of_var_to_reg (_var *vet, int size_array){//construcao de ex
 }
 
 
-
+/*RECEBE A LINHA PARA ANALISE*/
 int _var::get_line_to_analyse(string line,_var *vetor_de_variaveis, int &vet_num,_reg reg){
 int n, pos;
-string subline, var;
-subline = string_of_var_to_reg(vetor_de_variaveis, vet_num);//forma string para passar para verificacao de post ou get ou variavel que possui uma dessas coisas
+string subline, var, array_of_vars_in_array;
+array_of_vars_in_array = string_of_var_to_reg(vetor_de_variaveis, vet_num);//forma string para passar para verificacao de post ou get ou variavel que possui uma dessas coisas
 //cout << subline << endl;
-n = reg.reg_get_or_post(line, subline);//compila e verifica se alguma variavel tem get ou post
-//cout << n << endl;
+n = reg.mount_reg_get_or_post(line, array_of_vars_in_array);//compila e verifica se alguma variavel tem get ou post
   if (n == 1){
-  //cout << line<< endl;
+    n = reg.reg_exec_first_string(line,pos);
+    if (n !=-1)
+      new_variable(line, pos, vetor_de_variaveis, vet_num, n);
     while (n != -1){
       n = reg.reg_exec(line, pos);//verificacoes posteriores verificar depois pra documentar corretamente
       if (n != -1){
+        new_variable(line, pos, vetor_de_variaveis, vet_num, n);
+      /*
         line = line.substr(pos, line.length());
         var = line.substr(0, n);
         if (!if_var_array(vetor_de_variaveis, vet_num, var)){
          // cout<<var<<endl;
           vet_num++;
         }
-        line = line.substr(n, line.length());
+        line = line.substr(n, line.length());*/
       }
     }
   }
   //imprime_vetor (vetor_de_variaveis,vet_num);
 return 1;
+}
+
+void _var::new_variable(string &line, int &pos, _var *vetor_de_variaveis,int &vet_num, int n)
+{
+  string var;
+  line = line.substr(pos, line.length());
+  var = line.substr(0, n);
+  if (!if_var_array(vetor_de_variaveis, vet_num, var)){
+    vet_num++;
+  }
+  line = line.substr(n, line.length());
 }
 
 void _var::imprime_vetor(_var *vet, int tam){
