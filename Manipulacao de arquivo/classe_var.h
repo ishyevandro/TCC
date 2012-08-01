@@ -17,9 +17,18 @@ public:
     int add_function ();//fara parte da regex!
     string string_of_var_to_reg(_var*, int);
     void new_variable(string &, int &, _var *,int &, int); 
+    int type_of_operator(string, _reg);
+    void remove_space(string&);
     
     void imprime_vetor(_var *, int);
     
 };
 
+class _method{
+public:
+    string method;
+    char type_of_method;
+    string functions;
+    _method *fila;
+};
 #endif

@@ -5,11 +5,20 @@
 #include <iostream>
 using namespace std;
 
+#define FALSE_VALUE -1
 #define REG_P_G 0
 #define REG_$ 1
+#define TRUE_VALUE 1
 #define REG_FIRST 2
 #define REG_OPERATOR 3
-#define REG_OPERATOR_CAT 4
+#define REG_OPERATOR_NORMAL 20
+#define REG_OPERATOR_SOMA 21
+#define REG_OPERATOR_SUB 22
+#define REG_OPERATOR_MULT 23
+#define REG_OPERATOR_DIV 24
+#define REG_OPERATOR_RES 25
+#define REG_OPERATOR_CAT 26
+#define MAX_REG 100
 
 class _reg{
 public:
@@ -22,6 +31,7 @@ public:
     int reg_exec(string, int&);
     int reg_exec_first_string(string, int&);
     int mount_reg_get_or_post(string, string);
+    int reg_to_operator(string);
 };
 #endif
 

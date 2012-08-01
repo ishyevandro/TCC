@@ -1,9 +1,12 @@
 g++ -o ca classe_arquivo.C classe_var.C classe_reg.C -lboost_regex
 
-Dia 30/08
-  * Analise correta de uma linha.
+Dia 30/07
+  * Analise correta de uma linha. (PARCIAL)
     ** Verificacao se e php ou html.
     ** Arrumar os operadores.
     ** Zerar variavel quando ela receber novo valor.
     ** Comecar a pensar em funcoes e arrumar a estrutura para as funcoes.
-     
+
+Dia 01/08
+  * classe var com algumas correcoes
+  * necessidade de pilha de var dentro de var e functions? Nao seria mais simples colocar em outra classe? e so passar para a variavel o metodo que ela recebeu (outra variavel)?
