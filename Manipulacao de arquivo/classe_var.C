@@ -1,15 +1,17 @@
 #include <iostream>
 #include "classe_var.h"
+#include "variavel.h"
 
 /*=====================================OPERADORES E CONSTRUTOR===============================*/
 _var::_var()//construtor padrao
 : n_var(0), pilha(NULL) {
+    this->vect.resize(VET_NUM);
     this->variavel.clear();
-    this->functions.clear();
 }
 
 _var::_var(string x)//construtor com string da var passada.
 : pilha(NULL), n_var(0), variavel(x) {
+    this->vect.resize(VET_NUM);
 }
 
 _var& _var::operator=(const _var &recebe)//recebe uma variavel para ir para o vetor de funcao ou variavel
@@ -37,17 +39,19 @@ int _var::if_var_array(_var *vet, int size_array, string new_string) {//insercao
         if (!vet[i].variavel.compare(new_string))
             return 1;
     }
-    //cout << new_string<< " if_var"<< endl;
     vet[size_array].variavel = new_string;
-    // cout << vet[size_array].variavel<< endl;
     return 0;
 }
 
 /*FORMA A STRING DE VARIAVEIS PARA FORMACAO DE EXPRESSAO REGULAR*/
 string _var::string_of_var_to_reg(_var *vet, int size_array) {//construcao de expressao para verificar se as variaveis estao na linha
     string ret;
-    ret.clear();
     int i = 0;
+    ret.clear();
+    if (size_array == 0)
+        ret = "(\\$_POST*)|(\\$_GET*)";
+    else
+        ret = "(\\$_POST*)|(\\$_GET*)|";
     for (i = 0; i < size_array; i++) {
         ret += "(\\";
         ret += vet[i].variavel;
@@ -63,6 +67,8 @@ string _var::string_of_var_to_reg(_var *vet, int size_array) {//construcao de ex
 int _var::analyse_line(string line, _var *vetor_de_variaveis, int &vet_num, _reg reg) {
     int n, pos, operator_type;
     string array_of_vars_in_array;
+    n = pos = operator_type = 0;
+    array_of_vars_in_array.clear();
     if (vet_num > 0)
         array_of_vars_in_array = string_of_var_to_reg(vetor_de_variaveis, vet_num); //forma string para passar para verificacao de post ou get ou variavel que possui uma dessas coisas
     n = reg.mount_reg_get_or_post(line, array_of_vars_in_array); //compila e verifica se alguma variavel tem get ou post
@@ -70,32 +76,48 @@ int _var::analyse_line(string line, _var *vetor_de_variaveis, int &vet_num, _reg
         remove_space(line);
         n = reg.reg_exec_first_string(line, pos); //pega a primeira string
         if (n != FALSE_VALUE) {
-            new_variable(line, pos, vetor_de_variaveis, vet_num, n);
+            n = new_variable(line, pos, vetor_de_variaveis, vet_num, n, reg);
+
             remove_space(line);
+
             operator_type = type_of_operator(line, reg);
-            while (n != FALSE_VALUE) {
+            while (n != FALSE_VALUE) {//totalmente mal projetado
                 n = reg.reg_exec_to_line(line, pos); //verificacoes posteriores verificar depois pra documentar corretamente
                 remove_space(line);
-                if (n != FALSE_VALUE)
-                    new_variable(line, pos, vetor_de_variaveis, vet_num, n);
+                n = new_variable(line, pos, vetor_de_variaveis, vet_num, n, reg);
             }
-        }
-        else{//quando for objeto e estiver sendo chamado uma funcao do mesmo
-            cout<<"E uma funcao de um objeto ou variavel"<< endl;
+        } else {//quando for objeto e estiver sendo chamado uma funcao do mesmo
+            cout << "E uma funcao de um objeto ou variavel" << endl;
         }
     }
     return 1;
 }
 
 /*ADICIONA UMA NOVA VARIAVEL AO VETOR DE VARIAVEIS*/
-void _var::new_variable(string &line, int &pos, _var *vetor_de_variaveis, int &vet_num, int n) {
-    string var;
+int _var::new_variable(string &line, int &pos, _var *vetor_de_variaveis, int &vet_num, int n, _reg reg) {
+    string var, cclear, subline;
+    int aux;
+    cclear.clear();
     line = line.substr(pos, line.length());
     var = line.substr(0, n);
-    if (!if_var_array(vetor_de_variaveis, vet_num, var)) {
-        vet_num++;
+    subline = line.substr(n, line.length());
+    aux = reg.mount_reg_get_or_post(line.substr(n, line.length()), cclear);
+    if (aux == FALSE_VALUE) {//restante da string nao possui get ou post entao essa string esta recebendo qualquer outra coisa. tirar ela do vetor
+        cout << "implementarei um metodo para ranca-la do vetor"<< endl;
+        return FALSE_VALUE;
+    } else {
+        aux = reg.mount_reg_get_or_post(var, cclear);
+        /*if (aux == 1) {verifica se a primeira variavel ja possui um get ou post
+             fazer alguma outra verificacao aqui que nao esta visivel pra mim no momento
+               algo relacionado a operadores para mudar a variavel ou adcionar nela e tals.
+               
+        }*/
+        if (!if_var_array(vetor_de_variaveis, vet_num, var)) {
+            vet_num++;
+        }
     }
-    line = line.substr(n, line.length());
+    line = line.substr(n, line.length()); //essa linha esta pulando operadores remocao futura!!
+    return TRUE_VALUE;
 }
 
 /*IMPRESSAO DO VETOR PARA TESTE*/
@@ -118,16 +140,6 @@ void _var::remove_space(string &line) {
 int _var::type_of_operator(string line, _reg reg) {
     int type;
     type = reg.reg_to_operator(line);
-    cout << type << endl;
     return type;
 }
 
-int _var::verify_comments(string line, _reg reg) {
-    int type;
-    type = reg.reg_comments(line);
-    if (type != -1) {
-        line = line.substr(0, type);
-        cout << line << " COMENT " << type << endl;
-    }
-    return type;
-}

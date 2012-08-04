@@ -119,8 +119,6 @@ int _reg::reg_exec_to_line(string line, int &pos) {//primeira string da linha.
 int _reg::mount_reg_get_or_post(string line, string variables)//verifica se na linha tem alguma interacao de get ou post ou alguma variavel que recebeu um get ou post.
 {
     if (!variables.empty()) {
-        if (this->variables_with_p_or_g.empty())
-            this->variables_with_p_or_g = "(\\$_POST*)|(\\$_GET*)|";
         this->variables_with_p_or_g += variables;
         regfree(&first[REG_P_G]);
         if (reg_comp_all(this->variables_with_p_or_g, REG_P_G) != 0)

@@ -6,12 +6,13 @@
       <in>classe_arquivo.h</in>
       <in>classe_funcao.C</in>
       <in>classe_funcao.h</in>
-      <in>classe_inter.C</in>
-      <in>classe_inter.h</in>
+      <in>classe_intermediaria.C</in>
+      <in>classe_intermediaria.h</in>
       <in>classe_reg.C</in>
       <in>classe_reg.h</in>
       <in>classe_var.C</in>
       <in>classe_var.h</in>
+      <in>variavel.h</in>
     </df>
     <logicalFolder name="ExternalFiles"
                    displayName="Important Files"

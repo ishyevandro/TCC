@@ -9,7 +9,7 @@ int _intermediaria::get_line_to_analyse(string line, _var *vetor_de_variaveis, i
     if (n == REG_VARIABLE)
         vetor_de_variaveis->analyse_line(line, vetor_de_variaveis, vet_num, reg);
     else
-        cout<<endl;
+        cout<<" "<< endl;
     return 1;
 }
 
