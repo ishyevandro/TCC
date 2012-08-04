@@ -17,7 +17,7 @@ void _arq::open(string abrir) {
     new_file.open(abrir.c_str(), ifstream::out);
     while (new_file.good()) {
         getline(new_file, linha);
-        this->vetor_de_variaveis->get_line_to_analyse(linha, vetor_de_variaveis, vet_num, *reg);
+        aux.get_line_to_analyse(linha, vetor_de_variaveis, vet_num, *reg);
         linha.clear();
     }
     this->vetor_de_variaveis->imprime_vetor(vetor_de_variaveis, vet_num);

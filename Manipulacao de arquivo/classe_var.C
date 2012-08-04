@@ -60,8 +60,8 @@ string _var::string_of_var_to_reg(_var *vet, int size_array) {//construcao de ex
 }
 
 /*RECEBE A LINHA PARA ANALISE*/
-int _var::get_line_to_analyse(string line, _var *vetor_de_variaveis, int &vet_num, _reg reg) {
-    int n, pos;
+int _var::analyse_line(string line, _var *vetor_de_variaveis, int &vet_num, _reg reg) {
+    int n, pos, operator_type;
     string array_of_vars_in_array;
     if (vet_num > 0)
         array_of_vars_in_array = string_of_var_to_reg(vetor_de_variaveis, vet_num); //forma string para passar para verificacao de post ou get ou variavel que possui uma dessas coisas
@@ -72,14 +72,16 @@ int _var::get_line_to_analyse(string line, _var *vetor_de_variaveis, int &vet_nu
         if (n != FALSE_VALUE) {
             new_variable(line, pos, vetor_de_variaveis, vet_num, n);
             remove_space(line);
-            type_of_operator(line, reg);
+            operator_type = type_of_operator(line, reg);
             while (n != FALSE_VALUE) {
-                //cout << "%" << line << "%" << endl;
                 n = reg.reg_exec_to_line(line, pos); //verificacoes posteriores verificar depois pra documentar corretamente
                 remove_space(line);
                 if (n != FALSE_VALUE)
                     new_variable(line, pos, vetor_de_variaveis, vet_num, n);
             }
+        }
+        else{//quando for objeto e estiver sendo chamado uma funcao do mesmo
+            cout<<"E uma funcao de um objeto ou variavel"<< endl;
         }
     }
     return 1;
@@ -108,6 +110,7 @@ void _var::imprime_vetor(_var *vet, int tam) {
 void _var::remove_space(string &line) {
     size_t found;
     found = line.find_first_not_of(" ");
+
     line = line.substr((int) found, line.length());
 }
 
@@ -119,5 +122,12 @@ int _var::type_of_operator(string line, _reg reg) {
     return type;
 }
 
-
-
+int _var::verify_comments(string line, _reg reg) {
+    int type;
+    type = reg.reg_comments(line);
+    if (type != -1) {
+        line = line.substr(0, type);
+        cout << line << " COMENT " << type << endl;
+    }
+    return type;
+}

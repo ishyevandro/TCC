@@ -11,6 +11,9 @@ using namespace std;
 #define TRUE_VALUE 1
 #define REG_FIRST 2
 #define REG_OPERATOR 3
+#define REG_FUNCTION 4
+#define REG_VARIABLE 5
+
 #define REG_OPERATOR_NORMAL 20
 #define REG_OPERATOR_SOMA 21
 #define REG_OPERATOR_SUB 22
@@ -18,6 +21,9 @@ using namespace std;
 #define REG_OPERATOR_DIV 24
 #define REG_OPERATOR_RES 25
 #define REG_OPERATOR_CAT 26
+#define REG_COMMENTS_SIMPLE 40
+#define REG_COMMENTS_INI 41
+#define REG_COMMENTS_FIM 42
 #define MAX_REG 100
 
 class _reg {
@@ -32,8 +38,10 @@ public:
     int reg_comp_all(string, int);
     int reg_exec_to_line(string, int&);
     int reg_exec_first_string(string, int&);
+    int reg_comments(string);
     int mount_reg_get_or_post(string, string);
     int reg_to_operator(string);
+    int what_is_first_string(string);
 };
 #endif
 
