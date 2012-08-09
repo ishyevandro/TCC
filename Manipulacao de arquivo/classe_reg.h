@@ -7,6 +7,8 @@ using namespace std;
 
 #define FALSE_VALUE -1
 #define REG_P_G 0
+#define REG_O_P_G 6
+#define REG_P_G_V 7
 #define REG_$ 1
 #define TRUE_VALUE 1
 #define REG_FIRST 2
@@ -21,6 +23,8 @@ using namespace std;
 #define REG_OPERATOR_DIV 24
 #define REG_OPERATOR_RES 25
 #define REG_OPERATOR_CAT 26
+#define REG_POS_OPERADOR_OPERADOR 27
+
 #define REG_COMMENTS_SIMPLE 40
 #define REG_COMMENTS_INI 41
 #define REG_COMMENTS_FIM 42
@@ -42,6 +46,7 @@ public:
     int mount_reg_get_or_post(string, string);
     int reg_to_operator(string);
     int what_is_first_string(string);
+    int reg_segunda_parte_linha(string );
 };
 #endif
 

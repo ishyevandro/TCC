@@ -5,8 +5,9 @@
 #include "classe_arquivo.h"
 
 _arq::_arq()
-: new_file(NULL), vetor_de_variaveis(NULL), reg(NULL), vet_num(0) {
-    vetor_de_variaveis = new _var[20];
+: new_file(NULL),/* vetor_de_variaveis(NULL),*/ reg(NULL), vet_num(0) {
+    //vetor_de_variaveis = new _var[20];
+    this->vetor_de_variaveis.resize(VET_NUM);
     reg = new _reg;
 }
 
@@ -20,7 +21,7 @@ void _arq::open(string abrir) {
         aux.get_line_to_analyse(linha, vetor_de_variaveis, vet_num, *reg);
         linha.clear();
     }
-    this->vetor_de_variaveis->imprime_vetor(vetor_de_variaveis, vet_num);
+    vetor_de_variaveis[0].imprime_vetor(vetor_de_variaveis, vet_num);
 }
 
 int main(int argc, char **argv) {
