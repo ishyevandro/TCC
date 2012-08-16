@@ -14,26 +14,25 @@ void _reg::reg_comp()//verificar se sera assim mesmo
     this->variables_with_p_or_g.clear();
     if (this->num_reg == 0)
         this->first = new regex_t[MAX_REG];
-    if (reg_comp_all("(^\\$_POST[\\[ ]*)|(^\\$_GET[\\[ ]*)", REG_O_P_G) != 0) {//verifica se a string corrente 'e um GET ou POST
-        cout << "POST erro\n" << endl; //arrumar essa porcaria pra ler do arquivos as expressoes
+    /* if (reg_comp_all("[\\$]", REG_$) != 0) {//encontr
+         cout << "Montagem da expressao com erro\n" << endl; //arrumar essa porcaria pra ler do arquivos as expressoes
+         exit(-1);
+     }*/
+
+    if (reg_comp_all("^[\\$]", REG_VARIABLE) != 0) {//Alterar para escapar caracteres whitespace e tals
+        cout << "Montagem da expressao com erro\n" << endl; //arrumar essa porcaria pra ler do arquivos as expressoes
         exit(-1);
     }
-    if (reg_comp_all("(^\\.*)", REG_POS_OPERADOR_OPERADOR) != 0) {//verifica se a string corrente 'e um GET ou POST
+    if (reg_comp_all("^[^\\$^\"^\']", REG_FUNCTION) != 0) {//Alterar para escapar caracteres whitespace e tals
+        cout << "Montagem da expressao com erro\n" << endl; //arrumar essa porcaria pra ler do arquivos as expressoes
+        exit(-1);
+    }
+    if (reg_comp_all("(^\\$_POST[\\[ ]*)|(^\\$_GET[\\[ ]*)", REG_O_P_G) != 0) {//verifica se a string corrente 'e um GET ou POST
         cout << "POST erro\n" << endl; //arrumar essa porcaria pra ler do arquivos as expressoes
         exit(-1);
     }
     if (reg_comp_all("(\\$_POST[\\[ ]*)|(\\$_GET[\\[ ]*)", REG_P_G) != 0) {//Expressao regular... descobrir como fazer aqui
         cout << "POST erro\n" << endl; //arrumar essa porcaria pra ler do arquivos as expressoes
-        exit(-1);
-    }
-
-    if (reg_comp_all("[\\$]", REG_$) != 0) {//Alterar para escapar caracteres whitespace e tals
-        cout << "Montagem da expressao com erro\n" << endl; //arrumar essa porcaria pra ler do arquivos as expressoes
-        exit(-1);
-    }
-
-    if (reg_comp_all("^[\\$]", REG_VARIABLE) != 0) {//Alterar para escapar caracteres whitespace e tals
-        cout << "Montagem da expressao com erro\n" << endl; //arrumar essa porcaria pra ler do arquivos as expressoes
         exit(-1);
     }
 
@@ -89,6 +88,15 @@ void _reg::reg_comp()//verificar se sera assim mesmo
         cout << "Montagem da expressao de comentario simples com erro\n" << endl;
         exit(-1);
     }
+    /*OPERADORES POS OPERADOR DE ATRIBUICAO*/
+    if (reg_comp_all("(^\\.*)", REG_POS_OPERATOR_CAT) != 0) {//verifica se a string corrente 'e um GET ou POST
+        cout << "POST erro\n" << endl; //arrumar essa porcaria pra ler do arquivos as expressoes
+        exit(-1);
+    }
+    if (reg_comp_all("(^[\\+\\-\\*\\%\\/]*)", REG_POS_OPERATOR_MAT) != 0) {//verifica se a string corrente 'e um GET ou POST
+        cout << "POST erro\n" << endl; //arrumar essa porcaria pra ler do arquivos as expressoes
+        exit(-1);
+    }
 }
 
 /*executa todas as expressoes regulares*/
@@ -113,6 +121,7 @@ int _reg::reg_exec_first_string(string line, int &pos) {//primeira string da lin
         return -1;
 }
 
+/*
 int _reg::reg_exec_to_line(string line, int &pos) {//primeira string da linha.
     string subline;
     if (reg_exec_all(line, REG_$) == 0) {//achar o inicio da variavel
@@ -123,7 +132,7 @@ int _reg::reg_exec_to_line(string line, int &pos) {//primeira string da linha.
     } else {
         return -1;
     }
-}
+}*/
 
 int _reg::mount_reg_get_or_post(string line, string variables)//verifica se na linha tem alguma interacao de get ou post ou alguma variavel que recebeu um get ou post.
 {
@@ -166,16 +175,25 @@ int _reg::reg_comments(string line) {
     return -1;
 }
 
-int _reg::what_is_first_string(string line) {
+int _reg::what_is_first_string(string line) {//AQUI ESTA O POSSIVEL ERRO
     if (reg_exec_all(line, REG_VARIABLE) == 0)
         return REG_VARIABLE;
-    else
+    else if (reg_exec_all(line, REG_FUNCTION) == 0)
         return REG_FUNCTION;
 }
 
 int _reg::reg_segunda_parte_linha(string subline) {
     if (reg_exec_all(subline, REG_O_P_G) == 0)
         return TRUE_VALUE;
+    else
+        return FALSE_VALUE;
+}
+
+int _reg::reg_operador_cat_ou_aritmetico(string subline) {
+    if (reg_exec_all(subline, REG_POS_OPERATOR_MAT) == 0)
+        return REG_POS_OPERATOR_MAT;
+    else if (reg_exec_all(subline, REG_POS_OPERATOR_CAT) == 0)
+        return REG_POS_OPERATOR_CAT;
     else
         return FALSE_VALUE;
 }

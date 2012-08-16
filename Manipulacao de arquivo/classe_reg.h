@@ -16,6 +16,7 @@ using namespace std;
 #define REG_FUNCTION 4
 #define REG_VARIABLE 5
 
+/*operadores utilizados para passar algum valor ha variavel exemplo "="*/
 #define REG_OPERATOR_NORMAL 20
 #define REG_OPERATOR_SOMA 21
 #define REG_OPERATOR_SUB 22
@@ -23,7 +24,10 @@ using namespace std;
 #define REG_OPERATOR_DIV 24
 #define REG_OPERATOR_RES 25
 #define REG_OPERATOR_CAT 26
-#define REG_POS_OPERADOR_OPERADOR 27
+
+/*operadores utilizados apos um operador anterior para formar um calculo ou concatenacao de string*/
+#define REG_POS_OPERATOR_MAT 31
+#define REG_POS_OPERATOR_CAT 32
 
 #define REG_COMMENTS_SIMPLE 40
 #define REG_COMMENTS_INI 41
@@ -47,6 +51,7 @@ public:
     int reg_to_operator(string);
     int what_is_first_string(string);
     int reg_segunda_parte_linha(string );
+    int reg_operador_cat_ou_aritmetico(string);
 };
 #endif
 

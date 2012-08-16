@@ -20,10 +20,11 @@ public:
     _var();
     _var(string);
     _var & operator =(const _var &outro);
-    int if_var_array(vector<_var> &, int &, string);
+    int add_var_array(vector<_var> &, int &, string);
     int analyse_line(string, vector<_var> &, int &, _reg); //analise de regex
     int add_function(); //fara parte da regex!
     string string_of_var_to_reg(vector<_var> &, int);
+    string string_of_var_to_reg(vector<_var> &, int, int);
     //int new_variable(string &, int &, vector<_var> , int &, int, _reg);
     int type_of_operator(string, _reg);
     void remove_space(string&);
@@ -32,8 +33,13 @@ public:
     void imprime_vetor(vector<_var> , int);
     int procura_variavel_no_vetor(string, vector<_var> &, int &);
     int remove_variavel_do_vetor(string, vector<_var> &, int &);
-    void adiciona_get_ou_post(_var &, string, _reg, string,vector<_var> , int );
+    void adiciona_get_ou_post(_var &, string &, _reg, string,vector<_var> , int );
+    int operador_normal(vector<_var> &,  int &, _reg, string, string, string);
+    int primeira_string(string &, int&);
     string string_de_vars_pos_operador(vector<_var> , int);
+    int operador_intermediario(string &, _reg);
+    int operador_normal_variavel(vector<_var> &, int &, _reg reg,string, string&);
+    int operador_normal_funcao(vector<_var> &, int &, _reg reg,string, string&);
 
 };
 #endif

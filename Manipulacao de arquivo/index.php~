@@ -1,10 +1,14 @@
 <?php
-    $i= $_POST['porcaria nenhuma'];
-    $j = $_GET['Muita porcaria'];
-    $conn->funfando = $j;
-    $x = $k;
-    $j=100;
-    $string="STRING";
-    $i=$string;
+    $i   = $_POST['porcaria nenhuma'];
+    $j        =       $_GET['Muita porcaria'];
+    $k = $j;
+  //  $x    =    $k;
+//    $j   .=   100; 
+    $strin   =   "STRING";
+    $aa   =   $i;
+    //$i = 0;
+    $a .= $j;
     
+    
+    tivechamada
 ?>
