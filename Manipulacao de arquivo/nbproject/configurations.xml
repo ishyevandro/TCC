@@ -2,6 +2,29 @@
 <configurationDescriptor version="84">
   <logicalFolder name="root" displayName="root" projectFiles="true" kind="ROOT">
     <df name="Manipulacao de arquivo" root=".">
+      <df name="projeto">
+        <df name="autom4te.cache">
+          <in>requests</in>
+        </df>
+        <df name="src">
+          <df name=".deps">
+          </df>
+          <in>classe_arquivo.C</in>
+          <in>classe_arquivo.h</in>
+          <in>classe_funcao.C</in>
+          <in>classe_funcao.h</in>
+          <in>classe_intermediaria.C</in>
+          <in>classe_intermediaria.h</in>
+          <in>classe_reg.C</in>
+          <in>classe_reg.h</in>
+          <in>classe_var.C</in>
+          <in>classe_var.h</in>
+          <in>variavel.h</in>
+        </df>
+        <df name="test">
+        </df>
+        <in>config.h</in>
+      </df>
       <in>classe_arquivo.C</in>
       <in>classe_arquivo.h</in>
       <in>classe_funcao.C</in>
