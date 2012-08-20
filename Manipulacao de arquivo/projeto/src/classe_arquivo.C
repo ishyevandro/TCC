@@ -27,7 +27,7 @@ void _arq::open(string abrir) {
 int main(int argc, char **argv) {
     _arq *A;
     A = new _arq;
-    A->open("index.php");
+    A->open("/home/evandro/Dropbox/TCC/TCC/Manipulacao de arquivo/projeto/test/index.php");
     delete A;
     return 0;
 }

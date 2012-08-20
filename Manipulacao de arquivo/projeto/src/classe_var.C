@@ -79,7 +79,7 @@ string _var::string_of_var_to_reg(vector<_var> &vet, int size_array, int nada) {
 int _var::analyse_line(string line, vector<_var> &vetor_de_variaveis, int &vet_num, _reg reg) {
     int n, operator_type;
     string array_of_vars_in_array, procura_operador, subline, nova_variavel;
-    n =  operator_type = 0;
+    n = operator_type = 0;
     array_of_vars_in_array.clear();
     /*MONTA A EXPRESSAO REGULAR PARA INCLUIR AS VARIAVEIS QUE ESTAO COM POST E GET*/
     if (vet_num > 0)
@@ -91,11 +91,11 @@ int _var::analyse_line(string line, vector<_var> &vetor_de_variaveis, int &vet_n
         nova_variavel = primeira_string(line, reg);
         //n = reg.reg_exec_first_string(line, pos); //pega a primeira string e retorna onde ela comeca em pos e retorna onde comeca operador em N
         if (n != FALSE_VALUE) {//PORCARIA TODA ERRADA. ALTERAR A EXPRESSAO REGULAR PARA PROCURAR PELO $
-            cout<<"<<"<<line<<endl;
+            // cout<<"<<"<<line<<endl;
             //procura_operador = line;//.substr(n, line.length()); /*pega a partir do final da primeira string pra frente*/
             remove_space(line); /*remove espacos para o primeiro caracter ser parte do operador ja*/
             operator_type = type_of_operator(line, reg); /*verifica qual o tipo de operador*/
-            cout<<">>"<<line<<"  "<<operator_type<<endl;
+            //cout<<">>"<<line<<"  "<<operator_type<<endl;
             switch (operator_type) {/*acoes a serem feitas com cada operador*/
                 case REG_OPERATOR_NORMAL:
                     /*Subline 'e a variavel que possui como inicio o primeiro campo apos o operador*/
@@ -103,7 +103,7 @@ int _var::analyse_line(string line, vector<_var> &vetor_de_variaveis, int &vet_n
                     operador_normal(vetor_de_variaveis, vet_num, reg, line, array_of_vars_in_array, nova_variavel);
                     break;
                 case REG_OPERATOR_CAT:
-                    cout << "concatena" << endl;
+                    cout << "??concatena??" << endl;
                     break;
                     //case REG_OPERATOR_SOMA REG_OPERATOR_SUB REG_OPERATOR_DIV REG_OPERATOR_RES:;
                 default:
@@ -145,6 +145,7 @@ int _var::type_of_operator(string &line, _reg reg) {
 /*IMPRESSAO DO VETOR PARA TESTE*/
 void _var::imprime_vetor(vector<_var> vet, int tam) {
     int i, j;
+    cout<<"IMPRESSAO DO VETOR"<<endl<<endl;
     for (i = 0; i < tam; i++) {
         cout << vet[i].variavel << " N parametros: " << vet[i].n_var << endl;
         for (j = 0; j < vet[i].n_var; j++)
@@ -183,12 +184,14 @@ void _var::adiciona_get_ou_post(_var &add, string &subline, _reg reg, string vet
     string string_guardar;
     remove_space(subline);
     size_t found;
-   // cout << "==================" << endl << subline << endl;
+    //cout << "==================" << endl << subline << endl;
     if (1 == 1) {//implementar a diferenca entre get direto e htmlspecial(get);
         if (reg.reg_segunda_parte_linha(subline) == TRUE_VALUE) {//verifica se o primeiro elemento 'e um get ou post
             found = subline.find_first_of("]");
             string_guardar = subline.substr(0, (int) found + 1);
+           // cout<<add.variavel<<endl;
             add.vect[add.n_var].variavel = string_guardar;
+          //  cout<<add.variavel<<endl;
             add.n_var++;
             subline = subline.substr((int) found + 1, subline.length());
         } else if (!vet_var_p_g.empty() && reg.mount_reg_get_or_post(subline, vet_var_p_g) != FALSE_VALUE) {
@@ -212,34 +215,42 @@ void _var::adiciona_get_ou_post(_var &add, string &subline, _reg reg, string vet
 int _var::operador_normal(vector<_var> &vetor_de_variaveis, int &vet_num, _reg reg, string subline, string reg_vetor_de_variaveis, string nova_variavel) {
     int auxiliar, pos_var, tipo;
     string reg_string_de_var_com_g_p;
+    _var auxiliar_sublinha; //pega todas as iteracoes posterior ao operador e armazena aqui para no fim colocar no vetor. Feito dessa forma para nao cair em recursao de objetos quando uma variavel receber ela mesmo depois de receber alguma outra.
+    auxiliar_sublinha.variavel = nova_variavel;
+    auxiliar_sublinha.n_var=0;
     /*verifica se nessa parte tem alguma variavel pra frente que possua get ou post*/
-   // cout<<"======ANTES DE PASSAR___"<<subline<<endl;
+    // cout<<"======ANTES DE PASSAR___"<<subline<<endl;
     remove_space(subline);
+    auxiliar = reg.mount_reg_get_or_post(subline, reg_vetor_de_variaveis); //SE HOUVER UM WHILE AQUI DARA ERRO
+    //cout<<"auxiliar= "<<auxiliar<<endl;
     if (auxiliar != FALSE_VALUE) {
         while (subline[0] != ';') {
-         //   cout<<"======ANTES DE PASSAR___"<<subline<<endl;//sera necessario implementar para verificar se essa variavel e concatenada... ou ate remover ela da posicao onde esta e caso tenha outra no vetor apagar a outra!
+            //   cout<<"======ANTES DE PASSAR___"<<subline<<endl;//sera necessario implementar para verificar se essa variavel e concatenada... ou ate remover ela da posicao onde esta e caso tenha outra no vetor apagar a outra!
             auxiliar = reg.mount_reg_get_or_post(subline, reg_vetor_de_variaveis); //SE HOUVER UM WHILE AQUI DARA ERRO
             if (auxiliar != FALSE_VALUE) {//verificar se ainda ha algum elemento com get ou post esta errado, precisa ser feito verificacao de variavel por variavel ate o final
                 tipo = reg.what_is_first_string(subline); //verifica se e variavel ou funcao
                 if (tipo == REG_VARIABLE) {
                     remove_space(subline);
-                    operador_normal_variavel(vetor_de_variaveis, vet_num, reg, nova_variavel, subline);
+                    operador_normal_variavel(vetor_de_variaveis, vet_num, reg, auxiliar_sublinha, subline);
                 } else if (tipo == REG_FUNCTION) {
                     cout << "NEM ERA PRA ENTRAR AQUI" << endl; //TA ERRADO POR QUE ESTA ENTRANDO? REGEX ERRADA?
                     remove_space(subline);
-                    operador_normal_funcao(vetor_de_variaveis, vet_num, reg, nova_variavel, subline);
+                    operador_normal_funcao(vetor_de_variaveis, vet_num, reg, auxiliar_sublinha, subline);
                 }
                 remove_space(subline);
-              //  cout<<subline<<endl;
+                  cout<<subline<<endl;//##nao atingiu
                 if (subline[0] != ';')
                     operador_intermediario(subline, reg);
                 remove_space(subline);
-            }else
+            } else
                 subline = ";";
         }
     } else {//remove a variavel da lista
-        cout<<"Removendo variavel: "<<nova_variavel<<endl;
+        cout << "Removendo variavel: " << nova_variavel << endl;
         remove_variavel_do_vetor(nova_variavel, vetor_de_variaveis, vet_num);
+    }
+    if(auxiliar_sublinha.n_var>0){
+        copia_var(auxiliar_sublinha, vetor_de_variaveis, vet_num);
     }
     return 0;
 }
@@ -260,19 +271,16 @@ int _var::operador_intermediario(string &subline, _reg reg) {
 
 }
 
-int _var::operador_normal_variavel(vector<_var> &vetor_de_variaveis, int &vet_num, _reg reg, string nova_variavel, string &subline) {
+int _var::operador_normal_variavel(vector<_var> &vetor_de_variaveis, int &vet_num, _reg reg, _var &nova_variavel, string &subline) {
     int pos_var;
     string reg_string_de_var_com_g_p;
-    pos_var = procura_variavel_no_vetor(nova_variavel, vetor_de_variaveis, vet_num);
-    if (pos_var == FALSE_VALUE)
-        pos_var = add_var_array(vetor_de_variaveis, vet_num, nova_variavel);
     reg_string_de_var_com_g_p = string_of_var_to_reg(vetor_de_variaveis, vet_num, 0);
-    adiciona_get_ou_post(vetor_de_variaveis[pos_var], subline, reg, reg_string_de_var_com_g_p, vetor_de_variaveis, vet_num);
-    return pos_var; //ALTERAR ESSE RETURN
+    adiciona_get_ou_post(nova_variavel, subline, reg, reg_string_de_var_com_g_p, vetor_de_variaveis, vet_num);
+    return 1; //ALTERAR ESSE RETURN
 }
 //POSSIVEL ERRO
 
-int _var::operador_normal_funcao(vector<_var>&vetor, int&vet_num, _reg reg, string nova_variavel, string &subline) {
+int _var::operador_normal_funcao(vector<_var>&vetor, int&vet_num, _reg reg, _var &nova_variavel, string &subline) {
     int found, aux, pos;
     string string_var, funcao;
     remove_space(subline);
@@ -294,7 +302,7 @@ int _var::operador_normal_funcao(vector<_var>&vetor, int&vet_num, _reg reg, stri
 
 }
 
-string _var::primeira_string (string &line, _reg reg){
+string _var::primeira_string(string &line, _reg reg) {
     string nova_string;
     int n, pos;
     n = reg.reg_exec_first_string(line, pos);
@@ -302,4 +310,19 @@ string _var::primeira_string (string &line, _reg reg){
     line = line.substr(n, line.length());
     remove_space(line);
     return nova_string;
+}
+
+int _var::copia_var(_var nova_variavel, vector<_var> &vetor_de_variaveis, int &vet_num) {
+    int pos_var, i, j;
+    pos_var = procura_variavel_no_vetor(nova_variavel.variavel, vetor_de_variaveis, vet_num);
+    if (pos_var == FALSE_VALUE)
+        pos_var = add_var_array(vetor_de_variaveis, vet_num, nova_variavel.variavel);
+
+    vetor_de_variaveis[pos_var].variavel = nova_variavel.variavel;
+    vetor_de_variaveis[pos_var].n_var = nova_variavel.n_var;
+    for (i = 0; i < nova_variavel.n_var; i++) {
+        vetor_de_variaveis[pos_var].vect[i].variavel = nova_variavel.vect[i].variavel;
+        vetor_de_variaveis[pos_var].vect[i].funcao = nova_variavel.vect[i].funcao;
+    }
+    return 1;
 }

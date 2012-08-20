@@ -38,8 +38,9 @@ public:
     string primeira_string(string &, _reg);
     string string_de_vars_pos_operador(vector<_var> , int);
     int operador_intermediario(string &, _reg);
-    int operador_normal_variavel(vector<_var> &, int &, _reg reg,string, string&);
-    int operador_normal_funcao(vector<_var> &, int &, _reg reg,string, string&);
+    int operador_normal_variavel(vector<_var> &, int &, _reg reg,_var &, string&);
+    int operador_normal_funcao(vector<_var> &, int &, _reg reg,_var &, string&);
+    int copia_var(_var, vector<_var> &, int &);
 
 };
 #endif
