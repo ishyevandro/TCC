@@ -41,6 +41,7 @@ public:
     int operador_normal_variavel(vector<_var> &, int &, _reg reg,_var &, string&);
     int operador_normal_funcao(vector<_var> &, int &, _reg reg,_var &, string&);
     int copia_var(_var, vector<_var> &, int &);
-
+    string retorna_gp(string &);
+    string retorna_variavel(string &, _reg);
 };
 #endif

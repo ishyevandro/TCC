@@ -39,7 +39,7 @@
           <buildCommandWorkingDir>.</buildCommandWorkingDir>
           <buildCommand>${MAKE} -f Makefile</buildCommand>
           <cleanCommand>${MAKE} -f Makefile clean</cleanCommand>
-          <executablePath></executablePath>
+          <executablePath>TCC</executablePath>
           <ccTool>
             <incDir>
               <pElem>/usr/lib/gtkmm-2.4/include</pElem>
@@ -103,7 +103,7 @@
           </incDir>
         </ccTool>
       </item>
-      <item path="classe_var.C" ex="false" tool="1" flavor2="0">
+      <item path="classe_var.C" ex="false" tool="1" flavor2="4">
         <ccTool>
           <incDir>
             <pElem>/usr/include/gio-unix-2.0/</pElem>

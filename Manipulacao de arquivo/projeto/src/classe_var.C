@@ -2,6 +2,9 @@
 #include "classe_var.h"
 #include "variavel.h"
 
+/*#NECESSARIO ALTERACAO DA BUSCA DE POST E GET... BUSCANDO POR EXPRESSAO REGULAR PARA RETIRAR
+ O ESPCAO ENTRE O $_GET   (ESTE ESPACO)[*/
+
 /*=====================================OPERADORES E CONSTRUTOR===============================*/
 _var::_var()//construtor padrao
 : n_var(0) {
@@ -78,7 +81,7 @@ string _var::string_of_var_to_reg(vector<_var> &vet, int size_array, int nada) {
 /*RECEBE A LINHA PARA ANALISE*/
 int _var::analyse_line(string line, vector<_var> &vetor_de_variaveis, int &vet_num, _reg reg) {
     int n, operator_type;
-    string array_of_vars_in_array, procura_operador, subline, nova_variavel;
+    string array_of_vars_in_array, nova_variavel;
     n = operator_type = 0;
     array_of_vars_in_array.clear();
     /*MONTA A EXPRESSAO REGULAR PARA INCLUIR AS VARIAVEIS QUE ESTAO COM POST E GET*/
@@ -87,10 +90,9 @@ int _var::analyse_line(string line, vector<_var> &vetor_de_variaveis, int &vet_n
     n = reg.mount_reg_get_or_post(line, array_of_vars_in_array); //compila e verifica se alguma variavel tem get ou post
     /*IF true caso tenha alguma variavel no vetor que possui get ou post*/
     if (n == TRUE_VALUE) {
-        remove_space(line);
         nova_variavel = primeira_string(line, reg);
         //n = reg.reg_exec_first_string(line, pos); //pega a primeira string e retorna onde ela comeca em pos e retorna onde comeca operador em N
-        if (n != FALSE_VALUE) {//PORCARIA TODA ERRADA. ALTERAR A EXPRESSAO REGULAR PARA PROCURAR PELO $
+        if (!nova_variavel.empty()) {//##PORCARIA TODA ERRADA. ALTERAR A EXPRESSAO REGULAR PARA PROCURAR PELO $
             // cout<<"<<"<<line<<endl;
             //procura_operador = line;//.substr(n, line.length()); /*pega a partir do final da primeira string pra frente*/
             remove_space(line); /*remove espacos para o primeiro caracter ser parte do operador ja*/
@@ -112,7 +114,7 @@ int _var::analyse_line(string line, vector<_var> &vetor_de_variaveis, int &vet_n
             }
             remove_space(line);
         } else {//quando for objeto e estiver sendo chamado uma funcao do mesmo
-            cout << "E uma funcao de um objeto ou variavel" << endl;
+            cout << "E UMA FUNCAO E AINDA NAO TRATEI NA PRIMEIRA_STRING" << endl;
         }
     }
     return 1;
@@ -121,7 +123,6 @@ int _var::analyse_line(string line, vector<_var> &vetor_de_variaveis, int &vet_n
 void _var::remove_space(string &line) {
     size_t found;
     found = line.find_first_not_of(" ");
-
     line = line.substr((int) found, line.length());
 }
 
@@ -129,7 +130,6 @@ void _var::remove_aspa_simples(string &subline) {
     size_t found;
     do {
         found = subline.find_first_not_of(" ");
-
         subline = subline.substr((int) found, subline.length());
     } while (1 != 1);
 }
@@ -145,7 +145,7 @@ int _var::type_of_operator(string &line, _reg reg) {
 /*IMPRESSAO DO VETOR PARA TESTE*/
 void _var::imprime_vetor(vector<_var> vet, int tam) {
     int i, j;
-    cout<<"IMPRESSAO DO VETOR"<<endl<<endl;
+    cout << "IMPRESSAO DO VETOR" << endl << endl;
     for (i = 0; i < tam; i++) {
         cout << vet[i].variavel << " N parametros: " << vet[i].n_var << endl;
         for (j = 0; j < vet[i].n_var; j++)
@@ -187,13 +187,11 @@ void _var::adiciona_get_ou_post(_var &add, string &subline, _reg reg, string vet
     //cout << "==================" << endl << subline << endl;
     if (1 == 1) {//implementar a diferenca entre get direto e htmlspecial(get);
         if (reg.reg_segunda_parte_linha(subline) == TRUE_VALUE) {//verifica se o primeiro elemento 'e um get ou post
-            found = subline.find_first_of("]");
-            string_guardar = subline.substr(0, (int) found + 1);
-           // cout<<add.variavel<<endl;
+            /*#COM MUDANCAS FUTURAS NAO SERA MAIS NECESSARIO USAR ESSA PARTE*/
+            string_guardar = retorna_variavel(subline, reg);
             add.vect[add.n_var].variavel = string_guardar;
-          //  cout<<add.variavel<<endl;
             add.n_var++;
-            subline = subline.substr((int) found + 1, subline.length());
+            //subline = subline.substr((int) subline.find_first_of("]") + 1, subline.length());
         } else if (!vet_var_p_g.empty() && reg.mount_reg_get_or_post(subline, vet_var_p_g) != FALSE_VALUE) {
             found = subline.find_first_of(" .+-;");
             string_guardar = subline.substr(0, (int) found);
@@ -213,19 +211,19 @@ void _var::adiciona_get_ou_post(_var &add, string &subline, _reg reg, string vet
 }
 
 int _var::operador_normal(vector<_var> &vetor_de_variaveis, int &vet_num, _reg reg, string subline, string reg_vetor_de_variaveis, string nova_variavel) {
-    int auxiliar, pos_var, tipo;
+    int auxiliar, tipo, operacao, cast;
     string reg_string_de_var_com_g_p;
     _var auxiliar_sublinha; //pega todas as iteracoes posterior ao operador e armazena aqui para no fim colocar no vetor. Feito dessa forma para nao cair em recursao de objetos quando uma variavel receber ela mesmo depois de receber alguma outra.
     auxiliar_sublinha.variavel = nova_variavel;
-    auxiliar_sublinha.n_var=0;
-    /*verifica se nessa parte tem alguma variavel pra frente que possua get ou post*/
-    // cout<<"======ANTES DE PASSAR___"<<subline<<endl;
+    auxiliar_sublinha.n_var = 0;
     remove_space(subline);
-    auxiliar = reg.mount_reg_get_or_post(subline, reg_vetor_de_variaveis); //SE HOUVER UM WHILE AQUI DARA ERRO
-    //cout<<"auxiliar= "<<auxiliar<<endl;
+    auxiliar = reg.mount_reg_get_or_post(subline, reg_vetor_de_variaveis); /*#ESTA ERRADO!
+    QUANDO A VARIAVEL QUE RECEBE E UM GET OU POST DA ERRO, VERIFICAR NA E2 SE GET OU POST CONSEGUEM RECEBER*/
     if (auxiliar != FALSE_VALUE) {
         while (subline[0] != ';') {
-            //   cout<<"======ANTES DE PASSAR___"<<subline<<endl;//sera necessario implementar para verificar se essa variavel e concatenada... ou ate remover ela da posicao onde esta e caso tenha outra no vetor apagar a outra!
+            //sera necessario implementar para verificar se essa variavel e concatenada... ou ate remover ela da posicao onde esta e caso tenha outra no vetor apagar a outra!
+            /*#NECESSARIO ARMAZENAR A PRIMEIRA STRING, APOS O OPERADOR, PARA FAZER AS FUTURAS ANALISES COM BASE APENAS NA VARIAVEL
+             QUE ESTARA SENDO VERIFICADA DESSAA VEZ.*/
             auxiliar = reg.mount_reg_get_or_post(subline, reg_vetor_de_variaveis); //SE HOUVER UM WHILE AQUI DARA ERRO
             if (auxiliar != FALSE_VALUE) {//verificar se ainda ha algum elemento com get ou post esta errado, precisa ser feito verificacao de variavel por variavel ate o final
                 tipo = reg.what_is_first_string(subline); //verifica se e variavel ou funcao
@@ -237,19 +235,21 @@ int _var::operador_normal(vector<_var> &vetor_de_variaveis, int &vet_num, _reg r
                     remove_space(subline);
                     operador_normal_funcao(vetor_de_variaveis, vet_num, reg, auxiliar_sublinha, subline);
                 }
-                remove_space(subline);
-                  cout<<subline<<endl;//##nao atingiu
-                if (subline[0] != ';')
-                    operador_intermediario(subline, reg);
-                remove_space(subline);
-            } else
+                //#
+                if (subline[0] != ';') {//##OPERADOR DE PRECEDENCIA "( )" NECESSARIO VERIFICACAO QUANDO
+   /*QUANDO DENTRO... POLONESA REVERSA?*/
+                    operacao = operador_intermediario(subline, reg);/*COMPLEMENTAR ESTA PARTE.*/
+                    if (operacao == REG_POS_OPERATOR_MAT)
+                        cast = operacao;
+                }
+            } else//NAO SUBSTITUIR POR ";" CAMINHAR PARA A PROXIMA VARIAVEL para verificar os opeeradores.
                 subline = ";";
         }
-    } else {//remove a variavel da lista
+    } else {//remove a variavel da lista #existe o problema de ele remover quando um $_get ou post recebe algo verificar isso
         cout << "Removendo variavel: " << nova_variavel << endl;
         remove_variavel_do_vetor(nova_variavel, vetor_de_variaveis, vet_num);
     }
-    if(auxiliar_sublinha.n_var>0){
+    if (auxiliar_sublinha.n_var > 0) {
         copia_var(auxiliar_sublinha, vetor_de_variaveis, vet_num);
     }
     return 0;
@@ -257,18 +257,23 @@ int _var::operador_normal(vector<_var> &vetor_de_variaveis, int &vet_num, _reg r
 
 int _var::operador_intermediario(string &subline, _reg reg) {
     int aux;
+    remove_space(subline);
     aux = reg.reg_operador_cat_ou_aritmetico(subline);
     if (aux == REG_POS_OPERATOR_CAT) {
         cout << "concatena _" << subline << endl;
+        subline = subline.substr(1, subline.length());
+        remove_space(subline);
+        return REG_POS_OPERATOR_CAT;
     } else if (aux == REG_POS_OPERATOR_MAT) {
+        subline = subline.substr(1, subline.length());
         cout << "matematico _" << subline << endl;
+        remove_space(subline);
+        return REG_POS_OPERATOR_MAT;
     } else {
-        cout << "fudeu _" << subline << endl;
+        cout << "NAO E MATEMATICO NEM CONCATENA: "<<subline<< endl;
+        remove_space(subline);
+        return -1;
     }
-    subline = subline.substr(1, subline.length());
-    //cout << subline << endl;
-    return 0;
-
 }
 
 int _var::operador_normal_variavel(vector<_var> &vetor_de_variaveis, int &vet_num, _reg reg, _var &nova_variavel, string &subline) {
@@ -302,14 +307,25 @@ int _var::operador_normal_funcao(vector<_var>&vetor, int&vet_num, _reg reg, _var
 
 }
 
+/*#FUNCAO UTILIZADA PARA PEGAR A STRING ANTES DE QUALQUER OPERADOR
+  POSSIVELMENTE SERA UMA VARIAVEL POREM E NECESSARIO ALTERAR O METODO ATUAL
+ PARA VERIFICAR SE E UMA VARIAVEL OU NAO*/
 string _var::primeira_string(string &line, _reg reg) {
     string nova_string;
-    int n, pos;
-    n = reg.reg_exec_first_string(line, pos);
-    nova_string = line.substr(pos, n);
-    line = line.substr(n, line.length());
+    int n, pos, tipo_de_string;
+    nova_string.clear();
     remove_space(line);
-    return nova_string;
+    tipo_de_string = reg.what_is_first_string(line);
+    if (tipo_de_string == REG_VARIABLE) {
+        if (reg.reg_segunda_parte_linha(line) == TRUE_VALUE)
+            nova_string = retorna_gp(line);
+        else
+            nova_string = retorna_variavel(line, reg);
+        //cout << nova_string << endl;
+        return nova_string;
+    }
+    else
+        return nova_string;
 }
 
 int _var::copia_var(_var nova_variavel, vector<_var> &vetor_de_variaveis, int &vet_num) {
@@ -325,4 +341,32 @@ int _var::copia_var(_var nova_variavel, vector<_var> &vetor_de_variaveis, int &v
         vetor_de_variaveis[pos_var].vect[i].funcao = nova_variavel.vect[i].funcao;
     }
     return 1;
+}
+
+/*#NAO E USADO*/
+string _var::retorna_gp(string &line) {//RETORNA A PRIMEIRA STRING QUANDO ELA E GET OU POST
+    size_t found;
+    string retorno;
+    found = line.find_first_of("]");
+    retorno = line.substr(0, (int) found + 1);
+    line = line.substr((int) found + 1, line.length());
+    return retorno;
+}
+
+string _var::retorna_variavel(string &line, _reg reg) {//RETORNA A PRIMEIRA STRING QUANDO E VARIAVEL
+    int n, pos;
+    string retorno;
+    n = reg.reg_exec_first_string(line, pos);
+    retorno = line.substr(pos, n);
+    line = line.substr(n, line.length());
+    remove_space(line);
+    //cout << retorno << "_" << endl;
+    if (line[0] == '[') {
+        cout<<line<<endl;
+        n = (int) line.find_first_of("]");
+        retorno += line.substr(0, n + 1);
+        line = line.substr(n + 1, line.length());
+    }
+    remove_space(line);
+    return retorno;
 }

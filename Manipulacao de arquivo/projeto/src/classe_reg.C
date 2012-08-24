@@ -40,8 +40,9 @@ void _reg::reg_comp()//verificar se sera assim mesmo
         cout << "Montagem da expressao com erro\n" << endl; //arrumar essa porcaria pra ler do arquivos as expressoes
         exit(-1);
     }
-    /*RETIRAR O MENOS FUTURAMENTE POR CAUSA DE CLASSES verificacao depois da primeira variavel*/
-    if (reg_comp_all("(\\=)|(\\-[^\\>])|(\\+)|(\\.)|(\\;)|( [\\-\\+\\=\\&. ])", REG_OPERATOR) != 0) {
+    /*#verificacao erronea... fazer multiplas verificacaos no first string para chegar a usar isso*/
+    //if (reg_comp_all("(\\=)|(\\-[^\\>])|(\\+)|(\\.)|(\\;)|( [\\-\\+\\=\\&. ])", REG_OPERATOR) != 0) {
+    if (reg_comp_all("(\\=)|(\\-[^\\>])|(\\+)|(\\.)|(\\;)| |\\[", REG_OPERATOR) != 0) {
         cout << "Montagem da expressao com erro segunda parte\n" << endl;
         exit(-1);
     }
@@ -93,7 +94,7 @@ void _reg::reg_comp()//verificar se sera assim mesmo
         cout << "POST erro\n" << endl; //arrumar essa porcaria pra ler do arquivos as expressoes
         exit(-1);
     }//\\*\\%\\/
-    if (reg_comp_all("(^[\\+\\-])", REG_POS_OPERATOR_MAT) != 0) {//verifica se a string corrente 'e um GET ou POST
+    if (reg_comp_all("(^[\\+-\\*\\/])", REG_POS_OPERATOR_MAT) != 0) {//verifica se a string corrente 'e um GET ou POST
         cout << "POST erro\n" << endl; //arrumar essa porcaria pra ler do arquivos as expressoes
         exit(-1);
     }

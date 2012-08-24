@@ -38,7 +38,8 @@ DIST_COMMON = README $(am__configure_deps) $(srcdir)/Makefile.am \
 	$(top_srcdir)/configure AUTHORS COPYING ChangeLog INSTALL NEWS \
 	depcomp install-sh missing
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
-am__aclocal_m4_deps = $(top_srcdir)/configure.ac
+am__aclocal_m4_deps = $(top_srcdir)/acinclude.m4 \
+	$(top_srcdir)/regex.m4 $(top_srcdir)/configure.ac
 am__configure_deps = $(am__aclocal_m4_deps) $(CONFIGURE_DEPENDENCIES) \
 	$(ACLOCAL_M4)
 am__CONFIG_DISTCLEAN_FILES = config.status config.cache config.log \
@@ -129,6 +130,7 @@ AUTOCONF = ${SHELL} "/home/evandro/Dropbox/TCC/TCC/Manipulacao de arquivo/projet
 AUTOHEADER = ${SHELL} "/home/evandro/Dropbox/TCC/TCC/Manipulacao de arquivo/projeto/missing" --run autoheader
 AUTOMAKE = ${SHELL} "/home/evandro/Dropbox/TCC/TCC/Manipulacao de arquivo/projeto/missing" --run automake-1.11
 AWK = mawk
+BOOST_REGEX_LIB = -lboost_regex-mt
 CC = gcc
 CCDEPMODE = depmode=gcc3
 CFLAGS = -g -O2

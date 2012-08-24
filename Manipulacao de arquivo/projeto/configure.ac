@@ -6,6 +6,7 @@ AC_PROG_CXX
 AC_HEADER_STDC
 AC_CHECK_HEADER([iostream vector ])
 PKG_CHECK_MODULES([GTKMM], [gtkmm-2.4 >= 2.10])
+AX_BOOST_REGEX
 AC_TYPE_SIZE_T
 AC_CONFIG_HEADERS([config.h])
 AC_CONFIG_FILES([Makefile src/Makefile])

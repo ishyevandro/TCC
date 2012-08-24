@@ -38,7 +38,8 @@ subdir = src
 DIST_COMMON = $(TCC_HEADERS) $(srcdir)/Makefile.am \
 	$(srcdir)/Makefile.in
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
-am__aclocal_m4_deps = $(top_srcdir)/configure.ac
+am__aclocal_m4_deps = $(top_srcdir)/acinclude.m4 \
+	$(top_srcdir)/regex.m4 $(top_srcdir)/configure.ac
 am__configure_deps = $(am__aclocal_m4_deps) $(CONFIGURE_DEPENDENCIES) \
 	$(ACLOCAL_M4)
 mkinstalldirs = $(install_sh) -d
@@ -51,7 +52,8 @@ am_TCC_OBJECTS = TCC-classe_arquivo.$(OBJEXT) TCC-classe_var.$(OBJEXT) \
 	TCC-classe_reg.$(OBJEXT) TCC-classe_intermediaria.$(OBJEXT)
 TCC_OBJECTS = $(am_TCC_OBJECTS)
 am__DEPENDENCIES_1 =
-TCC_DEPENDENCIES = $(am__DEPENDENCIES_1)
+TCC_DEPENDENCIES = $(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1) \
+	$(am__DEPENDENCIES_1)
 DEFAULT_INCLUDES = -I. -I$(top_builddir)
 depcomp = $(SHELL) $(top_srcdir)/depcomp
 am__depfiles_maybe = depfiles
@@ -94,6 +96,7 @@ AUTOCONF = ${SHELL} "/home/evandro/Dropbox/TCC/TCC/Manipulacao de arquivo/projet
 AUTOHEADER = ${SHELL} "/home/evandro/Dropbox/TCC/TCC/Manipulacao de arquivo/projeto/missing" --run autoheader
 AUTOMAKE = ${SHELL} "/home/evandro/Dropbox/TCC/TCC/Manipulacao de arquivo/projeto/missing" --run automake-1.11
 AWK = mawk
+BOOST_REGEX_LIB = -lboost_regex-mt
 CC = gcc
 CCDEPMODE = depmode=gcc3
 CFLAGS = -g -O2
@@ -188,8 +191,8 @@ AM_LDFLAGS = -mwindows
 TCCdir = .
 TCC_SOURCES = classe_arquivo.C classe_var.C classe_reg.C classe_intermediaria.C
 TCC_HEADERS = classe_arquivo.h classe_var.h classe_reg.h classe_intermediaria.h variavel.h
-TCC_CPPFLAGS = $(GTKMM_CFLAGS)
-TCC_LDADD = $(GTKMM_LIBS) -lboost_regex
+TCC_CPPFLAGS = $(GTKMM_CFLAGS) $(CPPFLAGS)
+TCC_LDADD = $(GTKMM_LIBS) $(LDFLAGS) $(BOOST_REGEX_LIB)
 all: all-am
 
 .SUFFIXES:

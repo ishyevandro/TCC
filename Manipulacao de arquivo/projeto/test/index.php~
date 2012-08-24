@@ -2,7 +2,7 @@
     
     $i ['JUDAS'] = $_POST     ['POST DO I'] + $b;
     //$_POST['PORCARIA NENHUMA'] = $i;
-    $j        =       $_GET       ['GET DO J'] . $_POST['GET DO J2'];
+    $j        =       $_GET       ['GET DO J'] . $_POST ['GET DO J2'];
     $i   = $j . $i;
     $JESUS = $j * $i;
     $k = $j - $x;
