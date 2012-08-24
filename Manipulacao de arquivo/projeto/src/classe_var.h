@@ -33,7 +33,7 @@ public:
     void imprime_vetor(vector<_var> , int);
     int procura_variavel_no_vetor(string, vector<_var> &, int &);
     int remove_variavel_do_vetor(string, vector<_var> &, int &);
-    void adiciona_get_ou_post(_var &, string &, _reg, string,vector<_var> , int );
+    int adiciona_get_ou_post(_var &, string &, _reg, string,vector<_var> , int );
     int operador_normal(vector<_var> &,  int &, _reg, string, string, string);
     string primeira_string(string &, _reg);
     string string_de_vars_pos_operador(vector<_var> , int);
@@ -43,5 +43,6 @@ public:
     int copia_var(_var, vector<_var> &, int &);
     string retorna_gp(string &);
     string retorna_variavel(string &, _reg);
+    string retorna_funcao (string &, _reg);
 };
 #endif

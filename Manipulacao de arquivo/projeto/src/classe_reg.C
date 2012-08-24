@@ -90,7 +90,7 @@ void _reg::reg_comp()//verificar se sera assim mesmo
         exit(-1);
     }
     /*OPERADORES POS OPERADOR DE ATRIBUICAO*/
-    if (reg_comp_all("(^\\.)", REG_POS_OPERATOR_CAT) != 0) {//verifica se a string corrente 'e um GET ou POST
+    if (reg_comp_all("(^[\\.])", REG_POS_OPERATOR_CAT) != 0) {//verifica se a string corrente 'e um GET ou POST
         cout << "POST erro\n" << endl; //arrumar essa porcaria pra ler do arquivos as expressoes
         exit(-1);
     }//\\*\\%\\/
@@ -121,19 +121,6 @@ int _reg::reg_exec_first_string(string line, int &pos) {//primeira string da lin
     } else
         return -1;
 }
-
-/*
-int _reg::reg_exec_to_line(string line, int &pos) {//primeira string da linha.
-    string subline;
-    if (reg_exec_all(line, REG_$) == 0) {//achar o inicio da variavel
-        subline = line.substr((int) result.rm_so, line.length()); //passa a verificar a partir do inicio da variavel
-        pos = (int) result.rm_so; //passagem por referencia de onde comeca a string
-        if (reg_exec_all(subline, REG_OPERATOR) == 0)
-            return (int) result.rm_so; //retorna posicao final
-    } else {
-        return -1;
-    }
-}*/
 
 int _reg::mount_reg_get_or_post(string line, string variables)//verifica se na linha tem alguma interacao de get ou post ou alguma variavel que recebeu um get ou post.
 {
@@ -193,10 +180,11 @@ int _reg::reg_segunda_parte_linha(string subline) {
 }
 
 int _reg::reg_operador_cat_ou_aritmetico(string subline) {
-    if (reg_exec_all(subline, REG_POS_OPERATOR_MAT) == 0)
-        return REG_POS_OPERATOR_MAT;
-    else if (reg_exec_all(subline, REG_POS_OPERATOR_CAT) == 0)
+    if (reg_exec_all(subline, REG_POS_OPERATOR_CAT) == 0)
         return REG_POS_OPERATOR_CAT;
+    else if (reg_exec_all(subline, REG_POS_OPERATOR_MAT) == 0)//###TEM ALGUM ERRO AQUI ESTRANHO SE ESTIVER ANTES DO PONTO ELE PEGA PONTO COMO OPERADOR MATEMATICO
+        return REG_POS_OPERATOR_MAT;
+
     else
         return FALSE_VALUE;
 }
