@@ -36,6 +36,7 @@ public:
     int adiciona_get_ou_post(_var &, string &, _reg, string,vector<_var> , int );
     int operador_normal(vector<_var> &,  int &, _reg, string, string, string);
     string primeira_string(string &, _reg);
+    string primeira_variavel(string &, _reg);
     string string_de_vars_pos_operador(vector<_var> , int);
     int operador_intermediario(string &, _reg);
     int operador_normal_variavel(vector<_var> &, int &, _reg reg,_var &, string&);

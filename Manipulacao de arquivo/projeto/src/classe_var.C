@@ -37,8 +37,9 @@ int _var::add_var_array(vector<_var> &vet, int &size_array, string new_string) {
 
 /*FORMA A STRING DE VARIAVEIS PARA FORMACAO DE EXPRESSAO REGULAR*/
 string _var::string_of_var_to_reg(vector<_var> &vet, int size_array) {//construcao de expressao para verificar se as variaveis estao na linha
-    string ret;
+    string ret, caracter_especiais, aux_esp1, aux_esp2;
     int i = 0;
+    size_t encontrado;
     ret.clear();
     if (size_array == 0)
         ret = "(\\$_POST*)|(\\$_GET*)";
@@ -46,12 +47,23 @@ string _var::string_of_var_to_reg(vector<_var> &vet, int size_array) {//construc
         ret = "(\\$_POST*)|(\\$_GET*)|";
     for (i = 0; i < size_array; i++) {
         ret += "(\\";
-        ret += vet[i].variavel;
+        //ret += vet[i].variavel;
+        caracter_especiais = vet[i].variavel;
+        encontrado = caracter_especiais.find("[");
+        if (encontrado != string::npos) {
+            aux_esp1 = "\\[";
+            aux_esp2 = "\\]";
+            caracter_especiais.replace(caracter_especiais.find("["), 1, aux_esp1);
+            caracter_especiais.replace(caracter_especiais.find("]"), 1, aux_esp2);
+            ret += caracter_especiais;
+        } else
+            ret += vet[i].variavel;
         if (i + 1 != size_array)
             ret += ")|";
         else
             ret += ")";
     }
+    // cout<<"COMPILA AQUI "<<endl<<ret<<endl;
     return ret;
 }
 
@@ -84,6 +96,7 @@ int _var::analyse_line(string line, vector<_var> &vetor_de_variaveis, int &vet_n
     string array_of_vars_in_array, nova_variavel;
     n = operator_type = 0;
     array_of_vars_in_array.clear();
+    //cout<<line<<endl;
     /*MONTA A EXPRESSAO REGULAR PARA INCLUIR AS VARIAVEIS QUE ESTAO COM POST E GET*/
     if (vet_num > 0)
         array_of_vars_in_array = string_of_var_to_reg(vetor_de_variaveis, vet_num); //forma string para passar para verificacao de post ou get ou variavel que possui uma dessas coisas
@@ -93,10 +106,11 @@ int _var::analyse_line(string line, vector<_var> &vetor_de_variaveis, int &vet_n
         nova_variavel = primeira_string(line, reg);
         //n = reg.reg_exec_first_string(line, pos); //pega a primeira string e retorna onde ela comeca em pos e retorna onde comeca operador em N
         if (!nova_variavel.empty()) {//##PORCARIA TODA ERRADA. ALTERAR A EXPRESSAO REGULAR PARA PROCURAR PELO $
-            // cout<<"<<"<<line<<endl;
+            //cout<<"<<"<<line<<endl;
             operator_type = type_of_operator(line, reg); /*verifica qual o tipo de operador*/
             switch (operator_type) {/*acoes a serem feitas com cada operador*/
                 case REG_OPERATOR_NORMAL:
+                    //cout << "QUE ERRO DO DEMONIO  E ESSE?"<<line<<endl;
                     operador_normal(vetor_de_variaveis, vet_num, reg, line, array_of_vars_in_array, nova_variavel);
                     break;
                 case REG_OPERATOR_CAT:
@@ -180,18 +194,20 @@ int _var::remove_variavel_do_vetor(string var, vector<_var> &vetor_de_variaveis,
 int _var::adiciona_get_ou_post(_var &add, string &subline, _reg reg, string vet_var_p_g, vector<_var> procura, int vet_num) {//vai ser adicionado a excessao de aspas simples aqui
     int pos, n;
     string string_guardar;
-    remove_space(subline);
+    //remove_space(subline);
     if (1 == 1) {//implementar a diferenca entre get direto e htmlspecial(get);
-      //  cout << "_________======" << subline << endl;
+        // cout << "_________======" << subline << endl;
         if (reg.reg_segunda_parte_linha(subline) == TRUE_VALUE) {//verifica se o primeiro elemento 'e um get ou post
             /*#COM MUDANCAS FUTURAS NAO SERA MAIS NECESSARIO USAR ESSA PARTE*/
-            string_guardar = retorna_variavel(subline, reg);
+            // cout << "_________======" << subline << endl;
+            string_guardar = subline;//retorna_variavel(subline, reg);
+            // cout << "_________======" << subline << endl;
             add.vect[add.n_var].variavel = string_guardar;
             add.n_var++;
             return 1;
             //subline = subline.substr((int) subline.find_first_of("]") + 1, subline.length());
         } else if (!vet_var_p_g.empty() && reg.mount_reg_get_or_post(subline, vet_var_p_g) != FALSE_VALUE) {
-            string_guardar = retorna_variavel (subline, reg);
+            string_guardar = subline;//retorna_variavel(subline, reg);
             pos = procura_variavel_no_vetor(string_guardar, procura, vet_num);
             for (n = 0; n < procura[pos].n_var; n++) {
                 add.vect[add.n_var].variavel = procura[pos].vect[n].variavel;
@@ -208,41 +224,59 @@ int _var::adiciona_get_ou_post(_var &add, string &subline, _reg reg, string vet_
 }
 
 int _var::operador_normal(vector<_var> &vetor_de_variaveis, int &vet_num, _reg reg, string subline, string reg_vetor_de_variaveis, string nova_variavel) {
-    int auxiliar, tipo, operacao, cast;
+    int auxiliar, tipo, operacao, cast, ultima_variavel;
     string reg_string_de_var_com_g_p;
     string variavel_atual; //##implementar para futuramente passar a string e nao a linha toda para analise futura.
     _var auxiliar_sublinha; //pega todas as iteracoes posterior ao operador e armazena aqui para no fim colocar no vetor. Feito dessa forma para nao cair em recursao de objetos quando uma variavel receber ela mesmo depois de receber alguma outra.
     auxiliar_sublinha.variavel = nova_variavel;
     auxiliar_sublinha.n_var = 0;
     remove_space(subline);
-    auxiliar = reg.mount_reg_get_or_post(subline, reg_vetor_de_variaveis); /*#ESTA ERRADO!
+
+    variavel_atual = primeira_variavel(subline, reg);
+    //cout<<subline<<"MOSTRA ALGUMA PORCARIA"<<endl;
+    auxiliar = reg.mount_reg_get_or_post(variavel_atual, reg_vetor_de_variaveis); /*#ESTA ERRADO!
     QUANDO A VARIAVEL QUE RECEBE E UM GET OU POST DA ERRO, VERIFICAR NA E2 SE GET OU POST CONSEGUEM RECEBER*/
+    //cout<<reg_vetor_de_variaveis<<endl;
+    ultima_variavel = 1;
     if (auxiliar != FALSE_VALUE) {
-        while (subline[0] != ';') {
+        while (subline[0] != ';' || ultima_variavel != 0) {
             //sera necessario implementar para verificar se essa variavel e concatenada... ou ate remover ela da posicao onde esta e caso tenha outra no vetor apagar a outra!
             /*#NECESSARIO ARMAZENAR A PRIMEIRA STRING, APOS O OPERADOR, PARA FAZER AS FUTURAS ANALISES COM BASE APENAS NA VARIAVEL
              QUE ESTARA SENDO VERIFICADA DESSAA VEZ.*/
-            auxiliar = reg.mount_reg_get_or_post(subline, reg_vetor_de_variaveis); //SE HOUVER UM WHILE AQUI DARA ERRO
+            cout << "VAR ATUAL " << variavel_atual<<"NA SUBLINHA"<<subline << endl;
+            auxiliar = reg.mount_reg_get_or_post(variavel_atual, reg_vetor_de_variaveis); //SE HOUVER UM WHILE AQUI DARA ERRO
+
             if (auxiliar != FALSE_VALUE) {//verificar se ainda ha algum elemento com get ou post esta errado, precisa ser feito verificacao de variavel por variavel ate o final
-                tipo = reg.what_is_first_string(subline); //verifica se e variavel ou funcao
+                tipo = reg.what_is_first_string(variavel_atual); //verifica se e variavel ou funcao
+                // cout << "err tipo: " << tipo << endl;
                 if (tipo == REG_VARIABLE) {
-                    operador_normal_variavel(vetor_de_variaveis, vet_num, reg, auxiliar_sublinha, subline);
+                    operador_normal_variavel(vetor_de_variaveis, vet_num, reg, auxiliar_sublinha, variavel_atual);
                 } else if (tipo == REG_FUNCTION) {
                     //cout << "NEM ERA PRA ENTRAR AQUI" << endl; //TA ERRADO POR QUE ESTA ENTRANDO? REGEX ERRADA?
-                    operador_normal_funcao(vetor_de_variaveis, vet_num, reg, auxiliar_sublinha, subline);
-                    remove_space(subline);
-                    subline = subline.substr(1, subline.length());
-                    remove_space(subline);
+                    operador_normal_funcao(vetor_de_variaveis, vet_num, reg, auxiliar_sublinha, variavel_atual);
+                    //remove_space(subline);
+                    //subline = subline.substr(1, subline.length());
+                    //remove_space(subline);
                 }
+
                 //#
                 if (subline[0] != ';') {//##OPERADOR DE PRECEDENCIA "( )" NECESSARIO VERIFICACAO QUANDO
                     /*QUANDO DENTRO... POLONESA REVERSA?*/
+                    //variavel_atual = primeira_string (subline, reg);
+                    cout << "&&&&&&" << subline << endl;
                     operacao = operador_intermediario(subline, reg); /*COMPLEMENTAR ESTA PARTE.*/
                     if (operacao == REG_POS_OPERATOR_MAT)
                         cast = operacao;
-                }
-            } else//NAO SUBSTITUIR POR ";" CAMINHAR PARA A PROXIMA VARIAVEL para verificar os opeeradores.
+                    variavel_atual = primeira_variavel(subline, reg);
+                    remove_space(subline);
+                    ultima_variavel = 1;
+                    
+                } else
+                    ultima_variavel = 0;
+            } else{//NAO SUBSTITUIR POR ";" CAMINHAR PARA A PROXIMA VARIAVEL para verificar os opeeradores.
+            ultima_variavel = 0;
                 subline = ";";
+            }
         }
     } else {//remove a variavel da lista #existe o problema de ele remover quando um $_get ou post recebe algo verificar isso
         cout << "Removendo variavel: " << nova_variavel << endl;
@@ -259,12 +293,12 @@ int _var::operador_intermediario(string &subline, _reg reg) {
     remove_space(subline);
     aux = reg.reg_operador_cat_ou_aritmetico(subline);
     if (aux == REG_POS_OPERATOR_CAT) {
-        cout << "concatena _" << subline << endl;
+        //  cout << "concatena _" << subline << endl;
         subline = subline.substr(1, subline.length());
         remove_space(subline);
         return REG_POS_OPERATOR_CAT;
     } else if (aux == REG_POS_OPERATOR_MAT) {
-        cout << "matematico _" << subline << endl;
+        //  cout << "matematico _" << subline << endl;
         subline = subline.substr(1, subline.length());
 
         remove_space(subline);
@@ -278,8 +312,9 @@ int _var::operador_intermediario(string &subline, _reg reg) {
 
 int _var::operador_normal_variavel(vector<_var> &vetor_de_variaveis, int &vet_num, _reg reg, _var &nova_variavel, string &subline) {
     string reg_string_de_var_com_g_p;
-    remove_space (subline);
+    remove_space(subline);
     reg_string_de_var_com_g_p = string_of_var_to_reg(vetor_de_variaveis, vet_num, 0);
+    // cout << "OPERADOR_NORMAL_VARIAVEL " << subline << endl;
     return adiciona_get_ou_post(nova_variavel, subline, reg, reg_string_de_var_com_g_p, vetor_de_variaveis, vet_num);
     //ALTERAR ESSE RETURN
 }
@@ -305,13 +340,13 @@ int _var::operador_normal_funcao(vector<_var>&vetor, int&vet_num, _reg reg, _var
     if (aux == REG_FUNCTION) {//doidera total rever essa coisa louca
         funcao = retorna_funcao(subline, reg);
         retorno = operador_normal_funcao(vetor, vet_num, reg, nova_variavel, subline);
-                cout<< funcao<<" :"<<retorno<<endl;
+        //cout << funcao << " :" << retorno << endl;
         if (retorno == 1) {
-            cout << nova_variavel.variavel << endl;
+            // cout << nova_variavel.variavel << endl;
             if (!nova_variavel.vect[n_var].funcao.empty())//no na cabeca preciso acessar o local correto para adicionar a funcao e agora?
                 nova_variavel.vect[n_var].funcao = "+";
             nova_variavel.vect[n_var].funcao = funcao;
-            
+
         }
         return pos;
     } else if (aux == REG_VARIABLE) {//##adicao de aspas nesse ponto. e perigoso a forma que esta sendo usada ate o momento
@@ -338,6 +373,30 @@ string _var::primeira_string(string &line, _reg reg) {
 
     } else if (tipo_de_string == REG_FUNCTION)
         return retorna_funcao(line, reg);
+}
+
+string _var::primeira_variavel(string &line, _reg reg) {
+    string nova_string;
+    int n, pos, tipo_de_string;
+    nova_string.clear();
+    remove_space(line);
+    tipo_de_string = reg.what_is_first_string(line);
+    //cout << endl << endl << line << endl << endl;
+    if (tipo_de_string == REG_VARIABLE) {
+        // if (reg.reg_segunda_parte_linha(line) == TRUE_VALUE)
+        //     nova_string = retorna_gp(line);
+        // else
+        nova_string = retorna_variavel(line, reg);
+        //nova_string += " ";
+        return nova_string;
+
+    } else if (tipo_de_string == REG_FUNCTION)
+        nova_string = retorna_funcao(line, reg);
+    nova_string += "(";
+    nova_string += retorna_variavel(line, reg);
+    line = line.substr(1, line.length());
+    nova_string += ") ";
+    return nova_string;
 }
 
 int _var::copia_var(_var nova_variavel, vector<_var> &vetor_de_variaveis, int &vet_num) {
@@ -372,14 +431,23 @@ string _var::retorna_variavel(string &line, _reg reg) {//RETORNA A PRIMEIRA STRI
     retorno = line.substr(pos, n);
     line = line.substr(n, line.length());
     remove_space(line);
-    //cout << retorno << "_" << endl;
     if (line[0] == '[') {
-        //cout<<line<<endl;
-        n = (int) line.find_first_of("]");
-        retorno += line.substr(0, n + 1);
-        line = line.substr(n + 1, line.length());
+        retorno+="['";
+        line = line.substr(1, line.length());
+        n = (int) line.find_first_of("'");
+        line = line.substr(n+1, line.length());
+        n = (int) line.find_first_of("'");
+        retorno+=line.substr(0,n);
+        retorno+="']";
+        line = line.substr(line.find_first_of("]")+1, line.length());
+        // cout << "RETORNA VARIAVEL " << retorno << endl;
+        //cout << "_________======" <<retorno << endl;
+        //line = line.substr(n + 1, line.length());
     }
-    remove_space(line);
+    //cout<<"saiu "<<line.length()<<endl;
+    if (!line.empty())
+        remove_space(line);
+    cout<<line<<endl;
     return retorno;
 }
 
@@ -387,14 +455,17 @@ string _var::retorna_funcao(string &line, _reg reg) {
     string retorno;
     int pos;
     remove_space(line);
+    //cout<<line<<"END ERRO"<<endl;
     pos = line.find_first_of(" (");
     if (pos > 0)
         retorno = line.substr(0, pos);
     line = line.substr(pos, line.length());
     remove_space(line);
+    //cout<<line<<"END ERRO"<<endl;
     if (line[0] == '(')
         line = line.substr(1, line.length());
-    else 
+    else
         return NULL;
+    remove_space(line);
     return retorno;
 }

@@ -132,7 +132,7 @@ int _reg::mount_reg_get_or_post(string line, string variables)//verifica se na l
         //cout<<this->variables_with_p_or_g<<endl;
     }
     if (reg_exec_all(line, REG_P_G) == 0) {//verifica se tem post ou get
-        // cout<<"TRUE"<<endl;
+         //cout<<"TRUE"<<endl;
         return 1;
     } else {
         // cout<<"FALSE"<<endl;
