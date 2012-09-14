@@ -10,7 +10,7 @@ class _intermediaria{
 public:
     int get_line_to_analyse(string , vector<_var>&, int &, _reg);
     void remove_space(string&);
-    int remove_comments(string&, _reg);
+    //int remove_comments(string&, _reg);
 };
 
 #endif

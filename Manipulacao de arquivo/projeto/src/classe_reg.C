@@ -23,7 +23,7 @@ void _reg::reg_comp()//verificar se sera assim mesmo
         cout << "Montagem da expressao com erro\n" << endl; //arrumar essa porcaria pra ler do arquivos as expressoes
         exit(-1);
     }
-    if (reg_comp_all("^[^\\$^\"^\']", REG_FUNCTION) != 0) {//Alterar para escapar caracteres whitespace e tals
+    if (reg_comp_all("^[^\\$^\"^\'^[0-9]]", REG_FUNCTION) != 0) {//Alterar para escapar caracteres whitespace e tals
         cout << "Montagem da expressao com erro\n" << endl; //arrumar essa porcaria pra ler do arquivos as expressoes
         exit(-1);
     }
@@ -77,6 +77,18 @@ void _reg::reg_comp()//verificar se sera assim mesmo
         cout << "Montagem da expressao com erro segunda parte\n" << endl;
         exit(-1);
     }
+    /*OPERADORES POS OPERADOR DE ATRIBUICAO*/
+    if (reg_comp_all("(^[\\.])", REG_POS_OPERATOR_CAT) != 0) {//verifica se a string corrente 'e um GET ou POST
+        cout << "POST erro\n" << endl; //arrumar essa porcaria pra ler do arquivos as expressoes
+        exit(-1);
+    }//\\*\\%\\/
+    if (reg_comp_all("(^[\\+-\\*\\/])", REG_POS_OPERATOR_MAT) != 0) {//verifica se a string corrente 'e um GET ou POST
+        cout << "POST erro\n" << endl; //arrumar essa porcaria pra ler do arquivos as expressoes
+        exit(-1);
+    }
+
+    /*PARTE PARA COMENTARIOS E ASPAS*/
+
     if (reg_comp_all("(//)", REG_COMMENTS_SIMPLE) != 0) {
         cout << "Montagem da expressao de comentario simples com erro\n" << endl;
         exit(-1);
@@ -89,14 +101,11 @@ void _reg::reg_comp()//verificar se sera assim mesmo
         cout << "Montagem da expressao de comentario simples com erro\n" << endl;
         exit(-1);
     }
-    /*OPERADORES POS OPERADOR DE ATRIBUICAO*/
-    if (reg_comp_all("(^[\\.])", REG_POS_OPERATOR_CAT) != 0) {//verifica se a string corrente 'e um GET ou POST
-        cout << "POST erro\n" << endl; //arrumar essa porcaria pra ler do arquivos as expressoes
-        exit(-1);
-    }//\\*\\%\\/
-    if (reg_comp_all("(^[\\+-\\*\\/])", REG_POS_OPERATOR_MAT) != 0) {//verifica se a string corrente 'e um GET ou POST
-        cout << "POST erro\n" << endl; //arrumar essa porcaria pra ler do arquivos as expressoes
-        exit(-1);
+    if (reg_comp_all("(\")", REG_ASPAS_D) != 0) {
+        cout << "Erro na montagem: Expressao de aspas duplas" << endl;
+    }
+    if (reg_comp_all("(\')", REG_ASPAS_S) != 0) {
+        cout << "Erro na montagem: Expressao de aspas simples" << endl;
     }
 }
 
@@ -132,7 +141,7 @@ int _reg::mount_reg_get_or_post(string line, string variables)//verifica se na l
         //cout<<this->variables_with_p_or_g<<endl;
     }
     if (reg_exec_all(line, REG_P_G) == 0) {//verifica se tem post ou get
-         //cout<<"TRUE"<<endl;
+        //cout<<"TRUE"<<endl;
         return 1;
     } else {
         // cout<<"FALSE"<<endl;
@@ -155,7 +164,7 @@ int _reg::reg_to_operator(string line) {
     if (reg_exec_all(line, REG_OPERATOR_CAT) == 0)
         return REG_OPERATOR_CAT;
     else
-        cout<<"ERRO FUDIDO"<<endl;
+        cout << "ERRO FUDIDO" << endl;
 }
 
 int _reg::reg_comments(string line) {
@@ -187,4 +196,18 @@ int _reg::reg_operador_cat_ou_aritmetico(string subline) {
 
     else
         return FALSE_VALUE;
+}
+
+int _reg::reg_verifica_aspasd(string line) {
+    if (reg_exec_all(line, REG_ASPAS_D) == 0) {
+        return result.rm_so;
+    }
+    return FALSE_VALUE;
+}
+
+int _reg::reg_comments_(string line, int type) {
+    if (reg_exec_all(line, type) == 0) {
+        return result.rm_eo;
+    }
+    return FALSE_VALUE;
 }

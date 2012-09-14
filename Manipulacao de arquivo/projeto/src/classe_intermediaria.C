@@ -3,7 +3,7 @@
 
 int _intermediaria::get_line_to_analyse(string line, vector<_var> &vetor_de_variaveis, int &vet_num, _reg reg) {
     int n, pos;
-    n = remove_comments(line, reg);
+   // n = remove_comments(line, reg);
     remove_space(line);
     n = reg.what_is_first_string(line);
     if (n == REG_VARIABLE)
@@ -19,7 +19,7 @@ void _intermediaria::remove_space(string &line) {
     if ((int) found < line.length())
          line = line.substr((int) found, line.length());
 }
-
+/*
 int _intermediaria::remove_comments(string &line, _reg reg) {
     int type;
     type = reg.reg_comments(line);
@@ -28,3 +28,4 @@ int _intermediaria::remove_comments(string &line, _reg reg) {
         line = line.substr(0, type);
     }return 0;
 }
+*/

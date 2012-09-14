@@ -1,0 +1,40 @@
+#include <iostream>
+	#include <vector>
+	 
+	using namespace std;
+ 
+ class _variavel {
+    string variavel;
+    string funcao;
+};
+ 
+ 
+	int main(int argc, char** argv) {
+	     
+	    /*  Initialize vector of 10 copies of the integer 5 */
+	    vector<int> vectorOne(10);
+	    vector<_variavel> vectorVar(10);     
+	    /*  Display size of vector */
+	    cout << "Size of vector is " << vectorOne.size() << " elements." << endl;
+	     
+	    /*  run through the vector and display each element, using size() to determine index boundary */
+	    for (long index=0; index<(long)vectorOne.size(); ++index) {
+	        cout << "size "<< vectorOne.size() << endl;
+	        	        cout <<"capacity " <<vectorOne.capacity() << endl;
+	    vectorOne.at(index) = 10-index;
+	        cout << "Element " << index << ": " << vectorOne.at(index) << endl;
+	    }
+	     
+	    /*  Change size of vector - element removal */
+	    vectorOne.resize(7);
+	     
+	    /*  Display size of vector */
+	    cout << "Size of vector is " << vectorOne.size() << " elements." << endl;
+	     
+	    /*  run through the vector and display each element, using size() to determine index boundary */
+	    for (long index=0; index<(long)vectorOne.size(); ++index) {
+	        cout << "Element " << index << ": " << vectorOne.at(index) << endl;
+    }
+	     
+	    return 0;
+	}

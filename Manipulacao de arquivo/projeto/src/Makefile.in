@@ -49,7 +49,8 @@ CONFIG_CLEAN_VPATH_FILES =
 am__installdirs = "$(DESTDIR)$(bindir)" "$(DESTDIR)$(TCCdir)"
 PROGRAMS = $(bin_PROGRAMS)
 am_TCC_OBJECTS = TCC-classe_arquivo.$(OBJEXT) TCC-classe_var.$(OBJEXT) \
-	TCC-classe_reg.$(OBJEXT) TCC-classe_intermediaria.$(OBJEXT)
+	TCC-classe_reg.$(OBJEXT) TCC-classe_intermediaria.$(OBJEXT) \
+	TCC-classe_aspas.$(OBJEXT)
 TCC_OBJECTS = $(am_TCC_OBJECTS)
 am__DEPENDENCIES_1 =
 TCC_DEPENDENCIES = $(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1) \
@@ -189,8 +190,8 @@ top_srcdir = @top_srcdir@
 AM_CXXFLAGS = -I.
 AM_LDFLAGS = -mwindows
 TCCdir = .
-TCC_SOURCES = classe_arquivo.C classe_var.C classe_reg.C classe_intermediaria.C
-TCC_HEADERS = classe_arquivo.h classe_var.h classe_reg.h classe_intermediaria.h variavel.h
+TCC_SOURCES = classe_arquivo.C classe_var.C classe_reg.C classe_intermediaria.C classe_aspas.C
+TCC_HEADERS = classe_arquivo.h classe_var.h classe_reg.h classe_intermediaria.h classe_aspas.h variavel.h
 TCC_CPPFLAGS = $(GTKMM_CFLAGS) $(CPPFLAGS)
 TCC_LDADD = $(GTKMM_LIBS) $(LDFLAGS) $(BOOST_REGEX_LIB)
 all: all-am
@@ -275,6 +276,7 @@ distclean-compile:
 	-rm -f *.tab.c
 
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/TCC-classe_arquivo.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/TCC-classe_aspas.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/TCC-classe_intermediaria.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/TCC-classe_reg.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/TCC-classe_var.Po@am__quote@
@@ -348,6 +350,20 @@ TCC-classe_intermediaria.obj: classe_intermediaria.C
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='classe_intermediaria.C' object='TCC-classe_intermediaria.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(TCC_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o TCC-classe_intermediaria.obj `if test -f 'classe_intermediaria.C'; then $(CYGPATH_W) 'classe_intermediaria.C'; else $(CYGPATH_W) '$(srcdir)/classe_intermediaria.C'; fi`
+
+TCC-classe_aspas.o: classe_aspas.C
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(TCC_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT TCC-classe_aspas.o -MD -MP -MF $(DEPDIR)/TCC-classe_aspas.Tpo -c -o TCC-classe_aspas.o `test -f 'classe_aspas.C' || echo '$(srcdir)/'`classe_aspas.C
+@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/TCC-classe_aspas.Tpo $(DEPDIR)/TCC-classe_aspas.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='classe_aspas.C' object='TCC-classe_aspas.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(TCC_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o TCC-classe_aspas.o `test -f 'classe_aspas.C' || echo '$(srcdir)/'`classe_aspas.C
+
+TCC-classe_aspas.obj: classe_aspas.C
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(TCC_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT TCC-classe_aspas.obj -MD -MP -MF $(DEPDIR)/TCC-classe_aspas.Tpo -c -o TCC-classe_aspas.obj `if test -f 'classe_aspas.C'; then $(CYGPATH_W) 'classe_aspas.C'; else $(CYGPATH_W) '$(srcdir)/classe_aspas.C'; fi`
+@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/TCC-classe_aspas.Tpo $(DEPDIR)/TCC-classe_aspas.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='classe_aspas.C' object='TCC-classe_aspas.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(TCC_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o TCC-classe_aspas.obj `if test -f 'classe_aspas.C'; then $(CYGPATH_W) 'classe_aspas.C'; else $(CYGPATH_W) '$(srcdir)/classe_aspas.C'; fi`
 install-TCCHEADERS: $(TCC_HEADERS)
 	@$(NORMAL_INSTALL)
 	test -z "$(TCCdir)" || $(MKDIR_P) "$(DESTDIR)$(TCCdir)"

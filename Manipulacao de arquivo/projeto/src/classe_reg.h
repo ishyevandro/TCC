@@ -15,6 +15,7 @@ using namespace std;
 #define REG_OPERATOR 3
 #define REG_FUNCTION 4
 #define REG_VARIABLE 5
+#define REG_COUNT 8
 
 /*operadores utilizados para passar algum valor ha variavel exemplo "="*/
 #define REG_OPERATOR_NORMAL 20
@@ -29,9 +30,12 @@ using namespace std;
 #define REG_POS_OPERATOR_MAT 31
 #define REG_POS_OPERATOR_CAT 32
 
+/*Comentarios e Aspas*/
 #define REG_COMMENTS_SIMPLE 40
 #define REG_COMMENTS_INI 41
 #define REG_COMMENTS_FIM 42
+#define REG_ASPAS_D 43
+#define REG_ASPAS_S 44
 #define MAX_REG 100
 
 class _reg {
@@ -47,11 +51,16 @@ public:
     int reg_exec_to_line(string, int&);
     int reg_exec_first_string(string, int&);
     int reg_comments(string);
+    int reg_comments_(string, int);
     int mount_reg_get_or_post(string, string);
     int reg_to_operator(string);
     int what_is_first_string(string);
     int reg_segunda_parte_linha(string );
     int reg_operador_cat_ou_aritmetico(string);
+ //   int count_string(string, string);
+    int reg_verifica_aspasd (string);
+//verificacao de funcoes
+    
 };
 #endif
 

@@ -21,6 +21,5 @@ public:
     funcao.clear();
     }
 };
-
 #endif	/* VARIAVEL_H */
 

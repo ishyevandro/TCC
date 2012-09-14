@@ -117,7 +117,8 @@ TCC-classe_arquivo.o: classe_arquivo.C /usr/include/c++/4.6/iostream \
  /usr/include/c++/4.6/bits/stl_vector.h \
  /usr/include/c++/4.6/bits/stl_bvector.h \
  /usr/include/c++/4.6/bits/vector.tcc classe_arquivo.h classe_var.h \
- classe_reg.h variavel.h classe_intermediaria.h
+ classe_reg.h variavel.h classe_intermediaria.h classe_aspas.h \
+ /usr/include/c++/4.6/sstream /usr/include/c++/4.6/bits/sstream.tcc
 
 /usr/include/c++/4.6/iostream:
 
@@ -432,3 +433,9 @@ classe_reg.h:
 variavel.h:
 
 classe_intermediaria.h:
+
+classe_aspas.h:
+
+/usr/include/c++/4.6/sstream:
+
+/usr/include/c++/4.6/bits/sstream.tcc:
