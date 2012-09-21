@@ -20,6 +20,7 @@ public:
 	void read ();
 	void open(string);
         int aspas_duplas(string &);
+        int aspas_simples(string &);
 	int remove_comments(string &);
         int verifica_comentario_dentro_de_aspas(string);
 };

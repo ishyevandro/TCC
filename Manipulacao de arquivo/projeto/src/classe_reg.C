@@ -23,7 +23,11 @@ void _reg::reg_comp()//verificar se sera assim mesmo
         cout << "Montagem da expressao com erro\n" << endl; //arrumar essa porcaria pra ler do arquivos as expressoes
         exit(-1);
     }
-    if (reg_comp_all("^[^\\$^\"^\'^[0-9]]", REG_FUNCTION) != 0) {//Alterar para escapar caracteres whitespace e tals
+    if (reg_comp_all("^[^\\$^\"^\'^[:digit:]]", REG_FUNCTION) != 0) {//Alterar para escapar caracteres whitespace e tals
+        cout << "Montagem da expressao com erro\n" << endl; //arrumar essa porcaria pra ler do arquivos as expressoes
+        exit(-1);
+    }
+    if (reg_comp_all("^[^[:digit:]]", REG_NUMBER) != 0) {//Alterar para escapar caracteres whitespace e tals
         cout << "Montagem da expressao com erro\n" << endl; //arrumar essa porcaria pra ler do arquivos as expressoes
         exit(-1);
     }
@@ -179,6 +183,8 @@ int _reg::what_is_first_string(string line) {//AQUI ESTA O POSSIVEL ERRO
         return REG_VARIABLE;
     else if (reg_exec_all(line, REG_FUNCTION) == 0)
         return REG_FUNCTION;
+    else if (reg_exec_all(line, REG_NUMBER) == 0)
+        cout<<"FAZER UM RETORNO PARA NUMERO"<<endl;
 }
 
 int _reg::reg_segunda_parte_linha(string subline) {
@@ -200,6 +206,13 @@ int _reg::reg_operador_cat_ou_aritmetico(string subline) {
 
 int _reg::reg_verifica_aspasd(string line) {
     if (reg_exec_all(line, REG_ASPAS_D) == 0) {
+        return result.rm_so;
+    }
+    return FALSE_VALUE;
+}
+
+int _reg::reg_verifica_aspass(string line) {
+    if (reg_exec_all(line, REG_ASPAS_S) == 0) {
         return result.rm_so;
     }
     return FALSE_VALUE;

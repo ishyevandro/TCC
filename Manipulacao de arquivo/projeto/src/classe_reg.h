@@ -15,6 +15,7 @@ using namespace std;
 #define REG_OPERATOR 3
 #define REG_FUNCTION 4
 #define REG_VARIABLE 5
+#define REG_NUMBER 6
 #define REG_COUNT 8
 
 /*operadores utilizados para passar algum valor ha variavel exemplo "="*/
@@ -59,6 +60,7 @@ public:
     int reg_operador_cat_ou_aritmetico(string);
  //   int count_string(string, string);
     int reg_verifica_aspasd (string);
+    int reg_verifica_aspass (string);
 //verificacao de funcoes
     
 };

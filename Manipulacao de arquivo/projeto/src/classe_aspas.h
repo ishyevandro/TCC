@@ -17,7 +17,7 @@ public:
   string nome_atribuido[MAX_REG];
   string aspas_valor[MAX_REG];
   void call_clear();
-  string novo_valor(string);
+  string novo_valor(string, string);
   void busca_valor();
   int primeiro_vazio();
   _aspas():nome_atribuido(),aspas_valor(){

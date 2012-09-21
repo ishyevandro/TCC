@@ -233,10 +233,8 @@ int _var::operador_normal(vector<_var> &vetor_de_variaveis, int &vet_num, _reg r
     remove_space(subline);
 
     variavel_atual = primeira_variavel(subline, reg);
-    //cout<<variavel_atual<<"::campo variavel_atual"<<endl;
     auxiliar = reg.mount_reg_get_or_post(variavel_atual, reg_vetor_de_variaveis); /*#ESTA ERRADO!
     QUANDO A VARIAVEL QUE RECEBE E UM GET OU POST DA ERRO, VERIFICAR NA E2 SE GET OU POST CONSEGUEM RECEBER*/
-    //cout<<reg_vetor_de_variaveis<<endl;
     ultima_variavel = 1;
     if (auxiliar != FALSE_VALUE) {
         while (subline[0] != ';' || ultima_variavel != 0) {
@@ -370,8 +368,8 @@ string _var::primeira_variavel(string &line, _reg reg) {
         return retorna_variavel(line, reg);
     } else if (tipo_de_string == REG_FUNCTION){
         nova_string = retorna_funcao(line, reg);
-    }else
-        exit (-1);
+    }else//####RETORNOU UM NUMERO E AGORA??
+        return nova_string;
     nova_string += "(";
     nova_string += retorna_variavel(line, reg);
     line = line.substr(1, line.length());

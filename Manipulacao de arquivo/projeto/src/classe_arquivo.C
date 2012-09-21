@@ -21,23 +21,23 @@ void _arq::open(string abrir) {
         this->aspas->call_clear();
         getline(new_file, linha);
         remove_comments(linha);
-        aspas_duplas(linha);
-        cout<<"IMPRESSAO DA LINHA:"<<linha<<endl;
+        //aspas_duplas(linha);
+        //aspas_simples (linha);
+        //cout<<"IMPRESSAO DA LINHA:"<<linha<<endl;
         aux.get_line_to_analyse(linha, vetor_de_variaveis, vet_num, *reg);
         linha.clear();
     }
-    //vetor_de_variaveis[0].imprime_vetor(vetor_de_variaveis, vet_num);
+    vetor_de_variaveis[0].imprime_vetor(vetor_de_variaveis, vet_num);
 }
 
 int _arq::aspas_duplas(string &linha) {
     int inicio, fim;
-    string retorno, inicio_aspas, nova_linha;
+    string retorno, inicio_aspas, nova_linha, tipo;
     retorno.clear();
     fim = -1;
     inicio = reg->reg_verifica_aspasd(linha);
-    if (inicio == FALSE_VALUE)
-        return 0;
-    else {
+    if (inicio != FALSE_VALUE){
+        tipo = "d";
         inicio_aspas = linha.substr(inicio + 1, linha.length());
         while (fim == FALSE_VALUE) {
             fim = reg->reg_verifica_aspasd(inicio_aspas);
@@ -47,28 +47,54 @@ int _arq::aspas_duplas(string &linha) {
             } else {
                 retorno = inicio_aspas.substr(0, fim);
                 linha = linha.substr(1, inicio - 1);
-                linha += aspas->novo_valor(retorno);
+                linha += aspas->novo_valor(retorno, tipo);
                 linha += inicio_aspas.substr(fim + 1, inicio_aspas.length());
             }
         }
         aspas_duplas(linha);
-       // cout << retorno << endl;
-        //cout << "linha para ser analisada =" << linha << endl;
-        return 0;
     }
+    return 1;
+}
+
+int _arq::aspas_simples(string &linha) {
+    int inicio, fim;
+    string retorno, inicio_aspas, nova_linha, tipo;
+    retorno.clear();
+    fim = -1;
+    inicio = reg->reg_verifica_aspass(linha);
+    if (inicio != FALSE_VALUE){
+        tipo = "s";
+        inicio_aspas = linha.substr(inicio + 1, linha.length());
+        while (fim == FALSE_VALUE) {
+            fim = reg->reg_verifica_aspass(inicio_aspas);
+            if (fim == FALSE_VALUE) {
+                getline(new_file, nova_linha);
+                inicio_aspas += nova_linha;
+            } else {
+                retorno = inicio_aspas.substr(0, fim);
+                linha = linha.substr(1, inicio - 1);
+                linha += aspas->novo_valor(retorno, tipo);
+                linha += inicio_aspas.substr(fim + 1, inicio_aspas.length());
+            }
+        }
+        aspas_simples(linha);
+    }
+    return 1;
 }
 
 int _arq::remove_comments(string &line) {
-    int type, comments, remove_primeiro;
+    int type, comments, remove_primeiro, retorno;
     string comentario;
-    if (verifica_comentario_dentro_de_aspas (line) == -1)
-        return 0;
+    retorno = -1;
+    //if (verifica_comentario_dentro_de_aspas (line) == -1)
+    //    return 0;
     type = reg->reg_comments(line);
     if (type != FALSE_VALUE) {
         line = line.substr(0, type);
-        return 1;
+        retorno = 1;
     }
     type = reg->reg_comments_(line, REG_COMMENTS_INI);
+    //cout<<"comentario grande"<<type<<endl;
     if (type != FALSE_VALUE) {
         remove_primeiro = type-2;//utilizado o remove_rpimeiro para remover a primeira forma de comentario ja que a reg_comments retorna a primeira posicao apos a cadeia de caracteres
         line = line.substr(0, remove_primeiro);
@@ -76,9 +102,10 @@ int _arq::remove_comments(string &line) {
         type = FALSE_VALUE;
         while (type == FALSE_VALUE) {
             type = reg->reg_comments_(comentario, REG_COMMENTS_FIM);
-            if (type != FALSE_VALUE)
+            if (type != FALSE_VALUE){
                 line += comentario.substr(type, comentario.length());
-            else {
+                //cout <<"IMPRIME PORRA"<<comentario.substr(type, comentario.length())<<endl;
+            }else {
                 getline(new_file, comentario);
             }
         }

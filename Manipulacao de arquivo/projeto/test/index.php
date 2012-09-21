@@ -7,14 +7,14 @@
     $JESUS = $j * $i;
     $k = $j - $x;
     $x    =    $k;
-    $j   .=   100; 
-    $strin   =   "STRING// primeira linha
+    $j   .=   '100'; 
+   /* $strin   =   "STRING// primeira linha
     segunda parte
     terceira parte
     quarta parte
     
     " + alguma coisa . "mais comentario";
-    $aa   =   $i;
+    */$aa   =   $i;
     $aa = 0;
     tivechamada
 ?>

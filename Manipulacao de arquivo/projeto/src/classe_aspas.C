@@ -8,13 +8,14 @@ void _aspas::call_clear(){
     }
 }
 
-string _aspas::novo_valor(string aspas){
+string _aspas::novo_valor(string aspas, string tipo){
     int nova_pos;
     ostringstream convert;
     nova_pos = primeiro_vazio();
     convert <<nova_pos;
     this->nome_atribuido[nova_pos] = "$";
     this->nome_atribuido[nova_pos].append(convert.str());
+    this->nome_atribuido[nova_pos].append(tipo);
     this->aspas_valor[nova_pos] = aspas;
     return this->nome_atribuido[nova_pos]; 
     cout <<nova_pos<<endl;
