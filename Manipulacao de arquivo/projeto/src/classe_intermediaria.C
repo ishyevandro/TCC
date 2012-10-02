@@ -6,6 +6,7 @@ int _intermediaria::get_line_to_analyse(string line, vector<_var> &vetor_de_vari
    // n = remove_comments(line, reg);
     remove_space(line);
     n = reg.what_is_first_string(line);
+    //cout << n<<"()" <<line<<endl;
     if (n == REG_VARIABLE)
         vetor_de_variaveis[0].analyse_line(line, vetor_de_variaveis, vet_num, reg);
     else

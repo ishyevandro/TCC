@@ -111,6 +111,12 @@ void _reg::reg_comp()//verificar se sera assim mesmo
     if (reg_comp_all("(\')", REG_ASPAS_S) != 0) {
         cout << "Erro na montagem: Expressao de aspas simples" << endl;
     }
+    if (reg_comp_all("[(]", REG_PARENTESE_I) != 0) {
+        cout << "Erro na montagem: Expressao de parentese inicial" << endl;
+    }
+    if (reg_comp_all("[)]", REG_PARENTESE_F) != 0) {
+        cout << "Erro na montagem: Expressao de parentese final" << endl;
+    }
 }
 
 /*executa todas as expressoes regulares*/
@@ -146,10 +152,10 @@ int _reg::mount_reg_get_or_post(string line, string variables)//verifica se na l
     }
     if (reg_exec_all(line, REG_P_G) == 0) {//verifica se tem post ou get
         //cout<<"TRUE"<<endl;
-        return 1;
+        return TRUE_VALUE;
     } else {
         // cout<<"FALSE"<<endl;
-        return -1;
+        return FALSE_VALUE;
     }
 }
 
@@ -181,9 +187,10 @@ int _reg::reg_comments(string line) {
 int _reg::what_is_first_string(string line) {//AQUI ESTA O POSSIVEL ERRO
     if (reg_exec_all(line, REG_VARIABLE) == 0)
         return REG_VARIABLE;
-    else if (reg_exec_all(line, REG_FUNCTION) == 0)
+    else if (reg_exec_all(line, REG_FUNCTION) == 0){
+        line = line.substr(result.rm_so, line.length());//##verificar corretamente sobre os defines em php
         return REG_FUNCTION;
-    else if (reg_exec_all(line, REG_NUMBER) == 0)
+    }else if (reg_exec_all(line, REG_NUMBER) == 0)
         cout<<"FAZER UM RETORNO PARA NUMERO"<<endl;
 }
 
@@ -220,6 +227,15 @@ int _reg::reg_verifica_aspass(string line) {
 
 int _reg::reg_comments_(string line, int type) {
     if (reg_exec_all(line, type) == 0) {
+        return result.rm_eo;
+    }
+    return FALSE_VALUE;
+}
+
+int _reg::reg_verifica_parentese(string line, int tipo_paren, int retorno){
+    if (reg_exec_all (line, tipo_paren) == 0){
+        if (retorno == 0)
+            return result.rm_so;
         return result.rm_eo;
     }
     return FALSE_VALUE;

@@ -30,20 +30,22 @@ public:
     void remove_space(string&);
     //int verify_comments(string, _reg);
     void remove_aspa_simples(string &); //implementar assim que a analise inicial for feita
-    void imprime_vetor(vector<_var> , int);
+    void imprime_vetor(vector<_var>, int);
     int procura_variavel_no_vetor(string, vector<_var> &, int &);
     int remove_variavel_do_vetor(string, vector<_var> &, int &);
-    int adiciona_get_ou_post(_var &, string &, _reg, string,vector<_var> , int );
-    int operador_normal(vector<_var> &,  int &, _reg, string, string, string);
+    int adiciona_get_ou_post(_var &, string &, _reg, string, vector<_var>, int);
+    int operador_normal(vector<_var> &, int &, _reg, string, string, string);
     string primeira_string(string &, _reg);
     string primeira_variavel(string &, _reg);
-    string string_de_vars_pos_operador(vector<_var> , int);
+    string string_de_vars_pos_operador(vector<_var>, int);
     int operador_intermediario(string &, _reg);
-    int operador_normal_variavel(vector<_var> &, int &, _reg reg,_var &, string&);
-    int operador_normal_funcao(vector<_var> &, int &, _reg reg,_var &, string&);
+    int operador_normal_variavel(vector<_var> &, int &, _reg reg, _var &, string&);
+    int operador_normal_funcao(vector<_var> &, int &, _reg reg, _var &, string&);
     int copia_var(_var, vector<_var> &, int &);
     string retorna_gp(string &);
     string retorna_variavel(string &, _reg);
-    string retorna_funcao (string &, _reg);
+    string retorna_funcao(string &, _reg);
+    int retorna_elementos_dentro_de_parentese(string, _reg);
+    int count_char(string, char);
 };
 #endif

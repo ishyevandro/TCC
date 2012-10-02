@@ -83,7 +83,7 @@
       <item path="classe_arquivo.C" ex="false" tool="1" flavor2="4">
         <ccTool>
           <incDir>
-            <pElem>/usr/include/gio-unix-2.0/</pElem>
+            <pElem>/usr/include/gio-unix-2.0</pElem>
           </incDir>
         </ccTool>
       </item>
@@ -115,7 +115,7 @@
       <item path="classe_var.C" ex="false" tool="1" flavor2="4">
         <ccTool>
           <incDir>
-            <pElem>/usr/include/gio-unix-2.0</pElem>
+            <pElem>/usr/include/gio-unix-2.0/</pElem>
           </incDir>
         </ccTool>
       </item>

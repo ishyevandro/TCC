@@ -5,6 +5,8 @@
 #include <iostream>
 using namespace std;
 
+#define DISPLAY_ERROR 0
+
 #define FALSE_VALUE -1
 #define REG_P_G 0
 #define REG_O_P_G 6
@@ -39,6 +41,11 @@ using namespace std;
 #define REG_ASPAS_S 44
 #define MAX_REG 100
 
+/*Deteccao de parentese*/
+#define REG_PARENTESE_I 50
+#define REG_PARENTESE_F 51
+
+
 class _reg {
 public:
     regex_t *first;
@@ -61,6 +68,7 @@ public:
  //   int count_string(string, string);
     int reg_verifica_aspasd (string);
     int reg_verifica_aspass (string);
+    int reg_verifica_parentese (string, int, int);
 //verificacao de funcoes
     
 };

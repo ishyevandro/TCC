@@ -1,7 +1,7 @@
 <?php
     
-    $i [  'JUDAS'  ] = htmlspecialchars  (  $_POST ['POST DO I']   ) + $b;
-    //$_POST['PORCARIA NENHUMA'] = $i;
+    $i [  'JUDAS'  ] = htmlspecialchars  (  htmlspecialchars  ($_POST ['POST DO I'])   ) + $b;
+    $cd = 0 + $i [  'JUDAS'  ];
     $j        =       $_GET       ['GET DO J'   ] . $_POST['GET DO J2'];
     $i   = $i ['JUDAS'].$j;
     $JESUS = $j * $i;
