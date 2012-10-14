@@ -9,16 +9,17 @@ using namespace std;
 
 #define FALSE_VALUE -1
 #define REG_P_G 0
-#define REG_O_P_G 6
-#define REG_P_G_V 7
+#define REG_P_G_V 7// nao esta sendo utilizado
 #define REG_$ 1
 #define TRUE_VALUE 1
 #define REG_FIRST 2
 #define REG_OPERATOR 3
 #define REG_FUNCTION 4
 #define REG_VARIABLE 5
-#define REG_NUMBER 6
-#define REG_COUNT 8
+#define REG_O_P_G 6
+#define REG_NUMBER 7
+#define REG_ASPAS 8
+#define REG_FUNCTION 9
 
 /*operadores utilizados para passar algum valor ha variavel exemplo "="*/
 #define REG_OPERATOR_NORMAL 20
