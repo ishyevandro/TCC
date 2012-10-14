@@ -47,5 +47,6 @@ public:
     string retorna_funcao(string &, _reg);
     int retorna_elementos_dentro_de_parentese(string, _reg);
     int count_char(string, char);
+    int proximo_operador (string, _reg);
 };
 #endif

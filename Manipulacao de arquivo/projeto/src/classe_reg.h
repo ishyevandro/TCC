@@ -29,9 +29,19 @@ using namespace std;
 #define REG_OPERATOR_RES 25
 #define REG_OPERATOR_CAT 26
 
+/*Operadores de comparacao utilizados geralmente em if ou como retorno de 1 ou 0*/
+#define REG_OPERATOR_COMPARE 27
+#define REG_OPERATOR_COMPARE_IGUAL 28
+#define REG_OPERATOR_COMPARE_DIFERENTE 29
+#define REG_OPERATOR_COMPARE_MAIOR_MENOR 30
+#define REG_OPERATOR_COMPARE_MAIOR_MENOR_IGUAL 31
+#define REG_OPERATOR_COMPARE_DIFERENTE_TIPO 32
+#define REG_OPERATOR_COMPARE_IGUAL_TIPO 33
+
+
 /*operadores utilizados apos um operador anterior para formar um calculo ou concatenacao de string*/
-#define REG_POS_OPERATOR_MAT 31
-#define REG_POS_OPERATOR_CAT 32
+#define REG_POS_OPERATOR_MAT 34
+#define REG_POS_OPERATOR_CAT 35
 
 /*Comentarios e Aspas*/
 #define REG_COMMENTS_SIMPLE 40
@@ -69,6 +79,7 @@ public:
     int reg_verifica_aspasd (string);
     int reg_verifica_aspass (string);
     int reg_verifica_parentese (string, int, int);
+    int reg_verifica_operador_compara(string);
 //verificacao de funcoes
     
 };
