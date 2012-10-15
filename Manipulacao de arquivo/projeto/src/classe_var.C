@@ -218,7 +218,7 @@ int _var::adiciona_get_ou_post(_var &add, string &subline, _reg reg, string vet_
     //cout <<subline<<"::ADD Get ou post"<<endl;
     //cout <<vet_var_p_g<<"::ADD Get ou post"<<endl;
     // cout <<reg.mount_reg_get_or_post(subline, vet_var_p_g)<<endl;
-    cout<<"nova_variavel: "<<subline<<"veet_var_p_g: "<<vet_var_p_g<<endl;
+    //cout << "nova_variavel: " << subline << "veet_var_p_g: " << vet_var_p_g << endl;
     if (reg.reg_segunda_parte_linha(subline) == TRUE_VALUE) {//verifica se o primeiro elemento 'e um get ou post
         /*#COM MUDANCAS FUTURAS NAO SERA MAIS NECESSARIO USAR ESSA PARTE*/
         // cout << "_________======" << subline << endl;
@@ -254,19 +254,32 @@ int _var::operador_normal(vector<_var> &vetor_de_variaveis, int &vet_num, _reg r
     display_error("operador_normal");
     remove_space(subline);
     auxiliar = TRUE_VALUE;
-   // cout << "operador_normal: " << subline << endl;
+    // cout << "operador_normal: " << subline << endl;
     variavel_atual = primeira_variavel(subline, reg);
     ultima_variavel = 1;
     if (auxiliar != FALSE_VALUE) {
         do {
-            proximo_operador(subline, reg);
+            cout<<variavel_atual<<endl;
+            if (proximo_operador(subline, reg) == REG_OPERATOR_COMPARE) {
+                cout<<"Entrou como comparacao"<<variavel_atual<<endl<<"linha: "<<subline<<endl;
+                remove_operador_intermediario(subline, reg);
+                remove_space(subline);
+                if (subline[0] != ';'){
+                    operacao = operador_intermediario(subline, reg);
+                    variavel_atual = primeira_variavel(subline, reg);
+                }else {
+                    variavel_atual.clear();
+                }
+            }
             if (variavel_atual[0] == '"') {
-            //    cout<<"antes do operador aspas no operador_normal";
+                cout<<"Entrou como aspas"<<variavel_atual<<endl<<"linha: "<<subline<<endl;
                 operador_aspas(vetor_de_variaveis, vet_num, reg, auxiliar_sublinha, variavel_atual);
-            } else {
+            } else if (!variavel_atual.empty()){// && subline[0]!=';'
+                cout<<"variavel_normal"<<variavel_atual<<endl<<"linha: "<<subline<<endl;
                 //sera necessario implementar para verificar se essa variavel e concatenada... ou ate remover ela da posicao onde esta e caso tenha outra no vetor apagar a outra!
                 auxiliar = reg.mount_reg_get_or_post(variavel_atual, reg_vetor_de_variaveis); //SE HOUVER UM WHILE AQUI DARA ERRO
                 //cout << auxiliar << "variavel: " << variavel_atual << " linha:" << subline << endl;
+                cout<<auxiliar<<endl;
                 if (auxiliar != FALSE_VALUE) {//verifica se o elemento atual tem get ou post.
                     tipo = reg.what_is_first_string(variavel_atual); //verifica se e variavel ou funcao
                     if (tipo == REG_VARIABLE) {
@@ -278,8 +291,8 @@ int _var::operador_normal(vector<_var> &vetor_de_variaveis, int &vet_num, _reg r
                         //remove_space(subline);
                         //subline = subline.substr(1, subline.length());
                         //remove_space(subline);
-                    //} else if (tipo == REG_ASPAS) {
-                      //  cout << "operador_aspas" << variavel_atual << endl;
+                        //} else if (tipo == REG_ASPAS) {
+                        //  cout << "operador_aspas" << variavel_atual << endl;
                         //operador_aspas(vetor_de_variaveis, vet_num, reg, auxiliar_sublinha, variavel_atual);
                     }
                 }
@@ -287,38 +300,31 @@ int _var::operador_normal(vector<_var> &vetor_de_variaveis, int &vet_num, _reg r
             //#
             if (subline[0] != ';') {//##OPERADOR DE PRECEDENCIA "( )" NECESSARIO VERIFICACAO QUANDO
                 /*QUANDO DENTRO... POLONESA REVERSA?*/
-                // cout << "&&&&&&" << subline << endl;
+                 cout << "&&&&&&" << subline << endl;
                 operacao = operador_intermediario(subline, reg); /*COMPLEMENTAR ESTA PARTE.*/
                 if (operacao == REG_POS_OPERATOR_MAT)
                     cast = operacao;
                 variavel_atual = primeira_variavel(subline, reg);
                 remove_space(subline);
+                cout<<"ultima verificacao do laco"<<variavel_atual<<endl;
                 ultima_variavel = 1;
-
             } else
                 ultima_variavel = 0;
             //} else {//NAO SUBSTITUIR POR ";" CAMINHAR PARA A PROXIMA VARIAVEL para verificar os opeeradores.
             //   ultima_variavel = 0;
             //   subline = ";";
-            // }
-        } while (subline[0] != ';' && ultima_variavel != 0);
-    } else {//remove a variavel da lista #existe o problema de ele remover quando um $_get ou post recebe algo verificar isso
+            // }subline[0] != ';' && 
+        } while (ultima_variavel != 0);
+    }
+    if (auxiliar_sublinha.n_var == 0) {//remove a variavel da lista #existe o problema de ele remover quando um $_get ou post recebe algo verificar isso
         cout << "Removendo variavel: " << nova_variavel << endl;
         remove_variavel_do_vetor(nova_variavel, vetor_de_variaveis, vet_num);
-    }
-    if (auxiliar_sublinha.n_var > 0) {
+    } else if (auxiliar_sublinha.n_var > 0) {
         copia_var(auxiliar_sublinha, vetor_de_variaveis, vet_num);
     }
     return 0;
 }
 
-/*
-int _var::operador_concatena(vector<_var> &vetor_de_variaveis, int &vet_num, _reg reg, string subline, string reg_vetor_de_variaveis, string nova_variavel){
-
-}
-int _var::operador_matematico(vector<_var> &vetor_de_variaveis, int &vet_num, _reg reg, string subline, string reg_vetor_de_variaveis, string nova_variavel){
-
-}*/
 int _var::operador_intermediario(string &subline, _reg reg) {
     int aux;
     display_error("operador_intermediario");
@@ -332,13 +338,12 @@ int _var::operador_intermediario(string &subline, _reg reg) {
     } else if (aux == REG_POS_OPERATOR_MAT) {
         //  cout << "matematico _" << subline << endl;
         subline = subline.substr(1, subline.length());
-
         remove_space(subline);
         return REG_POS_OPERATOR_MAT;
     } else {
         cout << "NAO E MATEMATICO NEM CONCATENA: " << subline << endl;
         remove_space(subline);
-        return -1;
+        return FALSE_VALUE;
     }
 }
 
@@ -347,8 +352,8 @@ int _var::proximo_operador(string line, _reg reg) {
     remove_space(line);
     tipo_de_operador = reg.reg_verifica_operador_compara(line);
     if (tipo_de_operador != FALSE_VALUE) {
-        cout << "Operador de comparacao" << endl;
-        return tipo_de_operador;
+       // cout << "Operador de comparacao" << endl;
+        return REG_OPERATOR_COMPARE;
     }
     tipo_de_operador = reg.reg_operador_cat_ou_aritmetico(line);
     if (tipo_de_operador != FALSE_VALUE)
@@ -367,24 +372,27 @@ int _var::operador_normal_variavel(vector<_var> &vetor_de_variaveis, int &vet_nu
 //Alteracao nessa funcao para implementacoes futuras uma vez que neste projeto so esta sendo averiguado as funcoes basicas do proprio php
 
 int _var::operador_aspas(vector<_var> &vetor_de_variaveis, int &vet_num, _reg reg, _var &nova_variavel, string &subline) {
-    int n, k;
+    int n, k, aux;
     n = 1;
-    string variavel;
+    string variavel, reg_vetor_de_variaveis;
     display_error("operador_aspas");
-    cout<<subline;
+    //cout << subline;
     while (n != string::npos) {
         n = subline.find_first_of("$");
         if (n != string::npos) {
             subline = subline.substr(n, subline.length());
             k = subline.find_first_of(" }\"");
-            if (k != string::npos){
-                variavel = subline.substr(0,k);
-                cout<<"variavel aspas:"<<variavel<<endl;
-                operador_normal_variavel (vetor_de_variaveis,vet_num,reg, nova_variavel,variavel);
+            if (k != string::npos) {
+                variavel = subline.substr(0, k);
+               // cout << "variavel aspas:" << variavel << endl;
+                reg_vetor_de_variaveis = string_of_var_to_reg(vetor_de_variaveis, vet_num);
+                aux = reg.mount_reg_get_or_post(variavel, reg_vetor_de_variaveis);
+                if (aux!= FALSE_VALUE)
+                        operador_normal_variavel(vetor_de_variaveis, vet_num, reg, nova_variavel, variavel);
             }
-            subline = subline.substr(k+1, subline.length());
-           // cout << "OPerador aspas:" << subline << endl;
-           // exit(1);
+            subline = subline.substr(k + 1, subline.length());
+            // cout << "OPerador aspas:" << subline << endl;
+            // exit(1);
         }
     }
     //ALTERAR ESSE RETURN
@@ -597,12 +605,12 @@ int _var::verifica_funcao(string funcao) {
     n = funcao.find_first_of(" (");
     if (n != string::npos) {
         func = funcao.substr(0, n);
-        cout << func << endl;
+      //  cout << func << endl;
     }
     for (i = 1; i <= 8; i++) {//corrigir. vetores comecam do zero e nao do um
         if (func.compare(matriz[i]) == 0) {
             cout << func << "e uma funcao que necessita de seguranca" << endl;
-       //     exit(-1);
+            //     exit(-1);
         }
     }
 }
@@ -624,8 +632,17 @@ string _var::aspas_duplas(string &line, _reg reg) {
     retorno += '"';
     //cout<<line<<endl;
     line = line.substr(n + 1, line.length());
-    cout << "aspas duplas line:" << line << endl;
-    cout << "ASPAS DUPLAS " << retorno << endl;
+  //  cout << "aspas duplas line:" << line << endl;
+  // cout << "ASPAS DUPLAS " << retorno << endl;
 
     return retorno;
+}
+
+int _var::remove_operador_intermediario(string &line, _reg reg) {
+    int n;
+    string remove;
+    n = reg.reg_remove_operador_compara(line);
+    line = line.substr(n, line.length());
+    primeira_variavel(line, reg);
+    return 1;
 }

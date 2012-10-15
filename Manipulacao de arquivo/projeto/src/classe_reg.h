@@ -81,6 +81,7 @@ public:
     int reg_verifica_aspass (string);
     int reg_verifica_parentese (string, int, int);
     int reg_verifica_operador_compara(string);
+    int reg_remove_operador_compara(string);
 //verificacao de funcoes
     
 };

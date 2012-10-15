@@ -51,5 +51,6 @@ public:
     int proximo_operador (string, _reg);
     int verifica_funcao (string);
     string aspas_duplas (string &, _reg);
+    int remove_operador_intermediario(string &, _reg);
 };
 #endif

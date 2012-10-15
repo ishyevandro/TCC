@@ -90,7 +90,7 @@ void _reg::reg_comp()//verificar se sera assim mesmo
         cout << "POST erro\n" << endl; //arrumar essa porcaria pra ler do arquivos as expressoes
         exit(-1);
     }//\\*\\%\\/
-    if (reg_comp_all("(^[\\+-\\*\\/\\%])", REG_POS_OPERATOR_MAT) != 0) {//verifica se a string corrente 'e um GET ou POST
+    if (reg_comp_all("(^[\\+-\\*/%])", REG_POS_OPERATOR_MAT) != 0) {//verifica se a string corrente 'e um GET ou POST
         cout << "POST erro\n" << endl; //arrumar essa porcaria pra ler do arquivos as expressoes
         exit(-1);
     }
@@ -179,19 +179,14 @@ int _reg::mount_reg_get_or_post(string line, string variables)//verifica se na l
 {
     if (!variables.empty()) {
         this->variables_with_p_or_g = variables;
-       // cout <<"Mount reg get or post"<<variables_with_p_or_g<<endl;
         regfree(&first[REG_P_G]);
         if (reg_comp_all(this->variables_with_p_or_g, REG_P_G) != 0)
             cout << "Recompilar mount_reg_get_or_post erro"; //this->variables_with_p_or_g<<line<<endl;
-        //cout<<this->variables_with_p_or_g<<endl;
     }
-    if (reg_exec_all(line, REG_P_G) == 0) {//verifica se tem post ou get
-        //cout<<"TRUE"<<endl;
+    if (reg_exec_all(line, REG_P_G) == 0)//verifica se tem post ou get
         return TRUE_VALUE;
-    } else {
-        // cout<<"FALSE"<<endl;
+     else 
         return FALSE_VALUE;
-    }
 }
 
 /*RETORNA O TIPO DE OPERADOR QUE ESTA APOS A PRIMEIRA STRING*/
@@ -220,7 +215,6 @@ int _reg::reg_comments(string line) {
 }
 
 int _reg::what_is_first_string(string line) {//AQUI ESTA O POSSIVEL ERRO
-    cout<<line<<endl;
     if (reg_exec_all(line, REG_VARIABLE) == 0)
         return REG_VARIABLE;
     else if (reg_exec_all(line, REG_FUNCTION) == 0){
@@ -290,13 +284,15 @@ int _reg::reg_verifica_operador_compara(string line){
             return REG_OPERATOR_COMPARE_MAIOR_MENOR;
         else if (reg_exec_all(line, REG_OPERATOR_COMPARE_MAIOR_MENOR_IGUAL) == 0)
             return REG_OPERATOR_COMPARE_MAIOR_MENOR_IGUAL;
-        //else if (reg_exec_all(line, REG_OPERATOR_COMPARE_DIFERENTE_TIPO) == 0)
-         //   return REG_OPERATOR_COMPARE_DIFERENTE_TIPO;
-       // else if (reg_exec_all(line, REG_OPERATOR_COMPARE_IGUAL_TIPO) == 0)
-       //     return REG_OPERATOR_COMPARE_IGUAL_TIPO;
         else 
             return -2; 
     }
     else
         return FALSE_VALUE;
+}
+
+int _reg::reg_remove_operador_compara(string line){
+     if (reg_exec_all (line, REG_OPERATOR_COMPARE) == 0)
+         return result.rm_eo;
+     return FALSE_VALUE;
 }
