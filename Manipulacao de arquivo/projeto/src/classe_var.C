@@ -2,15 +2,15 @@
 #include "classe_var.h"
 #include "variavel.h"
 
-void display_error(string prnt) {
-    if (DISPLAY_ERROR == 1)
-        cout << prnt << endl;
-}
+//void display_error(string prnt) {
+  //  if (DISPLAY_ERROR == 1)
+    //    cout << prnt << endl;
+//}
 
 /*#NECESSARIO ALTERACAO DA BUSCA DE POST E GET... BUSCANDO POR EXPRESSAO REGULAR PARA RETIRAR
- O ESPCAO ENTRE O $_GET   (ESTE ESPACO)[*/
-
-/*=====================================OPERADORES E CONSTRUTOR===============================*/
+ O ESPCAO ENTRE O $_GET   (ESTE ESPACO)[ 
+*/
+//=====================================OPERADORES E CONSTRUTOR=============================== 
 _var::_var()//construtor padrao
 : n_var(0) {
     this->vect.resize(VET_NUM);
@@ -31,23 +31,23 @@ _var& _var::operator=(const _var &recebe)//recebe uma variavel para ir para o ve
     return *this;
 }
 
-/*====================================MANIPULACAO PRINCIPAL=========================*/
+/*====================================MANIPULACAO PRINCIPAL=========================
 
-/*VERIFICACAO DE VARIAVEL, VERIFICA SE A VARIAVEL JA ESTA NO VETOR DE VARIAVEIS*/
+/*VERIFICACAO DE VARIAVEL, VERIFICA SE A VARIAVEL JA ESTA NO VETOR DE VARIAVEIS 
 int _var::add_var_array(vector<_var> &vet, int &size_array, string new_string) {//insercao de variavel no vetor de variaveis
-    display_error("add_var_array");
+    //display_error("add_var_array");
     vet[size_array].variavel = new_string;
     size_array++;
     return size_array - 1;
 }
 
-/*FORMA A STRING DE VARIAVEIS PARA FORMACAO DE EXPRESSAO REGULAR*/
+/*FORMA A STRING DE VARIAVEIS PARA FORMACAO DE EXPRESSAO REGULAR 
 string _var::string_of_var_to_reg(vector<_var> &vet, int size_array) {//construcao de expressao para verificar se as variaveis estao na linha
     string ret, caracter_especiais, aux_esp1, aux_esp2;
     int i = 0;
     size_t encontrado;
     ret.clear();
-    display_error("string_of_var_to_reg ini");
+    //display_error("string_of_var_to_reg ini");
     if (size_array == 0)
         ret = "(\\$_POST*)|(\\$_GET*)";
     else
@@ -77,7 +77,7 @@ string _var::string_of_var_to_reg(vector<_var> &vet, int size_array, int nada) {
     string ret;
     int i = 0;
     ret.clear();
-    display_error("string_of_var_to_reg ini+par");
+    //display_error("string_of_var_to_reg ini+par");
     if (size_array == 0)
         ret = "(^\\$_POST*)|(^\\$_GET*)";
     else
@@ -97,24 +97,24 @@ string _var::string_of_var_to_reg(vector<_var> &vet, int size_array, int nada) {
     }
 }
 
-/*RECEBE A LINHA PARA ANALISE*/
+/*RECEBE A LINHA PARA ANALISE 
 int _var::analyse_line(string line, vector<_var> &vetor_de_variaveis, int &vet_num, _reg reg) {
     int n, operator_type;
     string array_of_vars_in_array, nova_variavel;
     n = operator_type = 0;
     array_of_vars_in_array.clear();
-    display_error("analyse_line");
-    /*MONTA A EXPRESSAO REGULAR PARA INCLUIR AS VARIAVEIS QUE ESTAO COM POST E GET*/
+    //display_error("analyse_line");
+    /*MONTA A EXPRESSAO REGULAR PARA INCLUIR AS VARIAVEIS QUE ESTAO COM POST E GET 
     if (vet_num > 0)
         array_of_vars_in_array = string_of_var_to_reg(vetor_de_variaveis, vet_num); //forma string para passar para verificacao de post ou get ou variavel que possui uma dessas coisas
     //n = reg.mount_reg_get_or_post(line, array_of_vars_in_array); //compila e verifica se alguma variavel tem get ou post
-    /*IF true caso tenha alguma variavel no vetor que possui get ou post*/
+    /*IF true caso tenha alguma variavel no vetor que possui get ou post 
     //if (n == TRUE_VALUE) {
     nova_variavel = primeira_string(line, reg);
     //pega a primeira string e retorna onde ela comeca em pos e retorna onde comeca operador em N
     if (!nova_variavel.empty()) {//##PORCARIA TODA ERRADA. ALTERAR A EXPRESSAO REGULAR PARA PROCURAR PELO $
-        operator_type = type_of_operator(line, reg); /*verifica qual o tipo de operador*/
-        switch (operator_type) {/*acoes a serem feitas com cada operador*/
+        operator_type = type_of_operator(line, reg); /*verifica qual o tipo de operador 
+        switch (operator_type) {/*acoes a serem feitas com cada operador 
             case REG_OPERATOR_NORMAL:
                 operador_normal(vetor_de_variaveis, vet_num, reg, line, array_of_vars_in_array, nova_variavel);
                 break;
@@ -136,7 +136,7 @@ int _var::analyse_line(string line, vector<_var> &vetor_de_variaveis, int &vet_n
 
 void _var::remove_space(string &line) {
     size_t found;
-    display_error("remove_space");
+    //display_error("remove_space");
     if (!line.empty()) {
         found = line.find_first_not_of(" ");
         if (found >= 0 && found <= line.length())
@@ -148,16 +148,16 @@ void _var::remove_space(string &line) {
 
 void _var::remove_aspa_simples(string &subline) {
     size_t found;
-    display_error("remove_aspas_simples");
+    //display_error("remove_aspas_simples");
     do {
         found = subline.find_first_not_of(" ");
         subline = subline.substr((int) found, subline.length());
     } while (1 != 1);
 }
 
-/*VERIFICACAO DO TIPO DE OPERACAO*/
+/*VERIFICACAO DO TIPO DE OPERACAO 
 int _var::type_of_operator(string &line, _reg reg) {
-    display_error("type_of_operator");
+    //display_error("type_of_operator");
     int retorno;
     remove_space(line);
     retorno = reg.reg_to_operator(line);
@@ -165,7 +165,7 @@ int _var::type_of_operator(string &line, _reg reg) {
     return retorno;
 }
 
-/*IMPRESSAO DO VETOR PARA TESTE*/
+/*IMPRESSAO DO VETOR PARA TESTE 
 void _var::imprime_vetor(vector<_var> vet, int tam) {
     int i, j;
     cout << "IMPRESSAO DO VETOR" << endl << endl;
@@ -183,7 +183,7 @@ void _var::imprime_vetor(vector<_var> vet, int tam) {
 
 int _var::procura_variavel_no_vetor(string var, vector<_var> &vetor_de_variaveis, int &vet_num) {
     int i;
-    display_error("procura_variavel_no_vetor");
+    //display_error("procura_variavel_no_vetor");
     for (i = 0; i < vet_num; i++) {
         if (var.compare(vetor_de_variaveis[i].variavel) == 0) {
             return i;
@@ -194,7 +194,7 @@ int _var::procura_variavel_no_vetor(string var, vector<_var> &vetor_de_variaveis
 
 int _var::remove_variavel_do_vetor(string var, vector<_var> &vetor_de_variaveis, int &vet_num) {
     int i, pos;
-    display_error("remove_variavel_do_vetor");
+    //display_error("remove_variavel_do_vetor");
     pos = procura_variavel_no_vetor(var, vetor_de_variaveis, vet_num);
     if (pos == FALSE_VALUE) {
         cout << "variavel nao encontrada no vetor" << endl;
@@ -213,14 +213,14 @@ int _var::remove_variavel_do_vetor(string var, vector<_var> &vetor_de_variaveis,
 int _var::adiciona_get_ou_post(_var &add, string &subline, _reg reg, string vet_var_p_g, vector<_var> procura, int vet_num) {//vai ser adicionado a excessao de aspas simples aqui
     int pos, n;
     string string_guardar;
-    display_error("adiciona_get_ou_post");
+    //display_error("adiciona_get_ou_post");
     //remove_space(subline);
     //cout <<subline<<"::ADD Get ou post"<<endl;
     //cout <<vet_var_p_g<<"::ADD Get ou post"<<endl;
     // cout <<reg.mount_reg_get_or_post(subline, vet_var_p_g)<<endl;
     //cout << "nova_variavel: " << subline << "veet_var_p_g: " << vet_var_p_g << endl;
     if (reg.reg_segunda_parte_linha(subline) == TRUE_VALUE) {//verifica se o primeiro elemento 'e um get ou post
-        /*#COM MUDANCAS FUTURAS NAO SERA MAIS NECESSARIO USAR ESSA PARTE*/
+        /*#COM MUDANCAS FUTURAS NAO SERA MAIS NECESSARIO USAR ESSA PARTE 
         // cout << "_________======" << subline << endl;
         string_guardar = subline; //retorna_variavel(subline, reg);
         //       string_guardar += " ";
@@ -251,7 +251,7 @@ int _var::operador_normal(vector<_var> &vetor_de_variaveis, int &vet_num, _reg r
     _var auxiliar_sublinha; //pega todas as iteracoes posterior ao operador e armazena aqui para no fim colocar no vetor. Feito dessa forma para nao cair em recursao de objetos quando uma variavel receber ela mesmo depois de receber alguma outra.
     auxiliar_sublinha.variavel = nova_variavel;
     auxiliar_sublinha.n_var = 0;
-    display_error("operador_normal");
+    //display_error("operador_normal");
     remove_space(subline);
     auxiliar = TRUE_VALUE;
     // cout << "operador_normal: " << subline << endl;
@@ -299,9 +299,9 @@ int _var::operador_normal(vector<_var> &vetor_de_variaveis, int &vet_num, _reg r
             }
             //#
             if (subline[0] != ';') {//##OPERADOR DE PRECEDENCIA "( )" NECESSARIO VERIFICACAO QUANDO
-                /*QUANDO DENTRO... POLONESA REVERSA?*/
+                /*QUANDO DENTRO... POLONESA REVERSA? 
                  cout << "&&&&&&" << subline << endl;
-                operacao = operador_intermediario(subline, reg); /*COMPLEMENTAR ESTA PARTE.*/
+                operacao = operador_intermediario(subline, reg); /*COMPLEMENTAR ESTA PARTE. 
                 if (operacao == REG_POS_OPERATOR_MAT)
                     cast = operacao;
                 variavel_atual = primeira_variavel(subline, reg);
@@ -327,7 +327,7 @@ int _var::operador_normal(vector<_var> &vetor_de_variaveis, int &vet_num, _reg r
 
 int _var::operador_intermediario(string &subline, _reg reg) {
     int aux;
-    display_error("operador_intermediario");
+    //display_error("operador_intermediario");
     remove_space(subline);
     aux = reg.reg_operador_cat_ou_aritmetico(subline);
     if (aux == REG_POS_OPERATOR_CAT) {
@@ -362,7 +362,7 @@ int _var::proximo_operador(string line, _reg reg) {
 
 int _var::operador_normal_variavel(vector<_var> &vetor_de_variaveis, int &vet_num, _reg reg, _var &nova_variavel, string &subline) {
     string reg_string_de_var_com_g_p;
-    display_error("operador_normal_variavel");
+//    display_error("operador_normal_variavel");
     remove_space(subline);
     reg_string_de_var_com_g_p = string_of_var_to_reg(vetor_de_variaveis, vet_num);
     return adiciona_get_ou_post(nova_variavel, subline, reg, reg_string_de_var_com_g_p, vetor_de_variaveis, vet_num);
@@ -375,7 +375,7 @@ int _var::operador_aspas(vector<_var> &vetor_de_variaveis, int &vet_num, _reg re
     int n, k, aux;
     n = 1;
     string variavel, reg_vetor_de_variaveis;
-    display_error("operador_aspas");
+  //  display_error("operador_aspas");
     //cout << subline;
     while (n != string::npos) {
         n = subline.find_first_of("$");
@@ -401,7 +401,7 @@ int _var::operador_aspas(vector<_var> &vetor_de_variaveis, int &vet_num, _reg re
 int _var::operador_normal_funcao(vector<_var>&vetor, int&vet_num, _reg reg, _var &nova_variavel, string &subline) {
     int found, aux, pos, retorno;
     string string_func, funcao;
-    display_error("operador_normal_funcao");
+   // display_error("operador_normal_funcao");
     remove_space(subline);
     retorno = 0;
     if (subline[0] == '(')
@@ -421,26 +421,26 @@ int _var::operador_normal_funcao(vector<_var>&vetor, int&vet_num, _reg reg, _var
             if (!nova_variavel.vect[n_var].funcao.empty())//no na cabeca preciso acessar o local correto para adicionar a funcao e agora?
                 nova_variavel.vect[n_var].funcao += "+";
             nova_variavel.vect[n_var].funcao += string_func;
-            display_error("operador_normal_funcao fim");
+//            display_error("operador_normal_funcao fim");
             return retorno;
         }
     } else if (aux == REG_VARIABLE) {//##adicao de aspas nesse ponto. e perigoso a forma que esta sendo usada ate o momento
         subline = primeira_variavel(subline, reg);
         retorno = operador_normal_variavel(vetor, vet_num, reg, nova_variavel, subline);
-        display_error("operador_normal_funcao fim");
+     //   display_error("operador_normal_funcao fim");
         return retorno;
     }
-    display_error("operador_normal_funcao fim");
+   // display_error("operador_normal_funcao fim");
     return retorno;
 }
 
 /*#FUNCAO UTILIZADA PARA PEGAR A STRING ANTES DE QUALQUER OPERADOR
   POSSIVELMENTE SERA UMA VARIAVEL POREM E NECESSARIO ALTERAR O METODO ATUAL
- PARA VERIFICAR SE E UMA VARIAVEL OU NAO*/
+ PARA VERIFICAR SE E UMA VARIAVEL OU NAO 
 string _var::primeira_string(string &line, _reg reg) {
     string nova_string;
     int n, pos, tipo_de_string;
-    display_error("primeira_string");
+   // display_error("primeira_string");
     nova_string.clear();
     remove_space(line);
     tipo_de_string = reg.what_is_first_string(line);
@@ -453,22 +453,22 @@ string _var::primeira_string(string &line, _reg reg) {
 string _var::primeira_variavel(string &line, _reg reg) {
     string nova_string;
     int n, pos, tipo_de_string;
-    display_error("primeira_variavel");
+   // display_error("primeira_variavel");
     nova_string.clear();
     remove_space(line);
     tipo_de_string = reg.what_is_first_string(line);
     if (tipo_de_string == REG_VARIABLE) {//#ERRADDO
-        display_error("primeira_variavel fim VARIAVEL");
+    //    display_error("primeira_variavel fim VARIAVEL");
         return retorna_variavel(line, reg);
     } else if (tipo_de_string == REG_FUNCTION) {
-        display_error("primeira_variavel fim FUNCAO");
+     //   display_error("primeira_variavel fim FUNCAO");
         nova_string = retorna_funcao(line, reg);
         verifica_funcao(nova_string);
     } else if (line[0] == '"') {
-        display_error("primeira variavel fim ASPAS");
+    //    display_error("primeira variavel fim ASPAS");
         nova_string = aspas_duplas(line, reg);
     } else {//####RETORNOU UM NUMERO E AGORA??
-        display_error("primeira_variavel fim NUMERO?");
+     //   display_error("primeira_variavel fim NUMERO?");
         nova_string = "4";
         n = line.find_first_not_of("1234567890.");
         if (n >= 0 && n <= line.length())
@@ -481,7 +481,7 @@ string _var::primeira_variavel(string &line, _reg reg) {
 
 int _var::copia_var(_var nova_variavel, vector<_var> &vetor_de_variaveis, int &vet_num) {
     int pos_var, i, j;
-    display_error("copia_var");
+    //display_error("copia_var");
     pos_var = procura_variavel_no_vetor(nova_variavel.variavel, vetor_de_variaveis, vet_num);
     if (pos_var == FALSE_VALUE)
         pos_var = add_var_array(vetor_de_variaveis, vet_num, nova_variavel.variavel);
@@ -495,11 +495,11 @@ int _var::copia_var(_var nova_variavel, vector<_var> &vetor_de_variaveis, int &v
     return 1;
 }
 
-/*#NAO E USADO*/
+/*#NAO E USADO 
 string _var::retorna_gp(string &line) {//RETORNA A PRIMEIRA STRING QUANDO ELA E GET OU POST
     size_t found;
     string retorno;
-    display_error("retorna_gp");
+    //display_error("retorna_gp");
     found = line.find_first_of("]");
     retorno = line.substr(0, (int) found + 1);
     line = line.substr((int) found + 1, line.length());
@@ -509,7 +509,7 @@ string _var::retorna_gp(string &line) {//RETORNA A PRIMEIRA STRING QUANDO ELA E 
 string _var::retorna_variavel(string &line, _reg reg) {//RETORNA A PRIMEIRA STRING QUANDO E VARIAVEL
     int n, pos;
     string retorno;
-    display_error("retorna_variavel");
+    //display_error("retorna_variavel");
     n = reg.reg_exec_first_string(line, pos);
     retorno = line.substr(pos, n);
     line = line.substr(n, line.length());
@@ -527,15 +527,15 @@ string _var::retorna_variavel(string &line, _reg reg) {//RETORNA A PRIMEIRA STRI
     }
     if (!line.empty())
         remove_space(line);
-    display_error("retorna_variavel fim");
+  //  display_error("retorna_variavel fim");
     return retorno;
 }
 
-/*## FAZER VERIFICACAO DO POS POIS DARA ERRO DESSA FORMA*/
+/*## FAZER VERIFICACAO DO POS POIS DARA ERRO DESSA FORMA 
 string _var::retorna_funcao(string &line, _reg reg) {
     string retorno;
     int pos_ini, pos_fim;
-    display_error("retorna_funcao");
+    //display_error("retorna_funcao");
     remove_space(line);
     retorno.clear();
     pos_ini = reg.reg_verifica_parentese(line, REG_PARENTESE_I, 0);
@@ -546,7 +546,7 @@ string _var::retorna_funcao(string &line, _reg reg) {
     }
     if (!line.empty())
         remove_space(line);
-    display_error("retorna_funcao fim");
+//    display_error("retorna_funcao fim");
     return retorno;
 }
 
@@ -554,7 +554,7 @@ int _var::retorna_elementos_dentro_de_parentese(string line, _reg reg) {
     int pos_ini, pos_fim, i, j, pos, count;
     string retorno, auxiliar;
     retorno.clear();
-    display_error("retorna_elementos_dentro_de_parentese");
+   // display_error("retorna_elementos_dentro_de_parentese");
     pos_ini = reg.reg_verifica_parentese(line, REG_PARENTESE_I, 0);
     if (pos_ini == FALSE_VALUE)
         return FALSE_VALUE;
@@ -574,7 +574,7 @@ int _var::retorna_elementos_dentro_de_parentese(string line, _reg reg) {
         }
     }
     auxiliar = line.substr(0, j);
-    display_error("retorna_elementos_dentro_de_parentese fim");
+   // display_error("retorna_elementos_dentro_de_parentese fim");
     return j;
 }
 
@@ -645,4 +645,4 @@ int _var::remove_operador_intermediario(string &line, _reg reg) {
     line = line.substr(n, line.length());
     primeira_variavel(line, reg);
     return 1;
-}
+}*/

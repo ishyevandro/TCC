@@ -1,20 +1,25 @@
 <?php
     
-    $i [  'JUDAS'  ] = htmlspecialchars  (  htmlspecialchars  ($_POST ['POST DO I'])   ) >= $b;
+   // $i [  'JUDAS'  ] = htmlspecialchars  (  htmlspecialchars  ($_POST ['POST DO I'])   ) >= $b;
     $cd = "0 < {$i['JUDAS']}";
-    $j        =       $_GET       ['GET DO J'   ] . $_POST['GET DO J2'];
-    $i   = $i ['JUDAS'] . $j;
-    $JESUS = $j * $i;
-    $k = $j - $x;
-    $k = mysql_query($j);
-    $x    =    $k;
-    $j   .=   '100'; 
+    $j        =      string_azul($_GET       ['GET DO J'   ], $k)
+            . 
+            $_POST['GET DO J2'];
+    $i   
+    =
+    $j;
+    $JESUS = chiquinha($j) . $i;
+    $k = $JESUS + $x;
+    $k .= htmlspecialchars($j);
+    $y = mysql_query($j);
+    $x    =    $y;
+    //$j   =   '100'; 
    /* $strin   =   "STRING// primeira linha
     segunda parte
     terceira parte
     quarta parte
     
     " + alguma coisa . "mais comentario";
-    */$aa   =   $i;
+    */$aa   =   $i . $j;
     $aa = 0;
 ?>

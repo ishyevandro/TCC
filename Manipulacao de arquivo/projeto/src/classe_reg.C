@@ -27,11 +27,12 @@ void _reg::reg_comp()//verificar se sera assim mesmo
         cout << "Montagem da expressao com erro\n" << endl; //arrumar essa porcaria pra ler do arquivos as expressoes
         exit(-1);
     }
-    if (reg_comp_all("^[^[:digit:]^\"]", REG_NUMBER) != 0) {//Alterar para escapar caracteres whitespace e tals
+    // if (reg_comp_all("^[^[:digit:]^\"^\"]", REG_NUMBER) != 0) {//Alterar para escapar caracteres whitespace e tals
+    if (reg_comp_all("^[[:digit:]]", REG_NUMBER) != 0) {//Alterar para escapar caracteres whitespace e tals
         cout << "Montagem da expressao com erro\n" << endl; //arrumar essa porcaria pra ler do arquivos as expressoes
         exit(-1);
     }
-        if (reg_comp_all("^\"", REG_ASPAS) != 0) {//Alterar para escapar caracteres whitespace e tals
+    if (reg_comp_all("^[\"|\']", REG_ASPAS) != 0) {//Alterar para escapar caracteres whitespace e tals
         cout << "Montagem da expressao com erro\n" << endl; //arrumar essa porcaria pra ler do arquivos as expressoes
         exit(-1);
     }
@@ -49,8 +50,8 @@ void _reg::reg_comp()//verificar se sera assim mesmo
         exit(-1);
     }
     /*#verificacao erronea... fazer multiplas verificacaos no first string para chegar a usar isso*/
-    //if (reg_comp_all("(\\=)|(\\-[^\\>])|(\\+)|(\\.)|(\\;)|( [\\-\\+\\=\\&. ])", REG_OPERATOR) != 0) {
-    if (reg_comp_all("(\\=)|(\\-[^\\>])|(\\+)|(\\.)|(\\;)| |\\[", REG_OPERATOR) != 0) {
+    //if (reg_comp_all("(,)|(\\))(\\=)|(\\-[^\\>])|(\\+)|(\\.)|(\\;)|( [\\-\\+\\=\\&. ])", REG_OPERATOR) != 0) {
+    if (reg_comp_all("(,)|(\\))|(\\=)|(\\-[^\\>])|(\\+)|(\\.)|(\\;)| |\\[", REG_OPERATOR) != 0) {
         cout << "Montagem da expressao com erro segunda parte\n" << endl;
         exit(-1);
     }
@@ -90,40 +91,40 @@ void _reg::reg_comp()//verificar se sera assim mesmo
         cout << "POST erro\n" << endl; //arrumar essa porcaria pra ler do arquivos as expressoes
         exit(-1);
     }//\\*\\%\\/
-    if (reg_comp_all("(^[\\+-\\*/%])", REG_POS_OPERATOR_MAT) != 0) {//verifica se a string corrente 'e um GET ou POST
+    if (reg_comp_all("(^[(\\+)|(-)|(\\*)|(/)|(%)])", REG_POS_OPERATOR_MAT) != 0) {//verifica se a string corrente 'e um GET ou POST
         cout << "POST erro\n" << endl; //arrumar essa porcaria pra ler do arquivos as expressoes
         exit(-1);
     }
     //OPERADORES DE COMPARACAO
-    if (reg_comp_all ("^([<>]=)|^(==)|(^===)|^(!=)|^(!==)|^([<>])", REG_OPERATOR_COMPARE) !=0){
-        cout <<"Reg operador com erro"<<endl;
+    if (reg_comp_all("^([<>]=)|^(==)|(^===)|^(!=)|^(!==)|^([<>])", REG_OPERATOR_COMPARE) != 0) {
+        cout << "Reg operador com erro" << endl;
         exit(-1);
     }
-    if (reg_comp_all ("^([<>])", REG_OPERATOR_COMPARE_MAIOR_MENOR) !=0){
-        cout <<"Reg operador com erro"<<endl;
+    if (reg_comp_all("^([<>])", REG_OPERATOR_COMPARE_MAIOR_MENOR) != 0) {
+        cout << "Reg operador com erro" << endl;
         exit(-1);
     }
-   /* if (reg_comp_all ("^(!==)", REG_OPERATOR_COMPARE_DIFERENTE_TIPO) !=0){
-        cout <<"Reg operador com erro"<<endl;
-        exit(-1);
-    }*/
-    if (reg_comp_all ("^(!=)", REG_OPERATOR_COMPARE_DIFERENTE) !=0){
-        cout <<"Reg operador com erro"<<endl;
+    /* if (reg_comp_all ("^(!==)", REG_OPERATOR_COMPARE_DIFERENTE_TIPO) !=0){
+         cout <<"Reg operador com erro"<<endl;
+         exit(-1);
+     }*/
+    if (reg_comp_all("^(!=)", REG_OPERATOR_COMPARE_DIFERENTE) != 0) {
+        cout << "Reg operador com erro" << endl;
         exit(-1);
     }
     /*if (reg_comp_all ("^(===)", REG_OPERATOR_COMPARE_IGUAL_TIPO) !=0){
         cout <<"Reg operador com erro"<<endl;
         exit(-1);
     }*/
-    if (reg_comp_all ("^(==)", REG_OPERATOR_COMPARE_IGUAL) !=0){
-        cout <<"Reg operador com erro"<<endl;
+    if (reg_comp_all("^(==)", REG_OPERATOR_COMPARE_IGUAL) != 0) {
+        cout << "Reg operador com erro" << endl;
         exit(-1);
     }
-    if (reg_comp_all ("^([<>]=)", REG_OPERATOR_COMPARE_MAIOR_MENOR_IGUAL) !=0){
-        cout <<"Reg operador com erro"<<endl;
+    if (reg_comp_all("^([<>]=)", REG_OPERATOR_COMPARE_MAIOR_MENOR_IGUAL) != 0) {
+        cout << "Reg operador com erro" << endl;
         exit(-1);
     }
-    
+
 
     /*PARTE PARA COMENTARIOS E ASPAS*/
 
@@ -143,6 +144,9 @@ void _reg::reg_comp()//verificar se sera assim mesmo
         cout << "Erro na montagem: Expressao de aspas duplas" << endl;
     }
     if (reg_comp_all("(\')", REG_ASPAS_S) != 0) {
+        cout << "Erro na montagem: Expressao de aspas simples" << endl;
+    }
+    if (reg_comp_all("(\\$[[:digit:]][ds])", REG_VAR_ASPAS) != 0) {
         cout << "Erro na montagem: Expressao de aspas simples" << endl;
     }
     if (reg_comp_all("[(]", REG_PARENTESE_I) != 0) {
@@ -185,7 +189,7 @@ int _reg::mount_reg_get_or_post(string line, string variables)//verifica se na l
     }
     if (reg_exec_all(line, REG_P_G) == 0)//verifica se tem post ou get
         return TRUE_VALUE;
-     else 
+    else
         return FALSE_VALUE;
 }
 
@@ -217,13 +221,13 @@ int _reg::reg_comments(string line) {
 int _reg::what_is_first_string(string line) {//AQUI ESTA O POSSIVEL ERRO
     if (reg_exec_all(line, REG_VARIABLE) == 0)
         return REG_VARIABLE;
-    else if (reg_exec_all(line, REG_FUNCTION) == 0){
-        line = line.substr(result.rm_so, line.length());//##verificar corretamente sobre os defines em php
+    else if (reg_exec_all(line, REG_FUNCTION) == 0) {
+        line = line.substr(result.rm_so, line.length()); //##verificar corretamente sobre os defines em php
         return REG_FUNCTION;
-    }else if (reg_exec_all(line, REG_NUMBER) == 0){
-        cout<<"FAZER UM RETORNO PARA NUMERO:"<<line<<endl;
-    }
-    else if (reg_exec_all(line, REG_ASPAS) == 0)
+    } else if (reg_exec_all(line, REG_NUMBER) == 0) {
+        //cout<<"FAZER UM RETORNO PARA NUMERO: "<<line<<endl;
+        return REG_NUMBER;
+    } else if (reg_exec_all(line, REG_ASPAS) == 0)
         return REG_ASPAS;
 }
 
@@ -265,8 +269,8 @@ int _reg::reg_comments_(string line, int type) {
     return FALSE_VALUE;
 }
 
-int _reg::reg_verifica_parentese(string line, int tipo_paren, int retorno){
-    if (reg_exec_all (line, tipo_paren) == 0){
+int _reg::reg_verifica_parentese(string line, int tipo_paren, int retorno) {
+    if (reg_exec_all(line, tipo_paren) == 0) {
         if (retorno == 0)
             return result.rm_so;
         return result.rm_eo;
@@ -274,8 +278,8 @@ int _reg::reg_verifica_parentese(string line, int tipo_paren, int retorno){
     return FALSE_VALUE;
 }
 
-int _reg::reg_verifica_operador_compara(string line){
-    if (reg_exec_all (line, REG_OPERATOR_COMPARE) == 0){
+int _reg::reg_verifica_operador_compara(string line) {
+    if (reg_exec_all(line, REG_OPERATOR_COMPARE) == 0) {
         if (reg_exec_all(line, REG_OPERATOR_COMPARE_IGUAL) == 0)
             return REG_OPERATOR_COMPARE_IGUAL;
         else if (reg_exec_all(line, REG_OPERATOR_COMPARE_DIFERENTE) == 0)
@@ -284,15 +288,24 @@ int _reg::reg_verifica_operador_compara(string line){
             return REG_OPERATOR_COMPARE_MAIOR_MENOR;
         else if (reg_exec_all(line, REG_OPERATOR_COMPARE_MAIOR_MENOR_IGUAL) == 0)
             return REG_OPERATOR_COMPARE_MAIOR_MENOR_IGUAL;
-        else 
-            return -2; 
-    }
-    else
+        else
+            return -2;
+    } else
         return FALSE_VALUE;
 }
 
-int _reg::reg_remove_operador_compara(string line){
-     if (reg_exec_all (line, REG_OPERATOR_COMPARE) == 0)
-         return result.rm_eo;
-     return FALSE_VALUE;
+int _reg::reg_remove_operador_compara(string line) {
+    if (reg_exec_all(line, REG_OPERATOR_COMPARE) == 0)
+        return result.rm_eo;
+    return FALSE_VALUE;
+}
+
+int _reg::reg_retorna_variavel_aspas(string line, int retorno) {
+    if (reg_exec_all(line, REG_VAR_ASPAS) == 0) {
+        if (retorno == 1)
+            return result.rm_so;
+        else
+            return result.rm_eo;
+    }
+    return FALSE_VALUE;
 }

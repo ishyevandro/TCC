@@ -55,7 +55,7 @@ using namespace std;
 /*Deteccao de parentese*/
 #define REG_PARENTESE_I 50
 #define REG_PARENTESE_F 51
-
+#define REG_VAR_ASPAS 52
 
 class _reg {
 public:
@@ -82,6 +82,7 @@ public:
     int reg_verifica_parentese (string, int, int);
     int reg_verifica_operador_compara(string);
     int reg_remove_operador_compara(string);
+    int reg_retorna_variavel_aspas (string, int);
 //verificacao de funcoes
     
 };

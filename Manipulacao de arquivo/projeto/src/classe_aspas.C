@@ -29,3 +29,26 @@ int _aspas::primeiro_vazio(){
     } 
     return i;
 }
+
+void _aspas::imprime_valores(){
+    int i = 0;
+    while (!this->nome_atribuido[i].empty()){
+        cout<<this->nome_atribuido[i]<<endl<<this->aspas_valor[i]<<endl;
+        i++;
+    }
+}
+
+string _aspas::busca_valor(string busca){
+    int i = 0;
+    string vazia;
+    vazia.empty();
+    while (!this->nome_atribuido[i].empty()){
+        if (busca.compare(this->nome_atribuido[i]) == 0){
+            //cout <<busca<<endl <<this->nome_atribuido[i]<<endl<<this->aspas_valor[i]<<endl;
+            
+            return this->aspas_valor[i];
+        }
+        i++;
+    }
+    return vazia;
+}

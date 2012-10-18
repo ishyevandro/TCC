@@ -18,8 +18,9 @@ public:
   string aspas_valor[MAX_REG];
   void call_clear();
   string novo_valor(string, string);
-  void busca_valor();
+  string busca_valor(string);
   int primeiro_vazio();
+  void imprime_valores();
   _aspas():nome_atribuido(),aspas_valor(){
       call_clear();
   }

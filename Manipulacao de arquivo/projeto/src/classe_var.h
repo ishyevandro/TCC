@@ -20,9 +20,9 @@ public:
     _var();
     _var(string);
     _var & operator =(const _var &outro);
-    int add_var_array(vector<_var> &, int &, string);
+  /*  int add_var_array(vector<_var> &, int &, string);
     int analyse_line(string, vector<_var> &, int &, _reg); //analise de regex
-    int add_function(); //fara parte da regex!
+    //int add_function(); //fara parte da regex!
     string string_of_var_to_reg(vector<_var> &, int);
     string string_of_var_to_reg(vector<_var> &, int, int);
     //int new_variable(string &, int &, vector<_var> , int &, int, _reg);
@@ -51,6 +51,6 @@ public:
     int proximo_operador (string, _reg);
     int verifica_funcao (string);
     string aspas_duplas (string &, _reg);
-    int remove_operador_intermediario(string &, _reg);
+    int remove_operador_intermediario(string &, _reg);*/
 };
 #endif

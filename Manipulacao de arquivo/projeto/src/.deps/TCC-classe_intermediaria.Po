@@ -108,7 +108,9 @@ TCC-classe_intermediaria.o: classe_intermediaria.C \
  /usr/include/c++/4.6/bits/stl_uninitialized.h \
  /usr/include/c++/4.6/bits/stl_vector.h \
  /usr/include/c++/4.6/bits/stl_bvector.h \
- /usr/include/c++/4.6/bits/vector.tcc classe_var.h variavel.h
+ /usr/include/c++/4.6/bits/vector.tcc classe_var.h variavel.h \
+ classe_aspas.h /usr/include/c++/4.6/sstream \
+ /usr/include/c++/4.6/bits/sstream.tcc
 
 /usr/include/c++/4.6/iostream:
 
@@ -397,3 +399,9 @@ classe_reg.h:
 classe_var.h:
 
 variavel.h:
+
+classe_aspas.h:
+
+/usr/include/c++/4.6/sstream:
+
+/usr/include/c++/4.6/bits/sstream.tcc:

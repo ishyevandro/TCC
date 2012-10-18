@@ -14,6 +14,7 @@ using namespace std;
 class _variavel {
 public:
     string variavel;
+    int cast;
     string funcao;
 
     _variavel():variavel(),funcao() {
