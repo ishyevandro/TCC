@@ -35,6 +35,8 @@ void _intermediaria::remove_space(string &line) {
     found = line.find_first_not_of(" ");
     if ((int) found < line.length())
         line = line.substr((int) found, line.length());
+    else
+        line.clear();
 }
 
 int _intermediaria::analisa_linha(string line) {
@@ -370,16 +372,16 @@ int _intermediaria::retorna_elementos_dentro_de_parentese(string line) {
 int _intermediaria::proximo_operador(string line) {
     int tipo_de_operador;
     remove_space(line);
-    //  cout<<"a linha antes do proximo:<<>>"<<line<<endl;
     tipo_de_operador = this->reg->reg_verifica_operador_compara(line);
     if (tipo_de_operador != FALSE_VALUE) {
         // cout << "Operador de comparacao" << endl;
         return REG_OPERATOR_COMPARE;
     }
     tipo_de_operador = this->reg->reg_operador_cat_ou_aritmetico(line);
-    if (tipo_de_operador != FALSE_VALUE)
+    if (tipo_de_operador != FALSE_VALUE) {
+     //   cout << "PROXIMO_OPERADOR: " << tipo_de_operador << endl << line << endl;
         return tipo_de_operador;
-    else return FALSE_VALUE;
+    } else return FALSE_VALUE;
 
 }
 
@@ -409,7 +411,7 @@ int _intermediaria::operador_intermediario(string &subline) {
         remove_space(subline);
         return REG_POS_OPERATOR_MAT;
     } else {
-        cout << "NAO E MATEMATICO NEM CONCATENA: " << subline << endl;
+      //  cout << "NAO E MATEMATICO NEM CONCATENA: " << subline << endl;
         remove_space(subline);
         return FALSE_VALUE;
     }
@@ -434,7 +436,7 @@ int _intermediaria::operador_aspas(_var &nova_variavel, string &subline, int cas
                 reg_vetor_de_variaveis = string_of_var_to_reg();
                 aux = this->reg->mount_reg_get_or_post(variavel, reg_vetor_de_variaveis);
                 if (aux != FALSE_VALUE) {
-                    cout << "operador_normal_variavel pelo operador_aspas" << endl << subline;
+                //    cout << "operador_normal_variavel pelo operador_aspas" << endl << subline;
                     retorno_operador_normal = operador_normal_variavel(nova_variavel, variavel, cast);
                     if (retorno_operador_normal != FALSE_VALUE)
                         retorno = retorno_operador_normal;
@@ -451,62 +453,103 @@ int _intermediaria::operador_normal_variavel(_var &nova_variavel, string &sublin
     string reg_string_de_var_com_g_p;
     display_error("operador_normal_variavel");
     remove_space(subline);
-    // cout << "cast" << cast << endl;
+  //   cout << "cast" << cast << endl;
     return adiciona_get_ou_post(nova_variavel, subline, cast);
     //ALTERAR ESSE RETURN
 }
 
 int _intermediaria::operador_normal_funcao(_var &nova_variavel, string &string_atual, int cast) {//ALTERAR ESTE METODO PARA VERIFICAR TODAS AS STRINGS DA FUNCAO
-    int aux, pos, retorno, i;
+    int aux, pos, retorno, i, aux_cast, retorno_absoluto;
     int *numero_de_variaveis;
-    string string_func, funcao;
+    string string_func, analisa_string;
     numero_de_variaveis = new (int);
-
     *numero_de_variaveis = nova_variavel.n_var;
     display_error("operador_normal_funcao");
     remove_space(string_atual);
-    retorno = 0;
+    retorno_absoluto = retorno = aux_cast = 0;
     if (string_atual[0] == '(')
         string_atual = string_atual.substr(1, string_atual.length());
     if (verifica_funcao(string_atual) == FALSE_VALUE) {
         do {
             remove_space(string_atual);
             aux = reg->what_is_first_string(string_atual);
-            if (aux == REG_FUNCTION) {//doidera total rever essa coisa louca
-                funcao = retorna_funcao(string_atual);
-                pos = funcao.find_first_of("(");
-                if (pos >= 0 && pos <= funcao.length()) {
-                    string_func = funcao.substr(0, pos);
-                    string_atual = funcao.substr(pos, funcao.length());
+            /*cout << aux << endl;
+            if (aux == REG_POS_OPERATOR_MAT) {
+                aux_cast = 1;
+                if (!string_atual.empty()) {
+                    cout << "ANDA COM OPERADOR" << string_atual << endl;
+                    string_atual = string_atual.substr(1, string_atual.length());
+                    aux = reg->what_is_first_string(string_atual);
+                } else {
+                    cout << "STRING VAZIA" << endl;
+                    return retorno_absoluto;
                 }
-                retorno = operador_normal_funcao(nova_variavel, string_atual, cast);
+            }*/
+            if (aux == REG_NUMBER) {
+                analisa_string = primeira_variavel(string_atual);
+          //      cout << "NUMBER" << endl;
+            } else if (aux == REG_FUNCTION) {//doidera total rever essa coisa louca
+                analisa_string = retorna_funcao(string_atual);
+                remove_space(string_atual);
+                pos = analisa_string.find_first_of("(");
+                if (pos > 0 && pos < analisa_string.length()) {//##ALTERADO AS COMPARACOES DE MAIOR IGUAL PARA MAIOR E MENOR IGUAL PARA MENOR
+                    string_func = analisa_string.substr(0, pos);
+                    analisa_string = analisa_string.substr(pos, analisa_string.length());
+                }
+                if (proximo_operador(string_atual) == REG_POS_OPERATOR_MAT || aux_cast == 1) {
+              //      cout << "Operador Matematico" << string_atual << endl;
+                    retorno = operador_normal_funcao(nova_variavel, analisa_string, aux_cast);
+                    aux_cast = 0;
+                } else {
+             //       cout << string_atual << endl;
+                    retorno = operador_normal_funcao(nova_variavel, analisa_string, cast);
+                }
                 if (retorno == 1) {
                     string_func = string_func + "+";
-                    //1                    for (i = this->n_funcao; i < nova_variavel.n_var; i++) {
                     for (i = *numero_de_variaveis; i < nova_variavel.n_var; i++) {
                         nova_variavel.vect[i].funcao += string_func;
                     }
                     this->n_funcao = 0;
                     display_error("operador_normal_funcao fim");
-                    return retorno;
+                    //1return retorno;
+                    if (retorno_absoluto != 1)
+                        retorno_absoluto = retorno;
                 }
             } else if (aux == REG_VARIABLE) {//##adicao de aspas nesse ponto. e perigoso a forma que esta sendo usada ate o momento
-                string_atual = primeira_variavel(string_atual); //acaba perdendo o resto da string alterar aqui
-                //1this->n_funcao = nova_variavel.n_var;
-                retorno = operador_normal_variavel(nova_variavel, string_atual, cast);
+           //     cout << "WARNING" << endl;
+                analisa_string = primeira_variavel(string_atual); //acaba perdendo o resto da string alterar aqui
+                
+                retorno = operador_normal_variavel(nova_variavel, analisa_string, cast);
+            //    cout << "WARNING"<<string_atual << endl;
                 display_error("operador_normal_funcao fim");
-                return retorno;
+                //1return retorno;
+                if (retorno_absoluto != 1)
+                    retorno_absoluto = retorno;
             } else if (aux == REG_ASPAS) {
-                string_atual = primeira_variavel(string_atual);
-                ///1this->n_funcao = nova_variavel.n_var;
-                //2 *numero_de_variaveis = nova_variavel.n_var;
-                return operador_aspas(nova_variavel, string_atual, 0);
-
+                analisa_string = primeira_variavel(string_atual);
+                retorno = operador_aspas(nova_variavel, analisa_string, 0);
+                //1return retorno;
+                if (retorno_absoluto != 1)
+                    retorno_absoluto = retorno;
             }
-        } while (1 == 1); //### este while precisa ser feito corretamente com lance de concatenacao, verificacao de tudo que e necessario colocar as coisas no local certo;
+            if (string_atual.empty() || string_atual[0] == ')') {
+            //    cout << "fim do laco" << endl;
+                aux = -3;
+            } else if (string_atual[0] == ',') {
+            //    cout << string_atual << endl;
+                string_atual = string_atual.substr(1, string_atual.length());
+          //      cout << string_atual << endl;
+            } else if (operador_intermediario(string_atual) == REG_POS_OPERATOR_MAT) {
+                //       string_atual = string_atual.substr(1, string_atual.length());
+            //    cout << "ENTRANDO AQUI" << string_atual << endl;
+                aux_cast = 1;
+            }
+            remove_space(string_atual);
+         //   cout << analisa_string << endl << "String atual" << string_atual << endl;
+        } while (aux != -3); //### este while precisa ser feito corretamente com lance de concatenacao, verificacao de tudo que e necessario colocar as coisas no local certo;
     }
     display_error("operador_normal_funcao fim");
-    return retorno;
+    return retorno_absoluto;
 }
 
 int _intermediaria::remove_variavel_do_vetor(string var) {
@@ -575,8 +618,11 @@ int _intermediaria::adiciona_get_ou_post(_var &add, string subline, int cast) {/
     } else if (!vet_var_p_g.empty() && reg->mount_reg_get_or_post(subline, vet_var_p_g) != FALSE_VALUE) {
         string_guardar = subline; //retorna_variavel(subline, reg);
         pos = procura_variavel_no_vetor(string_guardar);
+        //imprime_elemento (vetor_de_variaveis[pos]);
+        //cout << "Warning"<<endl;
         for (n = 0; n < this->vetor_de_variaveis[pos].n_var; n++) {//arrumar o cast
             add.vect[add.n_var].cast = this->vetor_de_variaveis[pos].vect[n].cast == 1 ? this->vetor_de_variaveis[pos].vect[n].cast : cast;
+            //cout <<"erro this->vetor_de_variaveis[pos].n_var"<< this->vetor_de_variaveis[pos].n_var<<endl;
             add.vect[add.n_var].variavel = this->vetor_de_variaveis[pos].vect[n].variavel;
             add.vect[add.n_var].funcao = this->vetor_de_variaveis[pos].vect[n].funcao;
             add.n_var++;

@@ -91,7 +91,7 @@ void _reg::reg_comp()//verificar se sera assim mesmo
         cout << "POST erro\n" << endl; //arrumar essa porcaria pra ler do arquivos as expressoes
         exit(-1);
     }//\\*\\%\\/
-    if (reg_comp_all("(^[(\\+)|(-)|(\\*)|(/)|(%)])", REG_POS_OPERATOR_MAT) != 0) {//verifica se a string corrente 'e um GET ou POST
+    if (reg_comp_all("(^[\\+|-|\\*|/|%])", REG_POS_OPERATOR_MAT) != 0) {//verifica se a string corrente 'e um GET ou POST
         cout << "POST erro\n" << endl; //arrumar essa porcaria pra ler do arquivos as expressoes
         exit(-1);
     }
@@ -160,7 +160,7 @@ void _reg::reg_comp()//verificar se sera assim mesmo
     if (reg_comp_all("(<\\?)|(<\\?php)", REG_INI_PHP) != 0) {
         cout << "Erro na montagem: Expressao de parentese final" << endl;
     }
-        if (reg_comp_all("(\\?>)", REG_FIM_PHP) != 0) {
+    if (reg_comp_all("(\\?>)", REG_FIM_PHP) != 0) {
         cout << "Erro na montagem: Expressao de parentese final" << endl;
     }
 }
@@ -237,6 +237,10 @@ int _reg::what_is_first_string(string line) {//AQUI ESTA O POSSIVEL ERRO
         return REG_NUMBER;
     } else if (reg_exec_all(line, REG_ASPAS) == 0)
         return REG_ASPAS;
+    else if (reg_exec_all(line, REG_OPERATOR_CAT) == 0)
+        return REG_POS_OPERATOR_CAT;
+    else if (reg_exec_all(line, REG_POS_OPERATOR_MAT) == 0)
+        return REG_POS_OPERATOR_MAT;
 }
 
 int _reg::reg_segunda_parte_linha(string subline) {
@@ -249,10 +253,10 @@ int _reg::reg_segunda_parte_linha(string subline) {
 int _reg::reg_operador_cat_ou_aritmetico(string subline) {
     if (reg_exec_all(subline, REG_POS_OPERATOR_CAT) == 0)
         return REG_POS_OPERATOR_CAT;
-    else if (reg_exec_all(subline, REG_POS_OPERATOR_MAT) == 0)//###TEM ALGUM ERRO AQUI ESTRANHO SE ESTIVER ANTES DO PONTO ELE PEGA PONTO COMO OPERADOR MATEMATICO
+    else if (reg_exec_all(subline, REG_POS_OPERATOR_MAT) == 0) {//###TEM ALGUM ERRO AQUI ESTRANHO SE ESTIVER ANTES DO PONTO ELE PEGA PONTO COMO OPERADOR MATEMATICO
+        cout << subline << "QUE PUTARIA E ESSA?" << subline[result.rm_so] << endl;
         return REG_POS_OPERATOR_MAT;
-
-    else
+    } else
         return FALSE_VALUE;
 }
 
@@ -322,8 +326,7 @@ int _reg::reg_tag_php(string line, int type) {
     if (type == 0) {
         if (reg_exec_all(line, REG_INI_PHP) == 0)
             return result.rm_eo;
-    }
-    else{
+    } else {
         if (reg_exec_all(line, REG_FIM_PHP) == 0)
             return result.rm_so;
     }
