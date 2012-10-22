@@ -10,6 +10,7 @@ using namespace std;
 class _arq{
 public:
 	ifstream new_file;
+        int tag_php;
         _intermediaria aux;
 	//vector <_var> vetor_de_variaveis;//mapeamento de todas as variaveis do arquivo
 	_reg *reg;
@@ -23,6 +24,7 @@ public:
         int aspas_simples(string &);
 	int remove_comments(string &);
         int verifica_comentario_dentro_de_aspas(string);
+        int verifica_tag(string &);
         string procura_fim_de_linha (string);
         string replace_aspas (string);
 };

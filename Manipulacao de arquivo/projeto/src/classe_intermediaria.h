@@ -47,6 +47,7 @@ public:
     int verifica_funcao(string);
     void imprime_vetor();
     void imprime_elemento(_var);
+    int verifica_condicional_laco (string);
     //int remove_comments(string&, _reg);
 };
 

@@ -50,12 +50,16 @@ using namespace std;
 #define REG_COMMENTS_FIM 42
 #define REG_ASPAS_D 43
 #define REG_ASPAS_S 44
+#define REG_VAR_ASPAS 45
 #define MAX_REG 100
 
 /*Deteccao de parentese*/
 #define REG_PARENTESE_I 50
 #define REG_PARENTESE_F 51
-#define REG_VAR_ASPAS 52
+
+/*Deteccao de TAG PHP inicio e FIM*/
+#define REG_INI_PHP 60
+#define REG_FIM_PHP 61
 
 class _reg {
 public:
@@ -83,6 +87,7 @@ public:
     int reg_verifica_operador_compara(string);
     int reg_remove_operador_compara(string);
     int reg_retorna_variavel_aspas (string, int);
+    int reg_tag_php (string, int);
 //verificacao de funcoes
     
 };

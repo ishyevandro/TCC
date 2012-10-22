@@ -155,6 +155,14 @@ void _reg::reg_comp()//verificar se sera assim mesmo
     if (reg_comp_all("[)]", REG_PARENTESE_F) != 0) {
         cout << "Erro na montagem: Expressao de parentese final" << endl;
     }
+
+    //TAG PHP
+    if (reg_comp_all("(<\\?)|(<\\?php)", REG_INI_PHP) != 0) {
+        cout << "Erro na montagem: Expressao de parentese final" << endl;
+    }
+        if (reg_comp_all("(\\?>)", REG_FIM_PHP) != 0) {
+        cout << "Erro na montagem: Expressao de parentese final" << endl;
+    }
 }
 
 /*executa todas as expressoes regulares*/
@@ -215,7 +223,7 @@ int _reg::reg_comments(string line) {
     if (reg_exec_all(line, REG_COMMENTS_SIMPLE) == 0) {
         return (int) result.rm_so;
     }
-    return -1;
+    return FALSE_VALUE;
 }
 
 int _reg::what_is_first_string(string line) {//AQUI ESTA O POSSIVEL ERRO
@@ -306,6 +314,18 @@ int _reg::reg_retorna_variavel_aspas(string line, int retorno) {
             return result.rm_so;
         else
             return result.rm_eo;
+    }
+    return FALSE_VALUE;
+}
+
+int _reg::reg_tag_php(string line, int type) {
+    if (type == 0) {
+        if (reg_exec_all(line, REG_INI_PHP) == 0)
+            return result.rm_eo;
+    }
+    else{
+        if (reg_exec_all(line, REG_FIM_PHP) == 0)
+            return result.rm_so;
     }
     return FALSE_VALUE;
 }

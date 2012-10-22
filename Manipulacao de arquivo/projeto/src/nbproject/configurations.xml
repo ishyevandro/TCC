@@ -2,6 +2,8 @@
 <configurationDescriptor version="84">
   <logicalFolder name="root" displayName="root" projectFiles="true" kind="ROOT">
     <df name="src" root=".">
+      <df name="hack">
+      </df>
       <in>classe_arquivo.C</in>
       <in>classe_arquivo.h</in>
       <in>classe_aspas.C</in>
@@ -61,13 +63,13 @@
               <pElem>..</pElem>
               <pElem>/usr/include/atk-1.0</pElem>
               <pElem>/usr/lib/cairomm-1.0/include</pElem>
-              <pElem>/usr/include/libpng12</pElem>
               <pElem>/usr/lib/x86_64-linux-gnu/gtk-2.0/include</pElem>
+              <pElem>/usr/include/libpng12</pElem>
               <pElem>/usr/include/gdkmm-2.4</pElem>
               <pElem>/usr/include/glib-2.0</pElem>
               <pElem>.</pElem>
-              <pElem>/usr/lib/pangomm-1.4/include</pElem>
               <pElem>/usr/lib/glibmm-2.4/include</pElem>
+              <pElem>/usr/lib/pangomm-1.4/include</pElem>
               <pElem>/usr/include/glibmm-2.4</pElem>
               <pElem>/usr/lib/gdkmm-2.4/include</pElem>
               <pElem>/usr/include/pango-1.0</pElem>
@@ -83,7 +85,7 @@
       <item path="classe_arquivo.C" ex="false" tool="1" flavor2="4">
         <ccTool>
           <incDir>
-            <pElem>/usr/include/gio-unix-2.0/</pElem>
+            <pElem>/usr/include/gio-unix-2.0</pElem>
           </incDir>
         </ccTool>
       </item>
@@ -101,7 +103,7 @@
       <item path="classe_intermediaria.C" ex="false" tool="1" flavor2="4">
         <ccTool>
           <incDir>
-            <pElem>/usr/include/gio-unix-2.0</pElem>
+            <pElem>/usr/include/gio-unix-2.0/</pElem>
           </incDir>
         </ccTool>
       </item>
