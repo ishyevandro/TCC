@@ -78,8 +78,9 @@ am__nobase_list = $(am__nobase_strip_setup); \
 am__base_list = \
   sed '$$!N;$$!N;$$!N;$$!N;$$!N;$$!N;$$!N;s/\n/ /g' | \
   sed '$$!N;$$!N;$$!N;$$!N;s/\n/ /g'
-am__installdirs = "$(DESTDIR)$(TCCdocdir)"
-DATA = $(TCCdoc_DATA)
+am__installdirs = "$(DESTDIR)$(Basedir)" "$(DESTDIR)$(Editordocdir)" \
+	"$(DESTDIR)$(Testedir)"
+DATA = $(Base_DATA) $(Editordoc_DATA) $(Teste_DATA)
 RECURSIVE_CLEAN_TARGETS = mostlyclean-recursive clean-recursive	\
   distclean-recursive maintainer-clean-recursive
 AM_RECURSIVE_TARGETS = $(RECURSIVE_TARGETS:-recursive=) \
@@ -130,7 +131,9 @@ AUTOCONF = ${SHELL} "/home/evandro/Dropbox/TCC/TCC/Manipulacao de arquivo/projet
 AUTOHEADER = ${SHELL} "/home/evandro/Dropbox/TCC/TCC/Manipulacao de arquivo/projeto/missing" --run autoheader
 AUTOMAKE = ${SHELL} "/home/evandro/Dropbox/TCC/TCC/Manipulacao de arquivo/projeto/missing" --run automake-1.11
 AWK = mawk
-BOOST_REGEX_LIB = -lboost_regex-mt
+BOOST_REGEX_LIB = -lboost_regex
+BSL_CFLAGS =  
+BSL_LIBS = -lbancosl-1.0 -lsqlite3  
 CC = gcc
 CCDEPMODE = depmode=gcc3
 CFLAGS = -g -O2
@@ -147,6 +150,8 @@ ECHO_N = -n
 ECHO_T = 
 EGREP = /bin/grep -E
 EXEEXT = 
+EX_CFLAGS = -g -O2  
+EX_LIBS = -lex-1.0 -ldl  
 GREP = /bin/grep
 GTKMM_CFLAGS = -pthread -I/usr/include/gtk-2.0 -I/usr/include/gtk-unix-print-2.0 -I/usr/include/atk-1.0 -I/usr/include/glib-2.0 -I/usr/lib/x86_64-linux-gnu/glib-2.0/include -I/usr/include/pango-1.0 -I/usr/include/cairo -I/usr/include/pixman-1 -I/usr/include/freetype2 -I/usr/include/libpng12 -I/usr/lib/x86_64-linux-gnu/gtk-2.0/include -I/usr/include/gdk-pixbuf-2.0 -I/usr/include/gio-unix-2.0/ -I/usr/include/gtkmm-2.4 -I/usr/lib/gtkmm-2.4/include -I/usr/include/atkmm-1.6 -I/usr/include/giomm-2.4 -I/usr/lib/giomm-2.4/include -I/usr/include/pangomm-1.4 -I/usr/lib/pangomm-1.4/include -I/usr/include/gdkmm-2.4 -I/usr/lib/gdkmm-2.4/include -I/usr/include/glibmm-2.4 -I/usr/lib/glibmm-2.4/include -I/usr/include/sigc++-2.0 -I/usr/lib/sigc++-2.0/include -I/usr/include/cairomm-1.0 -I/usr/lib/cairomm-1.0/include  
 GTKMM_LIBS = -pthread -lgtkmm-2.4 -latkmm-1.6 -lgdkmm-2.4 -lgiomm-2.4 -lpangomm-1.4 -lgtk-x11-2.0 -lglibmm-2.4 -lcairomm-1.0 -lsigc-2.0 -lgdk-x11-2.0 -latk-1.0 -lgio-2.0 -lpangoft2-1.0 -lpangocairo-1.0 -lgdk_pixbuf-2.0 -lcairo -lpango-1.0 -lfreetype -lfontconfig -lgobject-2.0 -lgmodule-2.0 -lgthread-2.0 -lrt -lglib-2.0  
@@ -163,20 +168,22 @@ MAKEINFO = ${SHELL} "/home/evandro/Dropbox/TCC/TCC/Manipulacao de arquivo/projet
 MKDIR_P = /bin/mkdir -p
 OBJEXT = o
 PACKAGE = tcc-evandro
-PACKAGE_BUGREPORT = email@email
-PACKAGE_NAME = TCC Evandro
-PACKAGE_STRING = TCC Evandro 1.0.0
+PACKAGE_BUGREPORT = 017706@comp.uems.br 
+PACKAGE_NAME = TCC-evandro
+PACKAGE_STRING = TCC-evandro 1.0.1
 PACKAGE_TARNAME = tcc-evandro
-PACKAGE_URL = 
-PACKAGE_VERSION = 1.0.0
+PACKAGE_URL = http://moodle.alcionesytes.net/
+PACKAGE_VERSION = 1.0.1
 PATH_SEPARATOR = :
 PKG_CONFIG = /usr/bin/pkg-config
 PKG_CONFIG_LIBDIR = 
 PKG_CONFIG_PATH = 
 SET_MAKE = 
 SHELL = /bin/bash
+SQLITE_CFLAGS =  
+SQLITE_LIBS = -lsqlite3  
 STRIP = 
-VERSION = 1.0.0
+VERSION = 1.0.1
 abs_builddir = /home/evandro/Dropbox/TCC/TCC/Manipulacao de arquivo/projeto
 abs_srcdir = /home/evandro/Dropbox/TCC/TCC/Manipulacao de arquivo/projeto
 abs_top_builddir = /home/evandro/Dropbox/TCC/TCC/Manipulacao de arquivo/projeto
@@ -209,7 +216,7 @@ mandir = ${datarootdir}/man
 mkdir_p = /bin/mkdir -p
 oldincludedir = /usr/include
 pdfdir = ${docdir}
-prefix = /usr/local
+prefix = /home/evandro/bin
 program_transform_name = s,x,x,
 psdir = ${docdir}
 sbindir = ${exec_prefix}/sbin
@@ -221,8 +228,13 @@ top_build_prefix =
 top_builddir = .
 top_srcdir = .
 SUBDIRS = src
-TCCdocdir = ${prefix}/docs
-TCCdoc_DATA = AUTHORS ChangeLog COPYING NEWS README INSTALL test/index.php
+Editordocdir = ${prefix}/docs
+Editordoc_DATA = AUTHORS ChangeLog COPYING NEWS README INSTALL
+Basedir = ${prefix}
+Base_DATA = consulta.db
+Testedir = $(prefix)/test
+Teste_DATA = test/classe_implementada.php  test/conn.php  test/index.php test/teste.php
+EXTRA_DIST = $(Editordoc_DATA) $(Base_DATA) $(Teste_DATA) TCC-Evandro.anjuta
 all: config.h
 	$(MAKE) $(AM_MAKEFLAGS) all-recursive
 
@@ -278,26 +290,66 @@ $(srcdir)/config.h.in:  $(am__configure_deps)
 
 distclean-hdr:
 	-rm -f config.h stamp-h1
-install-TCCdocDATA: $(TCCdoc_DATA)
+install-BaseDATA: $(Base_DATA)
 	@$(NORMAL_INSTALL)
-	test -z "$(TCCdocdir)" || $(MKDIR_P) "$(DESTDIR)$(TCCdocdir)"
-	@list='$(TCCdoc_DATA)'; test -n "$(TCCdocdir)" || list=; \
+	test -z "$(Basedir)" || $(MKDIR_P) "$(DESTDIR)$(Basedir)"
+	@list='$(Base_DATA)'; test -n "$(Basedir)" || list=; \
 	for p in $$list; do \
 	  if test -f "$$p"; then d=; else d="$(srcdir)/"; fi; \
 	  echo "$$d$$p"; \
 	done | $(am__base_list) | \
 	while read files; do \
-	  echo " $(INSTALL_DATA) $$files '$(DESTDIR)$(TCCdocdir)'"; \
-	  $(INSTALL_DATA) $$files "$(DESTDIR)$(TCCdocdir)" || exit $$?; \
+	  echo " $(INSTALL_DATA) $$files '$(DESTDIR)$(Basedir)'"; \
+	  $(INSTALL_DATA) $$files "$(DESTDIR)$(Basedir)" || exit $$?; \
 	done
 
-uninstall-TCCdocDATA:
+uninstall-BaseDATA:
 	@$(NORMAL_UNINSTALL)
-	@list='$(TCCdoc_DATA)'; test -n "$(TCCdocdir)" || list=; \
+	@list='$(Base_DATA)'; test -n "$(Basedir)" || list=; \
 	files=`for p in $$list; do echo $$p; done | sed -e 's|^.*/||'`; \
 	test -n "$$files" || exit 0; \
-	echo " ( cd '$(DESTDIR)$(TCCdocdir)' && rm -f" $$files ")"; \
-	cd "$(DESTDIR)$(TCCdocdir)" && rm -f $$files
+	echo " ( cd '$(DESTDIR)$(Basedir)' && rm -f" $$files ")"; \
+	cd "$(DESTDIR)$(Basedir)" && rm -f $$files
+install-EditordocDATA: $(Editordoc_DATA)
+	@$(NORMAL_INSTALL)
+	test -z "$(Editordocdir)" || $(MKDIR_P) "$(DESTDIR)$(Editordocdir)"
+	@list='$(Editordoc_DATA)'; test -n "$(Editordocdir)" || list=; \
+	for p in $$list; do \
+	  if test -f "$$p"; then d=; else d="$(srcdir)/"; fi; \
+	  echo "$$d$$p"; \
+	done | $(am__base_list) | \
+	while read files; do \
+	  echo " $(INSTALL_DATA) $$files '$(DESTDIR)$(Editordocdir)'"; \
+	  $(INSTALL_DATA) $$files "$(DESTDIR)$(Editordocdir)" || exit $$?; \
+	done
+
+uninstall-EditordocDATA:
+	@$(NORMAL_UNINSTALL)
+	@list='$(Editordoc_DATA)'; test -n "$(Editordocdir)" || list=; \
+	files=`for p in $$list; do echo $$p; done | sed -e 's|^.*/||'`; \
+	test -n "$$files" || exit 0; \
+	echo " ( cd '$(DESTDIR)$(Editordocdir)' && rm -f" $$files ")"; \
+	cd "$(DESTDIR)$(Editordocdir)" && rm -f $$files
+install-TesteDATA: $(Teste_DATA)
+	@$(NORMAL_INSTALL)
+	test -z "$(Testedir)" || $(MKDIR_P) "$(DESTDIR)$(Testedir)"
+	@list='$(Teste_DATA)'; test -n "$(Testedir)" || list=; \
+	for p in $$list; do \
+	  if test -f "$$p"; then d=; else d="$(srcdir)/"; fi; \
+	  echo "$$d$$p"; \
+	done | $(am__base_list) | \
+	while read files; do \
+	  echo " $(INSTALL_DATA) $$files '$(DESTDIR)$(Testedir)'"; \
+	  $(INSTALL_DATA) $$files "$(DESTDIR)$(Testedir)" || exit $$?; \
+	done
+
+uninstall-TesteDATA:
+	@$(NORMAL_UNINSTALL)
+	@list='$(Teste_DATA)'; test -n "$(Testedir)" || list=; \
+	files=`for p in $$list; do echo $$p; done | sed -e 's|^.*/||'`; \
+	test -n "$$files" || exit 0; \
+	echo " ( cd '$(DESTDIR)$(Testedir)' && rm -f" $$files ")"; \
+	cd "$(DESTDIR)$(Testedir)" && rm -f $$files
 
 # This directory's subdirectories are mostly independent; you can cd
 # into them and run `make' without going through this Makefile.
@@ -614,7 +666,7 @@ check: check-recursive
 all-am: Makefile $(DATA) config.h
 installdirs: installdirs-recursive
 installdirs-am:
-	for dir in "$(DESTDIR)$(TCCdocdir)"; do \
+	for dir in "$(DESTDIR)$(Basedir)" "$(DESTDIR)$(Editordocdir)" "$(DESTDIR)$(Testedir)"; do \
 	  test -z "$$dir" || $(MKDIR_P) "$$dir"; \
 	done
 install: install-recursive
@@ -663,7 +715,8 @@ info: info-recursive
 
 info-am:
 
-install-data-am: install-TCCdocDATA
+install-data-am: install-BaseDATA install-EditordocDATA \
+	install-TesteDATA
 
 install-dvi: install-dvi-recursive
 
@@ -709,7 +762,8 @@ ps: ps-recursive
 
 ps-am:
 
-uninstall-am: uninstall-TCCdocDATA
+uninstall-am: uninstall-BaseDATA uninstall-EditordocDATA \
+	uninstall-TesteDATA
 
 .MAKE: $(RECURSIVE_CLEAN_TARGETS) $(RECURSIVE_TARGETS) all \
 	ctags-recursive install-am install-strip tags-recursive
@@ -720,7 +774,8 @@ uninstall-am: uninstall-TCCdocDATA
 	dist-lzma dist-shar dist-tarZ dist-xz dist-zip distcheck \
 	distclean distclean-generic distclean-hdr distclean-tags \
 	distcleancheck distdir distuninstallcheck dvi dvi-am html \
-	html-am info info-am install install-TCCdocDATA install-am \
+	html-am info info-am install install-BaseDATA \
+	install-EditordocDATA install-TesteDATA install-am \
 	install-data install-data-am install-dvi install-dvi-am \
 	install-exec install-exec-am install-html install-html-am \
 	install-info install-info-am install-man install-pdf \
@@ -728,7 +783,8 @@ uninstall-am: uninstall-TCCdocDATA
 	installcheck installcheck-am installdirs installdirs-am \
 	maintainer-clean maintainer-clean-generic mostlyclean \
 	mostlyclean-generic pdf pdf-am ps ps-am tags tags-recursive \
-	uninstall uninstall-TCCdocDATA uninstall-am
+	uninstall uninstall-BaseDATA uninstall-EditordocDATA \
+	uninstall-TesteDATA uninstall-am
 
 
 # Tell versions [3.59,3.63) of GNU make to not export all variables.

@@ -4,15 +4,38 @@
 #include <boost/regex.h>
 #include "classe_arquivo.h"
 
+void display_errors(string prnt) {
+    if (DISPLAY_ERROR == 1)
+        cout << prnt << endl;
+}
+
 _arq::_arq()
-: new_file(NULL), reg(NULL)/*,  vetor_de_variaveis(NULL), vet_num(0) */ {
+: reg(NULL), no_corrente(NULL)/*,new_file(NULL),  vetor_de_variaveis(NULL), vet_num(0) */ {
     //vetor_de_variaveis = new _var[20];
     //this->vetor_de_variaveis.resize(VET_NUM);
     //this->aspas = new _aspas;
+    no_corrente = &aux;
     tag_php = 0;
     reg = new _reg;
 }
 
+int _arq::linha(string codigo_todo) {
+    string linha;
+    int pos;
+    display_errors("metodo LINHA inicio");
+    this->codigo = codigo_todo;
+    while (!this->codigo.empty()) {
+        // cout << "linha"<<this->codigo<< endl;
+        if (nova_linha(linha) == TRUE_VALUE)
+            verifica_tag(linha);
+        else
+            cout << "Improvavel entrar aqui" << endl;
+    }
+    display_errors("metodo LINHA inicio");
+    no_corrente->imprime_vetor();
+}
+
+/*
 void _arq::open(string abrir) {
     char *nome_do_arquivo;
     string linha; //linha lida do arquivo
@@ -20,7 +43,7 @@ void _arq::open(string abrir) {
     new_file.open(abrir.c_str(), ifstream::out);
     while (new_file.good()) {
         this->aux.aspas->call_clear();
-        getline(new_file, linha);
+        nova_linha(linha);
         //1        aspas_duplas(linha);
         //1        aspas_simples(linha);
         //1        remove_comments(linha);
@@ -32,30 +55,34 @@ void _arq::open(string abrir) {
     }
     aux.imprime_vetor();
     //vetor_de_variaveis[0].imprime_vetor(vetor_de_variaveis, vet_num);
-}
+}*/
 
 int _arq::aspas_duplas(string &linha) {
     int inicio, fim;
-    string retorno, inicio_aspas, nova_linha, tipo;
+    string retorno, inicio_aspas, nlinha, tipo;
     retorno.clear();
     fim = -1;
-    inicio = reg->reg_verifica_aspasd(linha);
+    inicio = reg->reg_verifica_aspasd(linha, 0);
+    //cout << "inicio_linha: " << linha << endl;
     if (inicio != FALSE_VALUE) {
         tipo = "d";
         inicio_aspas = linha.substr(inicio + 1, linha.length());
         while (fim == FALSE_VALUE) {
-            fim = reg->reg_verifica_aspasd(inicio_aspas);
+            fim = reg->reg_verifica_aspasd(inicio_aspas, 1);
             if (fim == FALSE_VALUE) {
-                getline(new_file, nova_linha);
-                inicio_aspas += nova_linha;
+                //  cout << "aspas_duplas" << endl;
+                nova_linha(nlinha);
+                inicio_aspas += nlinha;
             } else {
                 retorno = inicio_aspas.substr(0, fim);
                 linha = linha.substr(1, inicio - 1);
-                linha += this->aux.aspas->novo_valor(retorno, tipo);
+                linha += this->no_corrente->aspas->novo_valor(retorno, tipo);
                 linha += inicio_aspas.substr(fim + 1, inicio_aspas.length());
             }
         }
         aspas_duplas(linha);
+        //cout << "linha aqui: " << linha << endl;
+        // exit(1);
     }
     return 1;
 }
@@ -84,7 +111,8 @@ int _arq::remove_comments(string &line) {
                 line += comentario.substr(type, comentario.length());
                 ///cout <<"IMPRIME PORRA"<<comentario.substr(type, comentario.length())<<endl;
             } else {
-                getline(new_file, comentario);
+                //  cout << "comentarios_" << endl;
+                nova_linha(comentario);
             }
         }
     }
@@ -100,7 +128,7 @@ int _arq::verifica_comentario_dentro_de_aspas(string line) {
     if (comentario2 != FALSE_VALUE)
         comentario2 = reg->reg_comments(line.substr(comentario2, line.length()));
     if (comentario != FALSE_VALUE || comentario2 != FALSE_VALUE) {
-        aspas = reg->reg_verifica_aspasd(line);
+        aspas = reg->reg_verifica_aspasd(line, 0);
         //cout<<aspas<<"!="<<comentario<<comentario2<<endl;
         if ((aspas < comentario || aspas < comentario2) && aspas != FALSE_VALUE && (comentario != FALSE_VALUE || comentario2 != FALSE_VALUE))
             return -1;
@@ -111,18 +139,19 @@ int _arq::verifica_comentario_dentro_de_aspas(string line) {
 
 int _arq::aspas_simples(string &linha) {
     int inicio, fim;
-    string retorno, inicio_aspas, nova_linha, tipo;
+    string retorno, inicio_aspas, nlinha, tipo;
     retorno.clear();
     fim = -1;
-    inicio = reg->reg_verifica_aspass(linha);
+    inicio = reg->reg_verifica_aspass(linha, 0);
     if (inicio != FALSE_VALUE) {
         tipo = "s";
         inicio_aspas = linha.substr(inicio + 1, linha.length());
         while (fim == FALSE_VALUE) {
-            fim = reg->reg_verifica_aspass(inicio_aspas);
+            fim = reg->reg_verifica_aspass(inicio_aspas, 1);
             if (fim == FALSE_VALUE) {
-                getline(new_file, nova_linha);
-                inicio_aspas += nova_linha;
+                // cout << "ASpas simples" << inicio_aspas << endl;
+                nova_linha(nlinha);
+                inicio_aspas += nlinha;
             } else {
                 retorno = inicio_aspas.substr(0, fim);
                 linha = linha.substr(1, inicio - 1);
@@ -135,70 +164,80 @@ int _arq::aspas_simples(string &linha) {
     return 1;
 }
 
+/*
 int main(int argc, char **argv) {
     _arq *A;
     A = new _arq;
     A->open("/home/evandro/Dropbox/TCC/TCC/Manipulacao de arquivo/projeto/test/index.php");
     delete A;
     return 0;
-}
+}*/
+
+
 
 string _arq::procura_fim_de_linha(string linha) {
     int pos;
-    string nova_linha;
+    string nlinha;
+    display_errors("Procura_fim_de_linha inicio: ");
     do {
         pos = linha.find_first_of(';');
         if (pos == string::npos) {
-            getline(this->new_file, nova_linha);
-            aspas_duplas(nova_linha);
-            aspas_simples(nova_linha);
-            remove_comments(nova_linha);
-            linha += nova_linha;
+            //  cout << "procura_fim_de_linha" << endl;
+            nova_linha(nlinha);
+            aspas_duplas(nlinha);
+            aspas_simples(nlinha);
+            remove_comments(nlinha);
+            linha += nlinha;
         }
-    } while (pos == string::npos && new_file.good());
+    } while (pos == string::npos && !this->codigo.empty());
+    display_errors("Procura_fim_de_linha fim: ");
     return linha;
 }
 
 string _arq::replace_aspas(string linha) {
-    string nova_linha, aspas, retorno, verifica;
+    string nlinha, aspas, retorno, verifica;
     int pos, tipo, analise;
     analise = 1;
     verifica = linha;
-    nova_linha = linha;
+    nlinha = linha;
+    display_errors("Replace_aspas inicio: ");
     while (analise == 1) {
         pos = this->reg->reg_retorna_variavel_aspas(verifica, 1);
         if (pos != FALSE_VALUE) {
-            nova_linha = verifica.substr(0, pos);
+            nlinha = verifica.substr(0, pos);
             verifica = verifica.substr(pos, verifica.length());
             pos = this->reg->reg_retorna_variavel_aspas(verifica, 0);
             if (pos != FALSE_VALUE) {
                 aspas = verifica.substr(0, pos);
                 if (aspas[aspas.length() - 1] == 'd') {
-                    nova_linha += '"';
+                    nlinha += '"';
                     tipo = 0;
                 } else {
-                    nova_linha += '\'';
+                    nlinha += '\'';
                     tipo = 1;
                 }
                 verifica = verifica.substr(pos, verifica.length());
-                retorno = this->aux.aspas->busca_valor(aspas);
+                retorno = this->no_corrente->aspas->busca_valor(aspas);
                 if (!retorno.empty())
-                    nova_linha += retorno;
+                    nlinha += retorno;
                 else {
+                    cout << "EXIT REPLACE_ASPAS";
                     exit(-1);
                 }
                 if (tipo == 1)
-                    nova_linha += '\'';
+                    nlinha += '\'';
                 else
-                    nova_linha += '"';
-                nova_linha += verifica;
-                verifica = nova_linha;
+                    nlinha += '"';
+                nlinha += verifica;
+                verifica = nlinha;
             }
         } else {
             analise = 0;
         }
     }
-    return nova_linha;
+    this->no_corrente->aspas->call_clear();
+    display_errors("Replace_aspas fim: ");
+    return nlinha;
 }
 
 int _arq::verifica_tag(string &linha) {
@@ -207,6 +246,7 @@ int _arq::verifica_tag(string &linha) {
     tag = pos = 0;
     concatena = FALSE_VALUE;
     auxiliar.clear();
+    display_errors("verifica_tag inicio: ");
     if (tag_php == 1)
         analisa_ou_nao = 1;
     else
@@ -214,8 +254,8 @@ int _arq::verifica_tag(string &linha) {
     do {
         tag = pos;
         pos = reg->reg_tag_php(linha, tag_php);
-        // cout<<"Verifica TAG:"<<tag_php<<"E"<<"analisa"<<analisa_ou_nao<<endl;
-        //cout<<linha<<endl;
+        // cout << "Verifica TAG:" << tag_php << "E" << "analisa" << analisa_ou_nao << endl;
+        //cout << linha << endl;
         if (pos != FALSE_VALUE) {
             if (tag_php == 0) {
                 linha = linha.substr(pos, linha.length());
@@ -243,14 +283,78 @@ int _arq::verifica_tag(string &linha) {
     }
     if (analisa_ou_nao == 1) {
         do {
-            pos = linha.find_first_of (";");
-            if (pos  != string::npos){
-                auxiliar = linha.substr(0, pos+1);
-                linha = linha.substr(pos+1, linha.length());
+            pos = linha.find_first_of(";");
+            if (pos != string::npos) {
+                auxiliar = linha.substr(0, pos + 1);
+                linha = linha.substr(pos + 1, linha.length());
                 auxiliar = replace_aspas(auxiliar);
-                //cout<<auxiliar<<endl;
-                this->aux.verifica_linha(auxiliar);
+                verifica_condicional(auxiliar);
+                cout<<auxiliar<<endl<<endl<<endl;
+                this->no_corrente->verifica_linha(auxiliar, 0);
             }
+            if (this->no_corrente->colchete == 0 && this->no_corrente->pai != NULL)
+                this->no_corrente = this->no_corrente->pai;
         } while (pos != string::npos);
     }
+    display_errors("verifica_tag fim: ");
+}
+
+int _arq::nova_linha(string &linha) {
+    int pos;
+    display_errors("nova_linha: ");
+    pos = this->codigo.find_first_of("\n");
+    if (pos != string::npos) {
+        linha = this->codigo.substr(0, pos);
+        this->codigo = this->codigo.substr(pos + 1, this->codigo.length());
+        return TRUE_VALUE;
+    } else if (this->codigo.length() != 0) {
+        linha = this->codigo.substr(0, this->codigo.length());
+        this->codigo.clear();
+    } else {
+        cout << "fim_de arquivo" << endl;
+        this->codigo.clear();
+    }
+    display_errors("nova_linha fim: ");
+}
+
+int _arq::verifica_condicional(string &linha) {
+    int apos_cond, tipo, pos, cochete;
+    string if_completo;
+    apos_cond = pos = tipo = cochete = 0;
+    no_corrente->remove_space(linha);
+    cout << "Warning: " << linha << endl;
+    apos_cond = this->reg->reg_condicional_if(linha, tipo);
+    if (tipo == REG_IF) {
+        cout << "UM IF:" << linha.substr(apos_cond, linha.length()) << endl;
+        if_completo = linha.substr(0, apos_cond);
+        linha = linha.substr(apos_cond, linha.length());
+        pos = this->no_corrente->retorna_elementos_dentro_de_parentese(linha);
+        if (pos != FALSE_VALUE) {
+            if_completo += linha.substr(0, pos);
+            linha = linha.substr(pos, linha.length());
+            cochete = verifica_pos_condicional(linha);
+            this->no_corrente->novo_no(if_completo, cochete);
+            this->no_corrente = this->no_corrente->filho;
+            cout << "continuacao do if" << linha << endl;
+        } else
+            cout << "if sem sentido" << endl;
+    }
+    if (tipo == REG_ELSEIF) {
+        cout << "UM ELSEIF:" << linha.substr(apos_cond, linha.length()) << endl;
+    }
+    if (tipo == REG_ELSE) {
+        cout << "UM ELSE:" << linha.substr(apos_cond, linha.length()) << endl;
+    }
+}
+
+int _arq::verifica_pos_condicional(string &linha) {
+    this->no_corrente->remove_space(linha);
+    if (linha[0] == '{') {
+        cout << "POSSUI COXETES" << endl;
+        linha = linha.substr(1, linha.length());
+        cout << linha << endl;
+        return 1;
+    }
+    cout << "NAO POSSUI COXETES" << endl;
+    return 0;
 }

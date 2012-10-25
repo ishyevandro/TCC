@@ -4,13 +4,39 @@
     <df name="Manipulacao de arquivo" root=".">
       <df name="projeto">
         <df name="autom4te.cache">
-          <in>requests</in>
         </df>
         <df name="src">
-          <df name=".deps">
+          <in>classe_arquivo.C</in>
+          <in>classe_arquivo.h</in>
+          <in>classe_aspas.C</in>
+          <in>classe_aspas.h</in>
+          <in>classe_funcao.C</in>
+          <in>classe_funcao.h</in>
+          <in>classe_intermediaria.C</in>
+          <in>classe_intermediaria.h</in>
+          <in>classe_reg.C</in>
+          <in>classe_reg.h</in>
+          <in>classe_var.C</in>
+          <in>classe_var.h</in>
+          <in>editor.C</in>
+          <in>editor.h</in>
+          <in>main.C</in>
+          <in>variavel.h</in>
+        </df>
+        <df name="test">
+        </df>
+        <in>config.h</in>
+      </df>
+      <df name="projeto_antes_da_integracao">
+        <df name="autom4te.cache">
+        </df>
+        <df name="src">
+          <df name="hack">
           </df>
           <in>classe_arquivo.C</in>
           <in>classe_arquivo.h</in>
+          <in>classe_aspas.C</in>
+          <in>classe_aspas.h</in>
           <in>classe_funcao.C</in>
           <in>classe_funcao.h</in>
           <in>classe_intermediaria.C</in>

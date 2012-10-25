@@ -48,8 +48,10 @@ using namespace std;
 #define REG_COMMENTS_SIMPLE 40
 #define REG_COMMENTS_INI 41
 #define REG_COMMENTS_FIM 42
-#define REG_ASPAS_D 43
-#define REG_ASPAS_S 44
+#define REG_ASPAS_D_I 43
+#define REG_ASPAS_S_I 44
+#define REG_ASPAS_D_F 46
+#define REG_ASPAS_S_F 47
 #define REG_VAR_ASPAS 45
 #define MAX_REG 100
 
@@ -60,6 +62,11 @@ using namespace std;
 /*Deteccao de TAG PHP inicio e FIM*/
 #define REG_INI_PHP 60
 #define REG_FIM_PHP 61
+
+/*Deteccao de condicionais*/
+#define REG_IF 70
+#define REG_ELSEIF 71
+#define REG_ELSE 72
 
 class _reg {
 public:
@@ -81,13 +88,14 @@ public:
     int reg_segunda_parte_linha(string );
     int reg_operador_cat_ou_aritmetico(string);
  //   int count_string(string, string);
-    int reg_verifica_aspasd (string);
-    int reg_verifica_aspass (string);
+    int reg_verifica_aspasd (string, int);
+    int reg_verifica_aspass (string, int);
     int reg_verifica_parentese (string, int, int);
     int reg_verifica_operador_compara(string);
     int reg_remove_operador_compara(string);
     int reg_retorna_variavel_aspas (string, int);
     int reg_tag_php (string, int);
+    int reg_condicional_if (string, int &);
 //verificacao de funcoes
     
 };

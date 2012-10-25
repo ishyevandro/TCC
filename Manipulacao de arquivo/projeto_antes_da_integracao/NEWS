@@ -1,0 +1,3 @@
+configure do regex.
+./configure --with-boost-regex=boost_regex
+

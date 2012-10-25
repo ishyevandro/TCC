@@ -5,7 +5,7 @@
 #include "classe_reg.h"
 #include "variavel.h"
 
-#define VET_NUM 50
+#define VET_NUM 200
 using namespace std;
 
 class _var {

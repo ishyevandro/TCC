@@ -662,6 +662,80 @@ AC_MSG_RESULT([$am_cv_prog_tar_$1])])
 AC_SUBST([am__tar])
 AC_SUBST([am__untar])
 ])
+m4trace:acinclude.m4:1: -1- m4_include([regex.m4])
+m4trace:regex.m4:32: -1- AC_DEFUN([AX_BOOST_REGEX], [
+	AC_ARG_WITH([boost-regex],
+	AS_HELP_STRING([--with-boost-regex@<:@=special-lib@:>@],
+                   [use the Regex library from boost - it is possible to specify a certain library for the linker
+                        e.g. --with-boost-regex=boost_regex-gcc-mt-d-1_33_1 ]),
+        [
+        if test "$withval" = "no"; then
+			want_boost="no"
+        elif test "$withval" = "yes"; then
+            want_boost="yes"
+            ax_boost_user_regex_lib=""
+        else
+		    want_boost="yes"
+        	ax_boost_user_regex_lib="$withval"
+		fi
+        ],
+        [want_boost="yes"]
+	)
+
+	if test "x$want_boost" = "xyes"; then
+        AC_REQUIRE([AC_PROG_CC])
+		CPPFLAGS_SAVED="$CPPFLAGS"
+		CPPFLAGS="$CPPFLAGS $BOOST_CPPFLAGS"
+		export CPPFLAGS
+
+		LDFLAGS_SAVED="$LDFLAGS"
+		LDFLAGS="$LDFLAGS $BOOST_LDFLAGS"
+		export LDFLAGS
+
+        AC_CACHE_CHECK(whether the Boost::Regex library is available,
+					   ax_cv_boost_regex,
+        [AC_LANG_PUSH([C++])
+			 AC_COMPILE_IFELSE(AC_LANG_PROGRAM([[@%:@include <boost/regex.hpp>
+												]],
+                                   [[boost::regex r(); return 0;]]),
+                   ax_cv_boost_regex=yes, ax_cv_boost_regex=no)
+         AC_LANG_POP([C++])
+		])
+		if test "x$ax_cv_boost_regex" = "xyes"; then
+			AC_DEFINE(HAVE_BOOST_REGEX,,[define if the Boost::Regex library is available])
+            BOOSTLIBDIR=`echo $BOOST_LDFLAGS | sed -e 's/@<:@^\/@:>@*//'`
+            if test "x$ax_boost_user_regex_lib" = "x"; then
+                for libextension in `ls $BOOSTLIBDIR/libboost_regex*.{so,a}* 2>/dev/null | sed 's,.*/,,' | sed -e 's;^lib\(boost_regex.*\)\.so.*$;\1;' -e 's;^lib\(boost_regex.*\)\.a*$;\1;'` ; do
+                     ax_lib=${libextension}
+				    AC_CHECK_LIB($ax_lib, exit,
+                                 [BOOST_REGEX_LIB="-l$ax_lib"; AC_SUBST(BOOST_REGEX_LIB) link_regex="yes"; break],
+                                 [link_regex="no"])
+  				done
+                if test "x$link_regex" != "xyes"; then
+                for libextension in `ls $BOOSTLIBDIR/boost_regex*.{dll,a}* 2>/dev/null | sed 's,.*/,,' | sed -e 's;^\(boost_regex.*\)\.dll.*$;\1;' -e 's;^\(boost_regex.*\)\.a*$;\1;'` ; do
+                     ax_lib=${libextension}
+				    AC_CHECK_LIB($ax_lib, exit,
+                                 [BOOST_REGEX_LIB="-l$ax_lib"; AC_SUBST(BOOST_REGEX_LIB) link_regex="yes"; break],
+                                 [link_regex="no"])
+  				done
+                fi
+
+            else
+               for ax_lib in $ax_boost_user_regex_lib boost_regex-$ax_boost_user_regex_lib; do
+				      AC_CHECK_LIB($ax_lib, main,
+                                   [BOOST_REGEX_LIB="-l$ax_lib"; AC_SUBST(BOOST_REGEX_LIB) link_regex="yes"; break],
+                                   [link_regex="no"])
+               done
+            fi
+			if test "x$link_regex" != "xyes"; then
+				AC_MSG_ERROR(Could not link against $ax_lib !)
+			fi
+		fi
+
+		CPPFLAGS="$CPPFLAGS_SAVED"
+    	LDFLAGS="$LDFLAGS_SAVED"
+	fi
+])
 m4trace:configure.ac:1: -1- m4_pattern_forbid([^_?A[CHUM]_])
 m4trace:configure.ac:1: -1- m4_pattern_forbid([_AC_])
 m4trace:configure.ac:1: -1- m4_pattern_forbid([^LIBOBJS$], [do not use LIBOBJS directly, use AC_LIBOBJ (see section `AC_LIBOBJ vs LIBOBJS'])
@@ -864,13 +938,51 @@ m4trace:configure.ac:8: -1- PKG_CHECK_EXISTS([gtkmm-2.4 >= 2.10], [pkg_cv_[]GTKM
 m4trace:configure.ac:8: -1- PKG_CHECK_EXISTS([gtkmm-2.4 >= 2.10], [pkg_cv_[]GTKMM_LIBS=`$PKG_CONFIG --[]libs "gtkmm-2.4 >= 2.10" 2>/dev/null`
 		      test "x$?" != "x0" && pkg_failed=yes ], [pkg_failed=yes])
 m4trace:configure.ac:8: -1- _PKG_SHORT_ERRORS_SUPPORTED
-m4trace:configure.ac:9: -1- m4_pattern_allow([^size_t$])
-m4trace:configure.ac:12: -1- m4_pattern_allow([^LIB@&t@OBJS$])
-m4trace:configure.ac:12: -1- m4_pattern_allow([^LTLIBOBJS$])
-m4trace:configure.ac:12: -1- AM_CONDITIONAL([am__EXEEXT], [test -n "$EXEEXT"])
-m4trace:configure.ac:12: -1- m4_pattern_allow([^am__EXEEXT_TRUE$])
-m4trace:configure.ac:12: -1- m4_pattern_allow([^am__EXEEXT_FALSE$])
-m4trace:configure.ac:12: -1- _AM_SUBST_NOTMAKE([am__EXEEXT_TRUE])
-m4trace:configure.ac:12: -1- _AM_SUBST_NOTMAKE([am__EXEEXT_FALSE])
-m4trace:configure.ac:12: -1- _AC_AM_CONFIG_HEADER_HOOK(["$ac_file"])
-m4trace:configure.ac:12: -1- _AM_OUTPUT_DEPENDENCY_COMMANDS
+m4trace:configure.ac:9: -1- PKG_CHECK_MODULES([SQLITE], [sqlite3 >= 3.0])
+m4trace:configure.ac:9: -1- m4_pattern_allow([^SQLITE_CFLAGS$])
+m4trace:configure.ac:9: -1- m4_pattern_allow([^SQLITE_LIBS$])
+m4trace:configure.ac:9: -1- PKG_CHECK_EXISTS([sqlite3 >= 3.0], [pkg_cv_[]SQLITE_CFLAGS=`$PKG_CONFIG --[]cflags "sqlite3 >= 3.0" 2>/dev/null`
+		      test "x$?" != "x0" && pkg_failed=yes ], [pkg_failed=yes])
+m4trace:configure.ac:9: -1- PKG_CHECK_EXISTS([sqlite3 >= 3.0], [pkg_cv_[]SQLITE_LIBS=`$PKG_CONFIG --[]libs "sqlite3 >= 3.0" 2>/dev/null`
+		      test "x$?" != "x0" && pkg_failed=yes ], [pkg_failed=yes])
+m4trace:configure.ac:9: -1- _PKG_SHORT_ERRORS_SUPPORTED
+m4trace:configure.ac:10: -1- PKG_CHECK_MODULES([EX], [libex-1.0 >= 1.0])
+m4trace:configure.ac:10: -1- m4_pattern_allow([^EX_CFLAGS$])
+m4trace:configure.ac:10: -1- m4_pattern_allow([^EX_LIBS$])
+m4trace:configure.ac:10: -1- PKG_CHECK_EXISTS([libex-1.0 >= 1.0], [pkg_cv_[]EX_CFLAGS=`$PKG_CONFIG --[]cflags "libex-1.0 >= 1.0" 2>/dev/null`
+		      test "x$?" != "x0" && pkg_failed=yes ], [pkg_failed=yes])
+m4trace:configure.ac:10: -1- PKG_CHECK_EXISTS([libex-1.0 >= 1.0], [pkg_cv_[]EX_LIBS=`$PKG_CONFIG --[]libs "libex-1.0 >= 1.0" 2>/dev/null`
+		      test "x$?" != "x0" && pkg_failed=yes ], [pkg_failed=yes])
+m4trace:configure.ac:10: -1- _PKG_SHORT_ERRORS_SUPPORTED
+m4trace:configure.ac:11: -1- PKG_CHECK_MODULES([BSL], [libbancosl-1.0 >= 1.0])
+m4trace:configure.ac:11: -1- m4_pattern_allow([^BSL_CFLAGS$])
+m4trace:configure.ac:11: -1- m4_pattern_allow([^BSL_LIBS$])
+m4trace:configure.ac:11: -1- PKG_CHECK_EXISTS([libbancosl-1.0 >= 1.0], [pkg_cv_[]BSL_CFLAGS=`$PKG_CONFIG --[]cflags "libbancosl-1.0 >= 1.0" 2>/dev/null`
+		      test "x$?" != "x0" && pkg_failed=yes ], [pkg_failed=yes])
+m4trace:configure.ac:11: -1- PKG_CHECK_EXISTS([libbancosl-1.0 >= 1.0], [pkg_cv_[]BSL_LIBS=`$PKG_CONFIG --[]libs "libbancosl-1.0 >= 1.0" 2>/dev/null`
+		      test "x$?" != "x0" && pkg_failed=yes ], [pkg_failed=yes])
+m4trace:configure.ac:11: -1- _PKG_SHORT_ERRORS_SUPPORTED
+m4trace:configure.ac:12: -1- m4_pattern_allow([^DB_FILE$])
+m4trace:configure.ac:13: -1- AX_BOOST_REGEX
+m4trace:configure.ac:13: -1- _m4_warn([syntax], [AC_LANG_CONFTEST: no AC_LANG_SOURCE call detected in body], [../../lib/autoconf/lang.m4:194: AC_LANG_CONFTEST is expanded from...
+../../lib/autoconf/general.m4:2591: _AC_COMPILE_IFELSE is expanded from...
+../../lib/autoconf/general.m4:2607: AC_COMPILE_IFELSE is expanded from...
+../../lib/m4sugar/m4sh.m4:606: AS_IF is expanded from...
+../../lib/autoconf/general.m4:2032: AC_CACHE_VAL is expanded from...
+../../lib/autoconf/general.m4:2053: AC_CACHE_CHECK is expanded from...
+regex.m4:32: AX_BOOST_REGEX is expanded from...
+configure.ac:13: the top level])
+m4trace:configure.ac:13: -1- m4_pattern_allow([^HAVE_BOOST_REGEX$])
+m4trace:configure.ac:13: -1- m4_pattern_allow([^BOOST_REGEX_LIB$])
+m4trace:configure.ac:13: -1- m4_pattern_allow([^BOOST_REGEX_LIB$])
+m4trace:configure.ac:13: -1- m4_pattern_allow([^BOOST_REGEX_LIB$])
+m4trace:configure.ac:14: -1- m4_pattern_allow([^size_t$])
+m4trace:configure.ac:18: -1- m4_pattern_allow([^LIB@&t@OBJS$])
+m4trace:configure.ac:18: -1- m4_pattern_allow([^LTLIBOBJS$])
+m4trace:configure.ac:18: -1- AM_CONDITIONAL([am__EXEEXT], [test -n "$EXEEXT"])
+m4trace:configure.ac:18: -1- m4_pattern_allow([^am__EXEEXT_TRUE$])
+m4trace:configure.ac:18: -1- m4_pattern_allow([^am__EXEEXT_FALSE$])
+m4trace:configure.ac:18: -1- _AM_SUBST_NOTMAKE([am__EXEEXT_TRUE])
+m4trace:configure.ac:18: -1- _AM_SUBST_NOTMAKE([am__EXEEXT_FALSE])
+m4trace:configure.ac:18: -1- _AC_AM_CONFIG_HEADER_HOOK(["$ac_file"])
+m4trace:configure.ac:18: -1- _AM_OUTPUT_DEPENDENCY_COMMANDS

@@ -140,11 +140,18 @@ void _reg::reg_comp()//verificar se sera assim mesmo
         cout << "Montagem da expressao de comentario simples com erro\n" << endl;
         exit(-1);
     }
-    if (reg_comp_all("(\")", REG_ASPAS_D) != 0) {
+    if (reg_comp_all("\"", REG_ASPAS_D_I) != 0) {
         cout << "Erro na montagem: Expressao de aspas duplas" << endl;
     }
-    if (reg_comp_all("(\')", REG_ASPAS_S) != 0) {
-        cout << "Erro na montagem: Expressao de aspas simples" << endl;
+
+    if (reg_comp_all("\"", REG_ASPAS_D_F) != 0) {
+        cout << "Erro na montagem: Expressao de aspas duplas" << endl;
+    }
+    if (reg_comp_all("\'", REG_ASPAS_S_I) != 0) {
+        cout << "Erro na montagem: Expressao de aspas simples INICIO" << endl;
+    }//mais proximo de certo [^\\\\]
+    if (reg_comp_all("(\')", REG_ASPAS_S_F) != 0) {
+        cout << "Erro na montagem: Expressao de aspas simples FIM" << endl;
     }
     if (reg_comp_all("(\\$[[:digit:]][ds])", REG_VAR_ASPAS) != 0) {
         cout << "Erro na montagem: Expressao de aspas simples" << endl;
@@ -161,6 +168,17 @@ void _reg::reg_comp()//verificar se sera assim mesmo
         cout << "Erro na montagem: Expressao de parentese final" << endl;
     }
     if (reg_comp_all("(\\?>)", REG_FIM_PHP) != 0) {
+        cout << "Erro na montagem: Expressao de parentese final" << endl;
+    }
+
+    /*Condicionais*/
+    if (reg_comp_all("^(if)", REG_IF) != 0) {
+        cout << "Erro na montagem: Expressao de parentese final" << endl;
+    }
+    if (reg_comp_all("^(elseif|else *if)", REG_ELSEIF) != 0) {
+        cout << "Erro na montagem: Expressao de parentese final" << endl;
+    }
+    if (reg_comp_all("^(else)", REG_ELSE) != 0) {
         cout << "Erro na montagem: Expressao de parentese final" << endl;
     }
 }
@@ -216,7 +234,8 @@ int _reg::reg_to_operator(string line) {
     if (reg_exec_all(line, REG_OPERATOR_CAT) == 0)
         return REG_OPERATOR_CAT;
     else
-        cout << "ERRO FUDIDO" << endl;
+        cout << "ERRO nos operadores" << endl;
+    return FALSE_VALUE;
 }
 
 int _reg::reg_comments(string line) {
@@ -254,21 +273,33 @@ int _reg::reg_operador_cat_ou_aritmetico(string subline) {
     if (reg_exec_all(subline, REG_POS_OPERATOR_CAT) == 0)
         return REG_POS_OPERATOR_CAT;
     else if (reg_exec_all(subline, REG_POS_OPERATOR_MAT) == 0) {//###TEM ALGUM ERRO AQUI ESTRANHO SE ESTIVER ANTES DO PONTO ELE PEGA PONTO COMO OPERADOR MATEMATICO
-        cout << subline << "QUE PUTARIA E ESSA?" << subline[result.rm_so] << endl;
+        // cout << subline << "QUE PUTARIA E ESSA?" << subline[result.rm_so] << endl;
         return REG_POS_OPERATOR_MAT;
     } else
         return FALSE_VALUE;
 }
 
-int _reg::reg_verifica_aspasd(string line) {
-    if (reg_exec_all(line, REG_ASPAS_D) == 0) {
+int _reg::reg_verifica_aspasd(string line, int tipo) {
+    int execute;
+    if (tipo == 0)
+        execute = REG_ASPAS_D_I;
+    else
+        execute = REG_ASPAS_D_F;
+    if (reg_exec_all(line, execute) == 0) {
         return result.rm_so;
     }
     return FALSE_VALUE;
 }
 
-int _reg::reg_verifica_aspass(string line) {
-    if (reg_exec_all(line, REG_ASPAS_S) == 0) {
+int _reg::reg_verifica_aspass(string line, int tipo) {
+    int execute;
+    if (tipo == 0)
+        execute = REG_ASPAS_S_I;
+    else
+        execute = REG_ASPAS_S_F;
+    //cout << execute << "(^\\\\)\'" << line << endl;
+    if (reg_exec_all(line, execute) == 0) {
+        //  cout <<"encontrado "<<execute << endl;
         return result.rm_so;
     }
     return FALSE_VALUE;
@@ -329,6 +360,24 @@ int _reg::reg_tag_php(string line, int type) {
     } else {
         if (reg_exec_all(line, REG_FIM_PHP) == 0)
             return result.rm_so;
+    }
+    return FALSE_VALUE;
+}
+
+int _reg::reg_condicional_if(string line, int &tipo) {
+
+    if (reg_exec_all(line, REG_IF) == 0) {
+        tipo = REG_IF;
+        return result.rm_eo;
+    }
+    if (reg_exec_all(line, REG_ELSEIF) == 0) {
+        tipo = REG_ELSEIF;
+        return result.rm_eo;
+    }
+
+    if (reg_exec_all(line, REG_ELSE) == 0) {
+        tipo = REG_ELSE;
+        return result.rm_eo;
     }
     return FALSE_VALUE;
 }

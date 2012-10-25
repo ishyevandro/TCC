@@ -1,27 +1,32 @@
 #include <iostream>
 #include "classe_intermediaria.h"
 
-_intermediaria::_intermediaria() : reg(NULL), vet_num(0) {
+_intermediaria::_intermediaria() : irmao(NULL), pai(NULL), filho(NULL), reg(NULL), vet_num(0), colchete(0) {
     this->vetor_de_variaveis.resize(VET_NUM);
     this->reg = new _reg;
     this->aspas = new _aspas;
+    this->no = "Raiz";
 }
 
-void display_error(string prnt) {
+void _intermediaria::display_error(string prnt) {
     if (DISPLAY_ERROR == 1)
-        cout << prnt << endl;
+        cout <<this->no<<prnt << endl;
 }
 
 //int _intermediaria::get_line_to_analyse(string line, vector<_var> &vetor_de_variaveis, int &vet_num, _reg reg) {
 //int _intermediaria::get_line_to_analyse(string line, int &vet_num, _reg reg) {
 
-int _intermediaria::verifica_linha(string line) {
+int _intermediaria::verifica_linha(string line, int irmao) {
     int n;
-    // n = remove_comments(line, reg);
+    if (this->filho != NULL)
+        this->filho->verifica_linha(line, 1);
+    if (irmao == 1){
+        if (this->irmao != NULL)
+            this->irmao->verifica_linha(line,1);
+    }
     remove_space(line);
     n = reg->what_is_first_string(line);
     if (n == REG_VARIABLE) {
-        //cout <<"INICIO ANALISE LINHA: "<<line<<endl<<endl<<endl<<endl;
         analisa_linha(line);
     } else {
         verifica_condicional_laco(line);
@@ -57,10 +62,11 @@ int _intermediaria::analisa_linha(string line) {
         operator_type = type_of_operator(line); /*verifica qual o tipo de operador*/
         switch (operator_type) {/*acoes a serem feitas com cada operador*/
             case REG_OPERATOR_NORMAL:
+                //  cout << "nor" << endl;
                 operador_normal(line, array_of_vars_in_array, nova_variavel);
                 break;
             case REG_OPERATOR_CAT:
-                // cout << "cat" << endl;
+                //   cout << "cat" << endl;
                 operador_cat(line, array_of_vars_in_array, nova_variavel);
                 break;
                 //case REG_OPERATOR_SOMA REG_OPERATOR_SUB REG_OPERATOR_DIV REG_OPERATOR_RES:;
@@ -136,6 +142,10 @@ string _intermediaria::primeira_variavel(string &line) {
     } else if (tipo_de_string == REG_FUNCTION) {
         display_error("primeira_variavel fim FUNCAO");
         nova_string = retorna_funcao(line);
+        if (nova_string.empty()) {
+            cout << "####ERRO de sintaxe" << endl;
+            return nova_string;
+        }
         verifica_funcao(nova_string); //{analise no lugar errado}
     } else if (line[0] == '"') {
         display_error("primeira variavel fim ASPAS");
@@ -191,6 +201,8 @@ string _intermediaria::retorna_funcao(string &line) {
     pos_ini = this->reg->reg_verifica_parentese(line, REG_PARENTESE_I, 0);
     if (pos_ini != FALSE_VALUE) {
         pos_fim = retorna_elementos_dentro_de_parentese(line);
+        if (pos_fim == FALSE_VALUE)
+            return retorno;
         retorno = line.substr(0, pos_fim);
         line = line.substr(pos_fim, line.length());
     }
@@ -201,14 +213,20 @@ string _intermediaria::retorna_funcao(string &line) {
 }
 
 string _intermediaria::aspas_duplas(string &line) {
-    int n;
+    int n, aux;
     string retorno;
     remove_space(line);
-    n = this->reg->reg_verifica_aspasd(line);
-    line = line.substr(n + 1, line.length());
-    //cout<<"aspas duplas:"<<line<<endl;
-    n = this->reg->reg_verifica_aspasd(line);
+    n = this->reg->reg_verifica_aspasd(line, 0);
     if (n == FALSE_VALUE) {
+        //   cout << line << endl;
+        exit(1);
+    }
+    line = line.substr(n + 1, line.length());
+    //  cout << line << endl;
+    n = this->reg->reg_verifica_aspasd(line, 1);
+    aux = FALSE_VALUE;
+    if (n == FALSE_VALUE) {
+        cout << line << endl;
         cout << "Nao possui outra aspas" << endl;
         exit(1);
     }
@@ -227,10 +245,10 @@ string _intermediaria::aspas_simples(string &line) {
     int n;
     string retorno;
     remove_space(line);
-    n = this->reg->reg_verifica_aspass(line);
+    n = this->reg->reg_verifica_aspass(line, 0);
     line = line.substr(n + 1, line.length());
     //cout<<"aspas duplas:"<<line<<endl;
-    n = this->reg->reg_verifica_aspass(line);
+    n = this->reg->reg_verifica_aspass(line, 1);
     if (n == FALSE_VALUE && n == string::npos) {
         cout << "Nao possui outra aspas" << endl;
         exit(1);
@@ -240,6 +258,7 @@ string _intermediaria::aspas_simples(string &line) {
     retorno += '\'';
     line = line.substr(n + 1, line.length());
     remove_space(line);
+
     return retorno;
 }
 
@@ -253,11 +272,13 @@ int _intermediaria::type_of_operator(string &line) {
         line = line.substr(1, line.length());
     else
         line = line.substr(2, line.length());
+    display_error("type_of_operator fim");
     return retorno;
 }
 
 int _intermediaria::operador_normal(string subline, string reg_vetor_de_variaveis, string nova_variavel) {//##reg_vetor excesso
     //##implementar para futuramente passar a string e nao a linha toda para analise futura.
+
     _var auxiliar_sublinha; //pega todas as iteracoes posterior ao operador e armazena aqui para no fim colocar no vetor. Feito dessa forma para nao cair em recursao de objetos quando uma variavel receber ela mesmo depois de receber alguma outra.
     display_error("operador_normal INICIO");
     auxiliar_sublinha.variavel = nova_variavel;
@@ -268,6 +289,7 @@ int _intermediaria::operador_normal(string subline, string reg_vetor_de_variavei
 }
 
 int _intermediaria::operador_cat(string subline, string reg_vetor_de_variaveis, string nova_variavel) {
+
     _var nova_var;
     string reg_string_de_var_com_g_p;
     display_error("Operador_cat inicio");
@@ -285,9 +307,12 @@ int _intermediaria::pos_operador(string &subline, string reg_vetor_de_variaveis,
     vazia.empty();
     cast = FALSE_VALUE;
     variavel_atual = primeira_variavel(subline);
-    // exit(1);
+    //cout << "POS OPERADOR ERRO " << endl;
+    display_error("POS operador inicio");
+    // cout << "POS OPERADOR ERRO " << endl;
     ultima_variavel = 1;
     do {
+        //cout << subline << endl;
         prox_operador = proximo_operador(subline);
         if (prox_operador == REG_OPERATOR_COMPARE) {
             remove_operador_intermediario(subline);
@@ -337,15 +362,18 @@ int _intermediaria::pos_operador(string &subline, string reg_vetor_de_variaveis,
         cout << "Removendo variavel: " << nova_variavel.variavel << endl;
         remove_variavel_do_vetor(nova_variavel.variavel);
     } else if (nova_variavel.n_var > 0) {
+
         copia_var(nova_variavel);
     }
+    display_error("POS operador FIM");
     return 0;
 }
 
 int _intermediaria::retorna_elementos_dentro_de_parentese(string line) {
-    int pos_ini, pos_fim, i, j, pos, count;
+    int pos_ini, pos_fim, i, j, pos, count, aspas_d, aspas_s;
     string retorno, auxiliar;
     retorno.clear();
+    pos_ini = pos_fim = i = j = pos = count = aspas_d = aspas_s = 0;
     display_error("retorna_elementos_dentro_de_parentese");
     pos_ini = this->reg->reg_verifica_parentese(line, REG_PARENTESE_I, 0);
     if (pos_ini == FALSE_VALUE)
@@ -353,18 +381,39 @@ int _intermediaria::retorna_elementos_dentro_de_parentese(string line) {
     pos_fim = this->reg->reg_verifica_parentese(line, REG_PARENTESE_F, 1);
     if (pos_fim == FALSE_VALUE)
         return FALSE_VALUE;
-    auxiliar = line;
+    auxiliar = line.substr(0, pos_fim);
+    //cout << auxiliar << endl;
     count = count_char(auxiliar, '(');
-    i = j = 0;
-    while (i < count) {
-        if (line[j] == ')')
-            i++;
-        j++;
-        if (j > line.length()) {
+    aspas_s = aspas_d = 0;
+    //cout << count << endl;
+    do {
+        if (j > auxiliar.length()) {
             return FALSE_VALUE;
         }
-    }
-    auxiliar = line.substr(0, j);
+        //cout << "i" << i << "count" << count << "j" << j << line[j] << endl;
+        if (line[j] == '\'') {
+            if (aspas_s == 0) {
+                if (aspas_d == 0)
+                    aspas_s = 1;
+            } else if (j > 0) {
+                if (line[j - 1] != '\\')
+                    aspas_s = 0;
+            }
+        }
+        if (line[j] == '"') {
+            if (aspas_d == 0) {
+                if (aspas_s == 0)
+                    aspas_d = 1;
+            } else if (j > 0) {
+                if (line[j - 1] != '\\')
+                    aspas_d = 0;
+            }
+        }
+        if (line[j] == ')' && aspas_s == 0 && aspas_d == 0)
+            i++;
+        j++;
+        // cout << "aspas_s" << aspas_s << " aspasd " << aspas_d << endl;
+    } while (i < count);
     display_error("retorna_elementos_dentro_de_parentese fim");
     return j;
 }
@@ -379,7 +428,7 @@ int _intermediaria::proximo_operador(string line) {
     }
     tipo_de_operador = this->reg->reg_operador_cat_ou_aritmetico(line);
     if (tipo_de_operador != FALSE_VALUE) {
-     //   cout << "PROXIMO_OPERADOR: " << tipo_de_operador << endl << line << endl;
+        //   cout << "PROXIMO_OPERADOR: " << tipo_de_operador << endl << line << endl;
         return tipo_de_operador;
     } else return FALSE_VALUE;
 
@@ -391,6 +440,7 @@ int _intermediaria::remove_operador_intermediario(string &line) {
     n = this->reg->reg_remove_operador_compara(line);
     line = line.substr(n, line.length());
     primeira_variavel(line);
+
     return 1;
 }
 
@@ -411,8 +461,9 @@ int _intermediaria::operador_intermediario(string &subline) {
         remove_space(subline);
         return REG_POS_OPERATOR_MAT;
     } else {
-      //  cout << "NAO E MATEMATICO NEM CONCATENA: " << subline << endl;
+        //  cout << "NAO E MATEMATICO NEM CONCATENA: " << subline << endl;
         remove_space(subline);
+
         return FALSE_VALUE;
     }
 }
@@ -427,7 +478,7 @@ int _intermediaria::operador_aspas(_var &nova_variavel, string &subline, int cas
         n = subline.find_first_of("$");
         if (n != string::npos) {
             subline = subline.substr(n + 1, subline.length());
-            k = subline.find_first_of(" }\"$");
+            k = subline.find_first_of(" }\"\'$");
             if (k != string::npos) {
                 variavel = '$';
                 variavel = variavel + subline.substr(0, k);
@@ -436,8 +487,9 @@ int _intermediaria::operador_aspas(_var &nova_variavel, string &subline, int cas
                 reg_vetor_de_variaveis = string_of_var_to_reg();
                 aux = this->reg->mount_reg_get_or_post(variavel, reg_vetor_de_variaveis);
                 if (aux != FALSE_VALUE) {
-                //    cout << "operador_normal_variavel pelo operador_aspas" << endl << subline;
+                    //    cout << "operador_normal_variavel pelo operador_aspas" << endl << subline;
                     retorno_operador_normal = operador_normal_variavel(nova_variavel, variavel, cast);
+
                     if (retorno_operador_normal != FALSE_VALUE)
                         retorno = retorno_operador_normal;
                 }
@@ -453,7 +505,8 @@ int _intermediaria::operador_normal_variavel(_var &nova_variavel, string &sublin
     string reg_string_de_var_com_g_p;
     display_error("operador_normal_variavel");
     remove_space(subline);
-  //   cout << "cast" << cast << endl;
+    //   cout << "cast" << cast << endl;
+
     return adiciona_get_ou_post(nova_variavel, subline, cast);
     //ALTERAR ESSE RETURN
 }
@@ -473,21 +526,8 @@ int _intermediaria::operador_normal_funcao(_var &nova_variavel, string &string_a
         do {
             remove_space(string_atual);
             aux = reg->what_is_first_string(string_atual);
-            /*cout << aux << endl;
-            if (aux == REG_POS_OPERATOR_MAT) {
-                aux_cast = 1;
-                if (!string_atual.empty()) {
-                    cout << "ANDA COM OPERADOR" << string_atual << endl;
-                    string_atual = string_atual.substr(1, string_atual.length());
-                    aux = reg->what_is_first_string(string_atual);
-                } else {
-                    cout << "STRING VAZIA" << endl;
-                    return retorno_absoluto;
-                }
-            }*/
             if (aux == REG_NUMBER) {
                 analisa_string = primeira_variavel(string_atual);
-          //      cout << "NUMBER" << endl;
             } else if (aux == REG_FUNCTION) {//doidera total rever essa coisa louca
                 analisa_string = retorna_funcao(string_atual);
                 remove_space(string_atual);
@@ -497,11 +537,11 @@ int _intermediaria::operador_normal_funcao(_var &nova_variavel, string &string_a
                     analisa_string = analisa_string.substr(pos, analisa_string.length());
                 }
                 if (proximo_operador(string_atual) == REG_POS_OPERATOR_MAT || aux_cast == 1) {
-              //      cout << "Operador Matematico" << string_atual << endl;
+                    //      cout << "Operador Matematico" << string_atual << endl;
                     retorno = operador_normal_funcao(nova_variavel, analisa_string, aux_cast);
                     aux_cast = 0;
                 } else {
-             //       cout << string_atual << endl;
+                    //       cout << string_atual << endl;
                     retorno = operador_normal_funcao(nova_variavel, analisa_string, cast);
                 }
                 if (retorno == 1) {
@@ -509,18 +549,18 @@ int _intermediaria::operador_normal_funcao(_var &nova_variavel, string &string_a
                     for (i = *numero_de_variaveis; i < nova_variavel.n_var; i++) {
                         nova_variavel.vect[i].funcao += string_func;
                     }
-                    this->n_funcao = 0;
+                    // this->n_funcao = 0;
                     display_error("operador_normal_funcao fim");
                     //1return retorno;
                     if (retorno_absoluto != 1)
                         retorno_absoluto = retorno;
                 }
             } else if (aux == REG_VARIABLE) {//##adicao de aspas nesse ponto. e perigoso a forma que esta sendo usada ate o momento
-           //     cout << "WARNING" << endl;
+                //     cout << "WARNING" << endl;
                 analisa_string = primeira_variavel(string_atual); //acaba perdendo o resto da string alterar aqui
-                
+
                 retorno = operador_normal_variavel(nova_variavel, analisa_string, cast);
-            //    cout << "WARNING"<<string_atual << endl;
+                //    cout << "WARNING"<<string_atual << endl;
                 display_error("operador_normal_funcao fim");
                 //1return retorno;
                 if (retorno_absoluto != 1)
@@ -533,22 +573,23 @@ int _intermediaria::operador_normal_funcao(_var &nova_variavel, string &string_a
                     retorno_absoluto = retorno;
             }
             if (string_atual.empty() || string_atual[0] == ')') {
-            //    cout << "fim do laco" << endl;
+                //    cout << "fim do laco" << endl;
                 aux = -3;
             } else if (string_atual[0] == ',') {
-            //    cout << string_atual << endl;
+                //    cout << string_atual << endl;
                 string_atual = string_atual.substr(1, string_atual.length());
-          //      cout << string_atual << endl;
+                //      cout << string_atual << endl;
             } else if (operador_intermediario(string_atual) == REG_POS_OPERATOR_MAT) {
                 //       string_atual = string_atual.substr(1, string_atual.length());
-            //    cout << "ENTRANDO AQUI" << string_atual << endl;
+                //    cout << "ENTRANDO AQUI" << string_atual << endl;
                 aux_cast = 1;
             }
             remove_space(string_atual);
-         //   cout << analisa_string << endl << "String atual" << string_atual << endl;
+            //   cout << analisa_string << endl << "String atual" << string_atual << endl;
         } while (aux != -3); //### este while precisa ser feito corretamente com lance de concatenacao, verificacao de tudo que e necessario colocar as coisas no local certo;
     }
     display_error("operador_normal_funcao fim");
+
     return retorno_absoluto;
 }
 
@@ -568,6 +609,7 @@ int _intermediaria::remove_variavel_do_vetor(string var) {
     vetor_de_variaveis[vet_num - 1].variavel.clear();
     vetor_de_variaveis[vet_num - 1].n_var = 0;
     vet_num--;
+
     return 1;
 }
 
@@ -581,6 +623,7 @@ int _intermediaria::copia_var(_var nova_variavel) {
     this->vetor_de_variaveis[pos_var].variavel = nova_variavel.variavel;
     this->vetor_de_variaveis[pos_var].n_var = nova_variavel.n_var;
     for (i = 0; i < nova_variavel.n_var; i++) {
+
         this->vetor_de_variaveis[pos_var].vect[i].variavel = nova_variavel.vect[i].variavel;
         this->vetor_de_variaveis[pos_var].vect[i].funcao = nova_variavel.vect[i].funcao;
         this->vetor_de_variaveis[pos_var].vect[i].cast = nova_variavel.vect[i].cast;
@@ -589,13 +632,51 @@ int _intermediaria::copia_var(_var nova_variavel) {
 }
 
 int _intermediaria::count_char(string line, char count) {
-    int i, contador;
+    int i, contador, aspas_i, aspas_f;
+    string sublinha, sublinha_s;
+    sublinha = remove_aspas(line, '"');
+    if (sublinha.empty())
+        sublinha = line;
+    sublinha_s = remove_aspas(sublinha, '\'');
+    if (!sublinha_s.empty())
+        sublinha = sublinha_s;
+    // cout << "antes de zerar contador: " << sublinha << endl;
+    //exit(1);
     contador = 0;
-    for (i = 0; i < line.length(); i++) {
-        if (line[i] == count)
+    for (i = 0; i < sublinha.length(); i++) {
+        if (sublinha[i] == count) {
+            //cout << i << sublinha[i] << endl;
             contador++;
+        }
     }
+    // cout << contador << endl << endl << endl << endl;
     return contador;
+}
+
+string _intermediaria::remove_aspas(string linha, char remove) {
+    int i, aspas_i, aspas_f, escapa;
+    string retorno;
+    aspas_i = -1;
+    escapa = aspas_f = 0;
+    retorno.clear();
+    for (i = 0; i < linha.length(); i++) {
+        if (linha[i] == remove) {
+            if (aspas_i == -1) {
+                aspas_i = i;
+                if (i > 0)
+                    retorno += linha.substr(aspas_f, aspas_i - aspas_f);
+            } else {
+                if (linha[i - 1] != '\\') {
+                    aspas_f = i + 1;
+                    aspas_i = -1;
+                }
+            }
+        }
+    }
+    if (aspas_f != 0)
+        retorno += linha.substr(aspas_f, linha.length());
+    // cout << "saida do count char" << endl << retorno << endl;
+    return retorno;
 }
 
 int _intermediaria::adiciona_get_ou_post(_var &add, string subline, int cast) {//vai ser adicionado a excessao de aspas simples aqui
@@ -604,7 +685,7 @@ int _intermediaria::adiciona_get_ou_post(_var &add, string subline, int cast) {/
     display_error("adiciona_get_ou_post");
     remove_space(subline);
     vet_var_p_g = string_of_var_to_reg();
-    // cout << "adiciona_get: " << cast << endl;
+    // cout << "adiciona_get: " << vet_var_p_g << endl;
     if (reg->reg_segunda_parte_linha(subline) == TRUE_VALUE) {//verifica se o primeiro elemento 'e um get ou post
         /*#COM MUDANCAS FUTURAS NAO SERA MAIS NECESSARIO USAR ESSA PARTE*/
         // cout << "_________======" << subline << endl;
@@ -618,7 +699,7 @@ int _intermediaria::adiciona_get_ou_post(_var &add, string subline, int cast) {/
     } else if (!vet_var_p_g.empty() && reg->mount_reg_get_or_post(subline, vet_var_p_g) != FALSE_VALUE) {
         string_guardar = subline; //retorna_variavel(subline, reg);
         pos = procura_variavel_no_vetor(string_guardar);
-        //imprime_elemento (vetor_de_variaveis[pos]);
+        //    cout << pos << string_guardar << endl;
         //cout << "Warning"<<endl;
         for (n = 0; n < this->vetor_de_variaveis[pos].n_var; n++) {//arrumar o cast
             add.vect[add.n_var].cast = this->vetor_de_variaveis[pos].vect[n].cast == 1 ? this->vetor_de_variaveis[pos].vect[n].cast : cast;
@@ -632,7 +713,8 @@ int _intermediaria::adiciona_get_ou_post(_var &add, string subline, int cast) {/
     } else {//SE TA LOCAO?!
         cout << "Nao possui get nem post" << endl;
         //  cout << subline << endl;
-        return -1;
+
+        return FALSE_VALUE;
     }
 }
 
@@ -641,16 +723,18 @@ int _intermediaria::procura_variavel_no_vetor(string var) {
     display_error("procura_variavel_no_vetor");
     for (i = 0; i < this->vet_num; i++) {
         if (var.compare(this->vetor_de_variaveis[i].variavel) == 0) {
+
             return i;
         }
     }
-    return -1;
+    return FALSE_VALUE;
 }
 
 int _intermediaria::add_var_array(string new_string) {//insercao de variavel no vetor de variaveis
     display_error("add_var_array");
     this->vetor_de_variaveis[this->vet_num].variavel = new_string;
     this->vet_num++;
+
     return this->vet_num - 1;
 }
 
@@ -676,6 +760,7 @@ int _intermediaria::verifica_funcao(string funcao) {
     }
     for (i = 1; i <= 8; i++) {//corrigir. vetores comecam do zero e nao do um
         if (func.compare(matriz[i]) == 0) {
+
             cout << func << "e uma funcao que necessita de seguranca" << endl;
             retorno = 1;
         }
@@ -685,11 +770,16 @@ int _intermediaria::verifica_funcao(string funcao) {
 
 void _intermediaria::imprime_vetor() {
     int i, j;
-    cout << "IMPRESSAO DO VETOR" << endl << endl;
+    if (this->filho != NULL)
+        this->filho->imprime_vetor();
+    if (this->irmao != NULL)
+        this->irmao->imprime_vetor();
+    cout << "IMPRESSAO DO VETOR DO NO:"<< this->no<< endl << endl;
     for (i = 0; i < this->vet_num; i++) {
         cout << this->vetor_de_variaveis[i].variavel << " N parametros: " << this->vetor_de_variaveis[i].n_var << endl;
         for (j = 0; j < this->vetor_de_variaveis[i].n_var; j++) {
             cout << "===" << this->vetor_de_variaveis[i].vect[j].variavel << "." << this->vetor_de_variaveis[i].vect[j].cast << endl;
+
             if (!this->vetor_de_variaveis[i].vect[j].funcao.empty())
                 cout << "\t===" << this->vetor_de_variaveis[i].vect[j].funcao << "." << endl;
         }
@@ -705,6 +795,7 @@ void _intermediaria::imprime_elemento(_var elemento) {
     cout << elemento.variavel << " N parametros: " << elemento.n_var << endl;
     for (j = 0; j < elemento.n_var; j++) {
         cout << "===" << elemento.vect[j].variavel << "." << elemento.vect[j].cast << endl;
+
         if (!elemento.vect[j].funcao.empty())
             cout << "\t===" << elemento.vect[j].funcao << "." << endl;
     }
@@ -716,4 +807,38 @@ int _intermediaria::verifica_condicional_laco(string linha) {
     string prim_variavel;
     prim_variavel = primeira_variavel(linha);
     cout << prim_variavel << endl;
+}
+
+int _intermediaria::novo_no(string nome, int tipo) {
+    _intermediaria *auxiliar;
+    _intermediaria *novo_no;
+    int i, j;
+    if (this->filho == NULL) {
+        this->filho = new _intermediaria;
+        auxiliar = this->filho;
+        auxiliar->pai = this;
+        auxiliar = NULL;
+    } else {
+        auxiliar = this->filho;
+        novo_no = new _intermediaria;
+        novo_no->irmao = auxiliar;
+        this->filho = novo_no;
+        novo_no->pai = this;
+        auxiliar = NULL;
+    }
+    this->filho->colchete = tipo;
+    this->filho->vet_num = this->vet_num;
+    this->filho->aspas = this->aspas;
+    this->filho->reg = this->reg;
+    this->filho->no = nome;
+    for (i = 0; i < this->vet_num; i++) {
+        this->filho->vetor_de_variaveis[i].variavel = this->vetor_de_variaveis[i].variavel;
+        this->filho->vetor_de_variaveis[i].n_var = this->vetor_de_variaveis[i].n_var;
+        for (j = 0; j < this->vetor_de_variaveis[i].n_var; j++) {
+            this->filho->vetor_de_variaveis[i].vect[j].variavel = this->vetor_de_variaveis[i].vect[j].variavel;
+            this->filho->vetor_de_variaveis[i].vect[j].cast = this->vetor_de_variaveis[i].vect[j].cast;
+            this->filho->vetor_de_variaveis[i].vect[j].funcao = this->vetor_de_variaveis[i].vect[j].funcao;
+        }
+    }
+    return 0;
 }

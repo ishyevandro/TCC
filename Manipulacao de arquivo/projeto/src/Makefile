@@ -48,12 +48,14 @@ CONFIG_CLEAN_FILES =
 CONFIG_CLEAN_VPATH_FILES =
 am__installdirs = "$(DESTDIR)$(bindir)" "$(DESTDIR)$(TCCdir)"
 PROGRAMS = $(bin_PROGRAMS)
-am_TCC_OBJECTS = TCC-classe_arquivo.$(OBJEXT) TCC-classe_var.$(OBJEXT) \
+am_TCC_OBJECTS = TCC-main.$(OBJEXT) TCC-editor.$(OBJEXT) \
+	TCC-classe_arquivo.$(OBJEXT) TCC-classe_var.$(OBJEXT) \
 	TCC-classe_reg.$(OBJEXT) TCC-classe_intermediaria.$(OBJEXT) \
 	TCC-classe_aspas.$(OBJEXT)
 TCC_OBJECTS = $(am_TCC_OBJECTS)
 am__DEPENDENCIES_1 =
 TCC_DEPENDENCIES = $(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1) \
+	$(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1) \
 	$(am__DEPENDENCIES_1)
 DEFAULT_INCLUDES = -I. -I$(top_builddir)
 depcomp = $(SHELL) $(top_srcdir)/depcomp
@@ -97,7 +99,9 @@ AUTOCONF = ${SHELL} "/home/evandro/Dropbox/TCC/TCC/Manipulacao de arquivo/projet
 AUTOHEADER = ${SHELL} "/home/evandro/Dropbox/TCC/TCC/Manipulacao de arquivo/projeto/missing" --run autoheader
 AUTOMAKE = ${SHELL} "/home/evandro/Dropbox/TCC/TCC/Manipulacao de arquivo/projeto/missing" --run automake-1.11
 AWK = mawk
-BOOST_REGEX_LIB = -lboost_regex-mt
+BOOST_REGEX_LIB = -lboost_regex
+BSL_CFLAGS =  
+BSL_LIBS = -lbancosl-1.0 -lsqlite3  
 CC = gcc
 CCDEPMODE = depmode=gcc3
 CFLAGS = -g -O2
@@ -114,6 +118,8 @@ ECHO_N = -n
 ECHO_T = 
 EGREP = /bin/grep -E
 EXEEXT = 
+EX_CFLAGS = -g -O2  
+EX_LIBS = -lex-1.0 -ldl  
 GREP = /bin/grep
 GTKMM_CFLAGS = -pthread -I/usr/include/gtk-2.0 -I/usr/include/gtk-unix-print-2.0 -I/usr/include/atk-1.0 -I/usr/include/glib-2.0 -I/usr/lib/x86_64-linux-gnu/glib-2.0/include -I/usr/include/pango-1.0 -I/usr/include/cairo -I/usr/include/pixman-1 -I/usr/include/freetype2 -I/usr/include/libpng12 -I/usr/lib/x86_64-linux-gnu/gtk-2.0/include -I/usr/include/gdk-pixbuf-2.0 -I/usr/include/gio-unix-2.0/ -I/usr/include/gtkmm-2.4 -I/usr/lib/gtkmm-2.4/include -I/usr/include/atkmm-1.6 -I/usr/include/giomm-2.4 -I/usr/lib/giomm-2.4/include -I/usr/include/pangomm-1.4 -I/usr/lib/pangomm-1.4/include -I/usr/include/gdkmm-2.4 -I/usr/lib/gdkmm-2.4/include -I/usr/include/glibmm-2.4 -I/usr/lib/glibmm-2.4/include -I/usr/include/sigc++-2.0 -I/usr/lib/sigc++-2.0/include -I/usr/include/cairomm-1.0 -I/usr/lib/cairomm-1.0/include  
 GTKMM_LIBS = -pthread -lgtkmm-2.4 -latkmm-1.6 -lgdkmm-2.4 -lgiomm-2.4 -lpangomm-1.4 -lgtk-x11-2.0 -lglibmm-2.4 -lcairomm-1.0 -lsigc-2.0 -lgdk-x11-2.0 -latk-1.0 -lgio-2.0 -lpangoft2-1.0 -lpangocairo-1.0 -lgdk_pixbuf-2.0 -lcairo -lpango-1.0 -lfreetype -lfontconfig -lgobject-2.0 -lgmodule-2.0 -lgthread-2.0 -lrt -lglib-2.0  
@@ -130,20 +136,22 @@ MAKEINFO = ${SHELL} "/home/evandro/Dropbox/TCC/TCC/Manipulacao de arquivo/projet
 MKDIR_P = /bin/mkdir -p
 OBJEXT = o
 PACKAGE = tcc-evandro
-PACKAGE_BUGREPORT = email@email
-PACKAGE_NAME = TCC Evandro
-PACKAGE_STRING = TCC Evandro 1.0.0
+PACKAGE_BUGREPORT = 017706@comp.uems.br 
+PACKAGE_NAME = TCC-evandro
+PACKAGE_STRING = TCC-evandro 1.0.1
 PACKAGE_TARNAME = tcc-evandro
-PACKAGE_URL = 
-PACKAGE_VERSION = 1.0.0
+PACKAGE_URL = http://moodle.alcionesytes.net/
+PACKAGE_VERSION = 1.0.1
 PATH_SEPARATOR = :
 PKG_CONFIG = /usr/bin/pkg-config
 PKG_CONFIG_LIBDIR = 
 PKG_CONFIG_PATH = 
 SET_MAKE = 
 SHELL = /bin/bash
+SQLITE_CFLAGS =  
+SQLITE_LIBS = -lsqlite3  
 STRIP = 
-VERSION = 1.0.0
+VERSION = 1.0.1
 abs_builddir = /home/evandro/Dropbox/TCC/TCC/Manipulacao de arquivo/projeto/src
 abs_srcdir = /home/evandro/Dropbox/TCC/TCC/Manipulacao de arquivo/projeto/src
 abs_top_builddir = /home/evandro/Dropbox/TCC/TCC/Manipulacao de arquivo/projeto
@@ -176,7 +184,7 @@ mandir = ${datarootdir}/man
 mkdir_p = /bin/mkdir -p
 oldincludedir = /usr/include
 pdfdir = ${docdir}
-prefix = /usr/local
+prefix = /home/evandro/bin
 program_transform_name = s,x,x,
 psdir = ${docdir}
 sbindir = ${exec_prefix}/sbin
@@ -187,13 +195,13 @@ target_alias =
 top_build_prefix = ../
 top_builddir = ..
 top_srcdir = ..
-AM_CXXFLAGS = -I.
+AM_CXXFLAGS = -I. 
 AM_LDFLAGS = -mwindows
-TCCdir = .
-TCC_SOURCES = classe_arquivo.C classe_var.C classe_reg.C classe_intermediaria.C classe_aspas.C
-TCC_HEADERS = classe_arquivo.h classe_var.h classe_reg.h classe_intermediaria.h classe_aspas.h variavel.h
-TCC_CPPFLAGS = $(GTKMM_CFLAGS) $(CPPFLAGS)
-TCC_LDADD = $(GTKMM_LIBS) $(LDFLAGS) $(BOOST_REGEX_LIB)
+TCCdir = ${prefix}
+TCC_SOURCES = main.C editor.C classe_arquivo.C classe_var.C classe_reg.C classe_intermediaria.C classe_aspas.C
+TCC_HEADERS = editor.h classe_arquivo.h classe_var.h classe_reg.h classe_intermediaria.h classe_aspas.h variavel.h
+TCC_CPPFLAGS = $(GTKMM_CFLAGS) $(BSL_CFLAGS) $(EX_CFLAGS) $(CPPFLAGS)
+TCC_LDADD = $(GTKMM_LIBS) $(BSL_LIBS) $(EX_LIBS) $(LDFLAGS) $(BOOST_REGEX_LIB)
 all: all-am
 
 .SUFFIXES:
@@ -280,6 +288,8 @@ include ./$(DEPDIR)/TCC-classe_aspas.Po
 include ./$(DEPDIR)/TCC-classe_intermediaria.Po
 include ./$(DEPDIR)/TCC-classe_reg.Po
 include ./$(DEPDIR)/TCC-classe_var.Po
+include ./$(DEPDIR)/TCC-editor.Po
+include ./$(DEPDIR)/TCC-main.Po
 
 .C.o:
 	$(CXXCOMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<
@@ -294,6 +304,34 @@ include ./$(DEPDIR)/TCC-classe_var.Po
 #	source='$<' object='$@' libtool=no \
 #	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
 #	$(CXXCOMPILE) -c -o $@ `$(CYGPATH_W) '$<'`
+
+TCC-main.o: main.C
+	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(TCC_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT TCC-main.o -MD -MP -MF $(DEPDIR)/TCC-main.Tpo -c -o TCC-main.o `test -f 'main.C' || echo '$(srcdir)/'`main.C
+	$(am__mv) $(DEPDIR)/TCC-main.Tpo $(DEPDIR)/TCC-main.Po
+#	source='main.C' object='TCC-main.o' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
+#	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(TCC_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o TCC-main.o `test -f 'main.C' || echo '$(srcdir)/'`main.C
+
+TCC-main.obj: main.C
+	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(TCC_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT TCC-main.obj -MD -MP -MF $(DEPDIR)/TCC-main.Tpo -c -o TCC-main.obj `if test -f 'main.C'; then $(CYGPATH_W) 'main.C'; else $(CYGPATH_W) '$(srcdir)/main.C'; fi`
+	$(am__mv) $(DEPDIR)/TCC-main.Tpo $(DEPDIR)/TCC-main.Po
+#	source='main.C' object='TCC-main.obj' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
+#	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(TCC_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o TCC-main.obj `if test -f 'main.C'; then $(CYGPATH_W) 'main.C'; else $(CYGPATH_W) '$(srcdir)/main.C'; fi`
+
+TCC-editor.o: editor.C
+	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(TCC_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT TCC-editor.o -MD -MP -MF $(DEPDIR)/TCC-editor.Tpo -c -o TCC-editor.o `test -f 'editor.C' || echo '$(srcdir)/'`editor.C
+	$(am__mv) $(DEPDIR)/TCC-editor.Tpo $(DEPDIR)/TCC-editor.Po
+#	source='editor.C' object='TCC-editor.o' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
+#	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(TCC_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o TCC-editor.o `test -f 'editor.C' || echo '$(srcdir)/'`editor.C
+
+TCC-editor.obj: editor.C
+	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(TCC_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT TCC-editor.obj -MD -MP -MF $(DEPDIR)/TCC-editor.Tpo -c -o TCC-editor.obj `if test -f 'editor.C'; then $(CYGPATH_W) 'editor.C'; else $(CYGPATH_W) '$(srcdir)/editor.C'; fi`
+	$(am__mv) $(DEPDIR)/TCC-editor.Tpo $(DEPDIR)/TCC-editor.Po
+#	source='editor.C' object='TCC-editor.obj' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
+#	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(TCC_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o TCC-editor.obj `if test -f 'editor.C'; then $(CYGPATH_W) 'editor.C'; else $(CYGPATH_W) '$(srcdir)/editor.C'; fi`
 
 TCC-classe_arquivo.o: classe_arquivo.C
 	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(TCC_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT TCC-classe_arquivo.o -MD -MP -MF $(DEPDIR)/TCC-classe_arquivo.Tpo -c -o TCC-classe_arquivo.o `test -f 'classe_arquivo.C' || echo '$(srcdir)/'`classe_arquivo.C

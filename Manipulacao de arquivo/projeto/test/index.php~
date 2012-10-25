@@ -1,20 +1,28 @@
 <?php
     
-    $i [  'JUDAS'  ] = htmlspecialchars  (  $_POST ['POST DO I']   ) + $b;
-    //$_POST['PORCARIA NENHUMA'] = $i;
-    $j        =       $_GET       ['GET DO J'   ] . $_POST['GET DO J2'];
-    $i   = $i ['JUDAS'].$j;
-    $JESUS = $j * $i;
-    $k = $j - $x;
-    $x    =    $k;
-    $j   .=   ''; 
+   // $i [  'JUDAS'  ] = htmlspecialchars  (  htmlspecialchars  ($_POST ['POST DO I'])   ) >= $b;
+    //$cd = "0 < {$i['JUDAS']}";
+    if ("(((((("10 == 11)
+    $j        =      string_azul($_GET       ['GET DO J'   ], $k);
+    else if (11 --1111){
+    $a =   $_POST['GET DO J2'];
+    $i = $j; 
+    }
+    else: 
+    $JESUS = chiquinha($j) . $i;
+    $k = $JESUS + $x;
+    $k .= htmlspecialchars($j);
+    $y = mysql_query($j);
+    $x    =    $y;
+    endif;    
+    ?>
+    //$j   =   '100'; 
    /* $strin   =   "STRING// primeira linha
     segunda parte
     terceira parte
     quarta parte
     
     " + alguma coisa . "mais comentario";
-    */$aa   =   $i;
+    */$aa   =   $i . $j;
     $aa = 0;
-    tivechamada
-?>
+

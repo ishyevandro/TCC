@@ -13,11 +13,13 @@ public:
     vector <_var> vetor_de_variaveis;
     _reg *reg;
     _aspas *aspas;
-    int vet_num, n_funcao;
+    _intermediaria *irmao, *pai, *filho;
+    int vet_num, colchete;//, n_funcao;
+    string no;
     _intermediaria();
     //int get_line_to_analyse(string , vector<_var>&, int &, _reg);
     //int get_line_to_analyse(string , int &, _reg);
-    int verifica_linha(string);
+    int verifica_linha(string, int);
     void remove_space(string&);
     int analisa_linha(string);
     string string_of_var_to_reg();
@@ -27,6 +29,7 @@ public:
     string retorna_funcao(string &);
     string aspas_duplas(string &);
     string aspas_simples(string &);
+    string remove_aspas (string, char);
     int type_of_operator(string &);
     int operador_normal(string, string, string);
     int operador_cat(string, string, string);
@@ -48,6 +51,8 @@ public:
     void imprime_vetor();
     void imprime_elemento(_var);
     int verifica_condicional_laco (string);
+    int novo_no (string, int);
+    void display_error(string);
     //int remove_comments(string&, _reg);
 };
 

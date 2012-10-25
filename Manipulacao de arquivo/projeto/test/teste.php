@@ -22,31 +22,31 @@
                 <?php
                 ini_set("display_errors", 1);
                 $link = mysql_connect('localhost', 'root', 'root');
-                if (!$link) {
+               // if (!$link) {
                     echo "Erro no link com DB" .
                     die();
-                }
+               // }
                 $db_selected = mysql_select_db('TCC_TESTE', $link);
-                if (!$db_selected) {
+               // if (!$db_selected) {
                     echo "DB_NAO SELECIONADO";
                     die();
-                }
-                if (isset($_GET['usuario'])) {
-                    $nome = htmlspecialchars($_GET['nome'],ENT_QUOTES);
-                    $usuario = htmlspecialchars($_GET['usuario'], ENT_QUOTES);
+               // }
+              //  if (isset($_GET['usuario'])) {
+                    $nome = htmlspecialchars($_GET['nome']);
+                    $usuario = htmlspecialchars($_GET['usuario']);
                     $query = "INSERT INTO MERDA(usuario, nome) VALUES ('$usuario', '$nome')";
                     $result = mysql_query($query);
-                }
+               // }
 
                 $sql = "SELECT nome as nome, usuario as usuario from MERDA";
                 $result = mysql_query($sql);
                 //echo mysql_errno($link) . ": " . mysql_error($link). "\n";
-                if ($result) {
-                    while ($col = mysql_fetch_array($result)) {
+               // if ($result) {
+               //     while ($col = mysql_fetch_array($result)) {
                         echo $col[0] . " " . $col[1] . "<BR/>";
-                    }
-                }
-                // $col[0] = "Evandro \"PHODASTICO";
+              //      }
+             //   }
+                // $col[0] = "Evandro PHODASTICO";
                 // $cabelo['ponta'] = "duplos $col[0]";
                 // echo "quem tem $col[0]";
                 ?>
