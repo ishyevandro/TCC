@@ -133,7 +133,7 @@
       <item path="src/classe_aspas.C" ex="false" tool="1" flavor2="4">
         <ccTool>
           <incDir>
-            <pElem>/usr/include/gio-unix-2.0/</pElem>
+            <pElem>/usr/include/gio-unix-2.0</pElem>
           </incDir>
         </ccTool>
       </item>

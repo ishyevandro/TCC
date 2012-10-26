@@ -153,7 +153,7 @@ void _reg::reg_comp()//verificar se sera assim mesmo
     if (reg_comp_all("(\')", REG_ASPAS_S_F) != 0) {
         cout << "Erro na montagem: Expressao de aspas simples FIM" << endl;
     }
-    if (reg_comp_all("(\\$[[:digit:]][ds])", REG_VAR_ASPAS) != 0) {
+    if (reg_comp_all("(\\$[[:digit:]]{1,}[ds])", REG_VAR_ASPAS) != 0) {
         cout << "Erro na montagem: Expressao de aspas simples" << endl;
     }
     if (reg_comp_all("[(]", REG_PARENTESE_I) != 0) {
@@ -172,10 +172,10 @@ void _reg::reg_comp()//verificar se sera assim mesmo
     }
 
     /*Condicionais*/
-    if (reg_comp_all("^(if)", REG_IF) != 0) {
+    if (reg_comp_all("^([Ii][Ff])", REG_IF) != 0) {
         cout << "Erro na montagem: Expressao de parentese final" << endl;
     }
-    if (reg_comp_all("^(elseif|else *if)", REG_ELSEIF) != 0) {
+    if (reg_comp_all("^([Ee][Ll][Ss][Ee][Ii][Ff]|[Ee][Ll][Ss][Ee] *[Ii][Ff])", REG_ELSEIF) != 0) {
         cout << "Erro na montagem: Expressao de parentese final" << endl;
     }
     if (reg_comp_all("^(else)", REG_ELSE) != 0) {
@@ -213,10 +213,13 @@ int _reg::mount_reg_get_or_post(string line, string variables)//verifica se na l
         if (reg_comp_all(this->variables_with_p_or_g, REG_P_G) != 0)
             cout << "Recompilar mount_reg_get_or_post erro"; //this->variables_with_p_or_g<<line<<endl;
     }
-    if (reg_exec_all(line, REG_P_G) == 0)//verifica se tem post ou get
+    if (reg_exec_all(line, REG_P_G) == 0) {//verifica se tem post ou get
+      //  cout << "REG_MOUNT:" << line << endl << this->variables_with_p_or_g << endl;
         return TRUE_VALUE;
-    else
+    } else {
+       // cout << "FALSE_VALUE:" << line <<endl << this->variables_with_p_or_g << endl;
         return FALSE_VALUE;
+    }
 }
 
 /*RETORNA O TIPO DE OPERADOR QUE ESTA APOS A PRIMEIRA STRING*/

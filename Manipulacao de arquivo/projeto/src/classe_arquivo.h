@@ -11,9 +11,9 @@ class _arq{
 public:
 	//ifstream new_file;
         string codigo;
-        int tag_php;
+        int tag_php, id;
         _intermediaria aux, *no_corrente;
-	//vector <_var> vetor_de_variaveis;//mapeamento de todas as variaveis do arquivo
+	_aspas *aspas;
 	_reg *reg;
         //_aspas *aspas;
 	//int vet_num;
@@ -28,9 +28,11 @@ public:
         int verifica_comentario_dentro_de_aspas(string);
         int verifica_tag(string &);
         int verifica_condicional (string &);
+        int compara_pai (_intermediaria *);
         string procura_fim_de_linha (string);
         string replace_aspas (string);
         int linha(string);
         int verifica_pos_condicional(string&);
+        int remove_objeto_da_arvore(int, _intermediaria *);
 };
 #endif

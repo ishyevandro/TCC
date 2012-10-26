@@ -10,12 +10,11 @@ void display_errors(string prnt) {
 }
 
 _arq::_arq()
-: reg(NULL), no_corrente(NULL)/*,new_file(NULL),  vetor_de_variaveis(NULL), vet_num(0) */ {
+: reg(NULL), aspas(NULL), no_corrente(NULL), id(0), tag_php(0)/*,new_file(NULL),  vetor_de_variaveis(NULL), vet_num(0) */ {
     //vetor_de_variaveis = new _var[20];
     //this->vetor_de_variaveis.resize(VET_NUM);
-    //this->aspas = new _aspas;
+    aspas = new _aspas;
     no_corrente = &aux;
-    tag_php = 0;
     reg = new _reg;
 }
 
@@ -24,6 +23,8 @@ int _arq::linha(string codigo_todo) {
     int pos;
     display_errors("metodo LINHA inicio");
     this->codigo = codigo_todo;
+    aux.id = this->id;
+    id++;
     while (!this->codigo.empty()) {
         // cout << "linha"<<this->codigo<< endl;
         if (nova_linha(linha) == TRUE_VALUE)
@@ -75,8 +76,9 @@ int _arq::aspas_duplas(string &linha) {
                 inicio_aspas += nlinha;
             } else {
                 retorno = inicio_aspas.substr(0, fim);
-                linha = linha.substr(1, inicio - 1);
-                linha += this->no_corrente->aspas->novo_valor(retorno, tipo);
+                linha = linha.substr(0, inicio);
+                //2 linha += this->no_corrente->aspas->novo_valor(retorno, tipo);
+                linha += this->aspas->novo_valor(retorno, tipo);
                 linha += inicio_aspas.substr(fim + 1, inicio_aspas.length());
             }
         }
@@ -84,6 +86,7 @@ int _arq::aspas_duplas(string &linha) {
         //cout << "linha aqui: " << linha << endl;
         // exit(1);
     }
+    // cout << "ASPAS DUPLAS" <<linha << endl;
     return 1;
 }
 
@@ -93,13 +96,15 @@ int _arq::remove_comments(string &line) {
     retorno = -1;
     if (verifica_comentario_dentro_de_aspas(line) == -1)
         return 0;
+    //   cout << "ERRO REMOVE_COMENTS" << endl;
     type = reg->reg_comments(line);
+    //   cout << type << line << endl;
     if (type != FALSE_VALUE) {
         line = line.substr(0, type);
         retorno = 1;
+        //      cout << type << "   " << line << endl;
     }
     type = reg->reg_comments_(line, REG_COMMENTS_INI);
-    //cout<<"comentario grande"<<type<<endl;
     if (type != FALSE_VALUE) {
         remove_primeiro = type - 2; //utilizado o remove_rpimeiro para remover a primeira forma de comentario ja que a reg_comments retorna a primeira posicao apos a cadeia de caracteres
         line = line.substr(0, remove_primeiro);
@@ -131,7 +136,7 @@ int _arq::verifica_comentario_dentro_de_aspas(string line) {
         aspas = reg->reg_verifica_aspasd(line, 0);
         //cout<<aspas<<"!="<<comentario<<comentario2<<endl;
         if ((aspas < comentario || aspas < comentario2) && aspas != FALSE_VALUE && (comentario != FALSE_VALUE || comentario2 != FALSE_VALUE))
-            return -1;
+            return FALSE_VALUE;
     }
 
     return 1;
@@ -143,6 +148,7 @@ int _arq::aspas_simples(string &linha) {
     retorno.clear();
     fim = -1;
     inicio = reg->reg_verifica_aspass(linha, 0);
+    //cout <<"INICIO ASPAS_SIMPLES: "<< linha << endl;
     if (inicio != FALSE_VALUE) {
         tipo = "s";
         inicio_aspas = linha.substr(inicio + 1, linha.length());
@@ -154,13 +160,14 @@ int _arq::aspas_simples(string &linha) {
                 inicio_aspas += nlinha;
             } else {
                 retorno = inicio_aspas.substr(0, fim);
-                linha = linha.substr(1, inicio - 1);
-                linha += this->aux.aspas->novo_valor(retorno, tipo);
+                linha = linha.substr(0, inicio);
+                linha += this->aspas->novo_valor(retorno, tipo);
                 linha += inicio_aspas.substr(fim + 1, inicio_aspas.length());
             }
         }
         aspas_simples(linha);
     }
+    //  cout <<"ASPAS_SIMPLES:" <<linha << endl;
     return 1;
 }
 
@@ -202,13 +209,16 @@ string _arq::replace_aspas(string linha) {
     nlinha = linha;
     display_errors("Replace_aspas inicio: ");
     while (analise == 1) {
+        cout << "entrou no replace!" << endl;
         pos = this->reg->reg_retorna_variavel_aspas(verifica, 1);
+        cout << pos << endl;
         if (pos != FALSE_VALUE) {
             nlinha = verifica.substr(0, pos);
             verifica = verifica.substr(pos, verifica.length());
             pos = this->reg->reg_retorna_variavel_aspas(verifica, 0);
             if (pos != FALSE_VALUE) {
                 aspas = verifica.substr(0, pos);
+                cout << "SAIDA DAS ASPAS: " << aspas << endl;
                 if (aspas[aspas.length() - 1] == 'd') {
                     nlinha += '"';
                     tipo = 0;
@@ -217,7 +227,9 @@ string _arq::replace_aspas(string linha) {
                     tipo = 1;
                 }
                 verifica = verifica.substr(pos, verifica.length());
-                retorno = this->no_corrente->aspas->busca_valor(aspas);
+                //2retorno = this->no_corrente->aspas->busca_valor(aspas);
+                retorno = this->aspas->busca_valor(aspas);
+                cout << retorno << endl;
                 if (!retorno.empty())
                     nlinha += retorno;
                 else {
@@ -235,7 +247,8 @@ string _arq::replace_aspas(string linha) {
             analise = 0;
         }
     }
-    this->no_corrente->aspas->call_clear();
+    //2 this->no_corrente->aspas->call_clear();
+    this->aspas->call_clear();
     display_errors("Replace_aspas fim: ");
     return nlinha;
 }
@@ -254,8 +267,7 @@ int _arq::verifica_tag(string &linha) {
     do {
         tag = pos;
         pos = reg->reg_tag_php(linha, tag_php);
-        // cout << "Verifica TAG:" << tag_php << "E" << "analisa" << analisa_ou_nao << endl;
-        //cout << linha << endl;
+
         if (pos != FALSE_VALUE) {
             if (tag_php == 0) {
                 linha = linha.substr(pos, linha.length());
@@ -276,24 +288,49 @@ int _arq::verifica_tag(string &linha) {
         linha = procura_fim_de_linha(linha);
     } while (tag != FALSE_VALUE);
     if (!auxiliar.empty()) {
-        //cout << "empt" << linha << " ^^^^^^" << auxiliar << endl;
         if (concatena == 1)
             auxiliar += linha;
         linha = auxiliar;
     }
     if (analisa_ou_nao == 1) {
+        cout << "completa: " << linha << endl;
         do {
+            no_corrente->remove_space(linha);
+            // cout <<"completa: " linha << endl;
+
             pos = linha.find_first_of(";");
-            if (pos != string::npos) {
+            //cout << linha[0] << endl;
+            if (linha[0] == '}') {
+                cout << "ACHOU O COLCHETE" << endl;
+                this->no_corrente->colchete = 0;
+                linha = linha.substr(1, linha.length());
+
+            } else if (pos != string::npos) {
                 auxiliar = linha.substr(0, pos + 1);
                 linha = linha.substr(pos + 1, linha.length());
                 auxiliar = replace_aspas(auxiliar);
+                cout << auxiliar << endl;
                 verifica_condicional(auxiliar);
-                cout<<auxiliar<<endl<<endl<<endl;
+                cout << this->no_corrente->colchete << endl;
                 this->no_corrente->verifica_linha(auxiliar, 0);
             }
-            if (this->no_corrente->colchete == 0 && this->no_corrente->pai != NULL)
-                this->no_corrente = this->no_corrente->pai;
+            // cout << auxiliar<< endl;
+            this->no_corrente->remove_space(linha);
+            if (linha[0] == '}')
+                this->no_corrente->colchete = 0;
+            // cout << this->no_corrente->colchete << endl;
+            if (this->no_corrente->colchete == 0 && this->no_corrente->pai != NULL && this->no_corrente->tipo_de_condicional != REG_ELSE) {
+                concatena = compara_pai(this->no_corrente); //reaproveitamento da variavel concatena
+                if (concatena == FALSE_VALUE)
+                    cout << "SOU DIFERENTE DO MEU PAI: " << this->no_corrente->id << this->no_corrente->no << endl;
+                else {
+                    cout << "SOU IGUAL AO MEU PAI: " << this->no_corrente->id << this->no_corrente->no << endl;
+                    remove_objeto_da_arvore(0, NULL);
+                }
+                if (this->no_corrente->pai != NULL)
+                    this->no_corrente = this->no_corrente->pai;
+
+            }
         } while (pos != string::npos);
     }
     display_errors("verifica_tag fim: ");
@@ -319,30 +356,38 @@ int _arq::nova_linha(string &linha) {
 
 int _arq::verifica_condicional(string &linha) {
     int apos_cond, tipo, pos, cochete;
-    string if_completo;
+    string if_completo, auxiliar_nome;
     apos_cond = pos = tipo = cochete = 0;
     no_corrente->remove_space(linha);
-    cout << "Warning: " << linha << endl;
+    auxiliar_nome = "->";
     apos_cond = this->reg->reg_condicional_if(linha, tipo);
-    if (tipo == REG_IF) {
-        cout << "UM IF:" << linha.substr(apos_cond, linha.length()) << endl;
-        if_completo = linha.substr(0, apos_cond);
+    if (apos_cond != FALSE_VALUE && tipo != REG_ELSE) {
+        if_completo = no_corrente->no;
+        if_completo += auxiliar_nome;
+        if_completo += linha.substr(0, apos_cond);
         linha = linha.substr(apos_cond, linha.length());
         pos = this->no_corrente->retorna_elementos_dentro_de_parentese(linha);
         if (pos != FALSE_VALUE) {
             if_completo += linha.substr(0, pos);
             linha = linha.substr(pos, linha.length());
             cochete = verifica_pos_condicional(linha);
-            this->no_corrente->novo_no(if_completo, cochete);
+            this->no_corrente->novo_no(if_completo, cochete, this->id);
+            this->id++;
             this->no_corrente = this->no_corrente->filho;
+            if (tipo == REG_IF) {
+                this->no_corrente->tipo_de_condicional = REG_IF;
+            } else {
+                this->no_corrente->tipo_de_condicional = REG_ELSEIF;
+            }
             cout << "continuacao do if" << linha << endl;
         } else
             cout << "if sem sentido" << endl;
-    }
-    if (tipo == REG_ELSEIF) {
-        cout << "UM ELSEIF:" << linha.substr(apos_cond, linha.length()) << endl;
-    }
-    if (tipo == REG_ELSE) {
+    } else if (tipo == REG_ELSE) {
+        linha = linha.substr(apos_cond, linha.length());
+        cochete = verifica_pos_condicional(linha);
+        //this->no_corrente->novo_no(if_completo, cochete, this->id);
+        this->id++;
+        this->no_corrente->tipo_de_condicional = REG_ELSE;
         cout << "UM ELSE:" << linha.substr(apos_cond, linha.length()) << endl;
     }
 }
@@ -350,11 +395,70 @@ int _arq::verifica_condicional(string &linha) {
 int _arq::verifica_pos_condicional(string &linha) {
     this->no_corrente->remove_space(linha);
     if (linha[0] == '{') {
-        cout << "POSSUI COXETES" << endl;
+        cout << "POSSUI COLCHETES" << endl;
         linha = linha.substr(1, linha.length());
         cout << linha << endl;
         return 1;
     }
-    cout << "NAO POSSUI COXETES" << endl;
+    cout << "NAO POSSUI COLCHETES" << endl;
     return 0;
+}
+
+int _arq::compara_pai(_intermediaria *corrente) {
+    _intermediaria *pai;
+    int i, j;
+    if (corrente->pai == NULL)
+        return TRUE_VALUE;
+    pai = corrente->pai;
+    if (pai->vet_num != corrente->vet_num)
+        return FALSE_VALUE;
+    for (i = 0; i < pai->vet_num; i++) {
+        if (pai->vetor_de_variaveis[i].variavel.compare(corrente->vetor_de_variaveis[i].variavel) != 0)
+            return FALSE_VALUE;
+        for (j = 0; j < pai->vetor_de_variaveis[i].n_var; j++) {
+            if (pai->vetor_de_variaveis[i].vect[j].variavel.compare(corrente->vetor_de_variaveis[i].vect[j].variavel) != 0)
+                return FALSE_VALUE;
+            if (pai->vetor_de_variaveis[i].vect[j].funcao.compare(corrente->vetor_de_variaveis[i].vect[j].funcao) != 0)
+                return FALSE_VALUE;
+            if (pai->vetor_de_variaveis[i].vect[j].cast != corrente->vetor_de_variaveis[i].vect[j].cast)
+                return FALSE_VALUE;
+        }
+    }
+    return TRUE_VALUE;
+}
+
+int _arq::remove_objeto_da_arvore(int procura, _intermediaria *raiz) {
+    int removido;
+    _intermediaria *pai, *auxiliar, *irmao, *remove;
+    remove = this->no_corrente;
+    pai = this->no_corrente->pai;
+    if (remove->irmao != NULL) {
+        pai->filho = remove->irmao;
+        irmao = remove->irmao;
+        if (remove->filho != NULL) {
+            auxiliar = remove->filho;
+            while (auxiliar->irmao != NULL) {
+                auxiliar = auxiliar->irmao;
+            }
+            auxiliar->irmao = irmao->filho;
+            irmao->filho = remove->filho;
+            delete remove;
+        } else
+            delete remove;
+    } else if (remove->filho != NULL) {
+        pai->filho = remove->filho;
+        auxiliar = remove->filho;
+        if (auxiliar->irmao != NULL) {
+            irmao = auxiliar;
+            do {
+                irmao->pai = pai;
+                irmao = irmao->irmao;
+            } while (irmao->irmao != NULL);
+        }
+        delete remove;
+    } else {
+        cout << "TEM QUE ENTRAR AQUI" << remove->no << endl;
+        pai->filho = NULL;
+        delete remove;
+    }
 }

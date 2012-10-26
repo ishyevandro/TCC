@@ -12,11 +12,13 @@ class _intermediaria {
 public:
     vector <_var> vetor_de_variaveis;
     _reg *reg;
-    _aspas *aspas;
+   // _aspas *aspas;
     _intermediaria *irmao, *pai, *filho;
-    int vet_num, colchete;//, n_funcao;
+    int vet_num, colchete, id;//, n_funcao;
+    int tipo_de_condicional;
     string no;
     _intermediaria();
+    ~_intermediaria();
     //int get_line_to_analyse(string , vector<_var>&, int &, _reg);
     //int get_line_to_analyse(string , int &, _reg);
     int verifica_linha(string, int);
@@ -31,9 +33,9 @@ public:
     string aspas_simples(string &);
     string remove_aspas (string, char);
     int type_of_operator(string &);
-    int operador_normal(string, string, string);
-    int operador_cat(string, string, string);
-    int pos_operador(string &, string, _var &);
+    int operador_normal(string/*2, string*/, string);
+    int operador_cat(string/*2, string*/, string);
+    int pos_operador(string &/*2, string*/, _var &);
     int retorna_elementos_dentro_de_parentese(string);
     int proximo_operador(string);
     int remove_operador_intermediario(string &);
@@ -51,7 +53,7 @@ public:
     void imprime_vetor();
     void imprime_elemento(_var);
     int verifica_condicional_laco (string);
-    int novo_no (string, int);
+    int novo_no (string, int, int);
     void display_error(string);
     //int remove_comments(string&, _reg);
 };
