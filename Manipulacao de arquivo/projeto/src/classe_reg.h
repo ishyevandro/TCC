@@ -5,12 +5,12 @@
 #include <iostream>
 using namespace std;
 
-#define DISPLAY_ERROR 0
+#define DISPLAY_ERROR 1
 
 #define FALSE_VALUE -1
 #define REG_P_G 0
 #define REG_P_G_V 7// nao esta sendo utilizado
-#define REG_$ 1
+#define REG_$ 1 // nao esta sendo utilizada
 #define TRUE_VALUE 1
 #define REG_FIRST 2
 #define REG_OPERATOR 3
@@ -68,6 +68,10 @@ using namespace std;
 #define REG_ELSEIF 71
 #define REG_ELSE 72
 
+/*Deteccao de CAST*/
+#define REG_INT 80
+
+
 class _reg {
 public:
     regex_t *first;
@@ -96,6 +100,7 @@ public:
     int reg_retorna_variavel_aspas (string, int);
     int reg_tag_php (string, int);
     int reg_condicional_if (string, int &);
+    int reg_cast(string);
 //verificacao de funcoes
     
 };

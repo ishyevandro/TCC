@@ -4,22 +4,21 @@
 
 $j = string_azul($_GET ['GET DO J'], $k);
 $i = $j;
-$a = $_POST['GET DO J2'];
+$a = $_POST['POSTAAA'];
 if (Jesus == 1) {
     $segunda_var = $_GET['EVANDRO'];
     $terceira_var = $j;
     $quarta_var = $a;
 }
 else if (Jesus == 2)
-    $QUINTA_if = $_GET['LEANDRO'];
+    $a = $_GET['LEANDRO'];
 else{
     $terceiro_else = $_GET['ALESSANDRO'];
-    
 }
 $JESUS = chiquinha($j) . $i;
 $k = $JESUS + $x;
-$k .= htmlspecialchars($j) + $segunda_var + $terceira_var;
-$y = mysql_query($j);
+$k .= htmlspecialchars($j) . $segunda_var . $terceira_var . $terceiro_else . $a;
+$y = mysql_query($k, $link);
 $x = $y;
 ?>
 //$j   =   '100'; 

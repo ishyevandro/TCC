@@ -197,6 +197,14 @@ void EDITOR::aplicar() {
     Panalise = TProcess.get_buffer();
     codigo = Panalise->get_text();
     this->A->linha(codigo);
+
+    PLog = TLog.get_buffer();
+    PLog->get_bounds(inicio, final);
+    iter = PLog->erase(inicio, final);
+    PLog->insert(iter, Glib::ustring(this->A->debug));
+    TLog.set_buffer(PLog);
+
+
     delete this->A;
 }
 

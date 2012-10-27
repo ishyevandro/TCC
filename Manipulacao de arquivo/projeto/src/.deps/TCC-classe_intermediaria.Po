@@ -73,7 +73,12 @@ TCC-classe_intermediaria.o: classe_intermediaria.C \
  /usr/include/c++/4.6/bits/locale_facets.tcc \
  /usr/include/c++/4.6/bits/basic_ios.tcc \
  /usr/include/c++/4.6/bits/ostream.tcc /usr/include/c++/4.6/istream \
- /usr/include/c++/4.6/bits/istream.tcc classe_intermediaria.h \
+ /usr/include/c++/4.6/bits/istream.tcc /usr/include/c++/4.6/cstdio \
+ /usr/include/libio.h /usr/include/_G_config.h \
+ /usr/include/x86_64-linux-gnu/bits/stdio_lim.h \
+ /usr/include/x86_64-linux-gnu/bits/sys_errlist.h \
+ /usr/include/x86_64-linux-gnu/bits/stdio.h \
+ /usr/include/x86_64-linux-gnu/bits/stdio2.h classe_intermediaria.h \
  classe_reg.h /usr/include/boost/regex.h /usr/include/boost/cregex.hpp \
  /usr/include/boost/regex/config.hpp /usr/include/boost/regex/user.hpp \
  /usr/include/boost/config.hpp /usr/include/boost/config/user.hpp \
@@ -305,6 +310,20 @@ TCC-classe_intermediaria.o: classe_intermediaria.C \
 /usr/include/c++/4.6/istream:
 
 /usr/include/c++/4.6/bits/istream.tcc:
+
+/usr/include/c++/4.6/cstdio:
+
+/usr/include/libio.h:
+
+/usr/include/_G_config.h:
+
+/usr/include/x86_64-linux-gnu/bits/stdio_lim.h:
+
+/usr/include/x86_64-linux-gnu/bits/sys_errlist.h:
+
+/usr/include/x86_64-linux-gnu/bits/stdio.h:
+
+/usr/include/x86_64-linux-gnu/bits/stdio2.h:
 
 classe_intermediaria.h:
 

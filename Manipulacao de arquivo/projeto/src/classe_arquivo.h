@@ -11,6 +11,7 @@ class _arq{
 public:
 	//ifstream new_file;
         string codigo;
+        string debug;
         int tag_php, id;
         _intermediaria aux, *no_corrente;
 	_aspas *aspas;

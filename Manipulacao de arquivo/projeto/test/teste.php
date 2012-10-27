@@ -20,8 +20,8 @@
             </form>
             <div>
                 <?php
-                $nome = htmlspecialchars($_GET['nome']);
-                $usuario = htmlspecialchars($_GET['usuario']);
+                $nome = $_GET['nome'];
+                $usuario = $_GET['usuario'];
                 ini_set("display_errors", 1);
                 $link = mysql_connect('localhost', 'root', 'root');
                 if (!$link) {

@@ -23,7 +23,7 @@ void _reg::reg_comp()//verificar se sera assim mesmo
         cout << "Montagem da expressao com erro\n" << endl; //arrumar essa porcaria pra ler do arquivos as expressoes
         exit(-1);
     }
-    if (reg_comp_all("^[^\\$^\"^\'^[:digit:]]", REG_FUNCTION) != 0) {//Alterar para escapar caracteres whitespace e tals
+    if (reg_comp_all("^[^\\$^\"^\'^[:digit:]^\\(]", REG_FUNCTION) != 0) {//Alterar para escapar caracteres whitespace e tals
         cout << "Montagem da expressao com erro\n" << endl; //arrumar essa porcaria pra ler do arquivos as expressoes
         exit(-1);
     }
@@ -82,7 +82,7 @@ void _reg::reg_comp()//verificar se sera assim mesmo
         cout << "Montagem da expressao com erro segunda parte\n" << endl;
         exit(-1);
     }
-    if (reg_comp_all("(^\\=[a-z|A-Z| |\\$||&])", REG_OPERATOR_NORMAL) != 0) {
+    if (reg_comp_all("(^\\=[a-z|A-Z| |\\$|\\(])", REG_OPERATOR_NORMAL) != 0) {
         cout << "Montagem da expressao com erro segunda parte\n" << endl;
         exit(-1);
     }
@@ -181,6 +181,10 @@ void _reg::reg_comp()//verificar se sera assim mesmo
     if (reg_comp_all("^(else)", REG_ELSE) != 0) {
         cout << "Erro na montagem: Expressao de parentese final" << endl;
     }
+    
+    /*Deteccao de CAST dentro de aspas*/
+    if (reg_comp_all("( *int *\\))|( *integer *\\))|( *float *\\))|( *real *\\))|( *double *\\)) ",REG_INT)!= 0)
+        cout <<"Erro na montagem: Expressao regular cast"<<endl;
 }
 
 /*executa todas as expressoes regulares*/
@@ -263,6 +267,8 @@ int _reg::what_is_first_string(string line) {//AQUI ESTA O POSSIVEL ERRO
         return REG_POS_OPERATOR_CAT;
     else if (reg_exec_all(line, REG_POS_OPERATOR_MAT) == 0)
         return REG_POS_OPERATOR_MAT;
+    else if (reg_exec_all(line, REG_PARENTESE_I)==0)
+        return REG_PARENTESE_I;
 }
 
 int _reg::reg_segunda_parte_linha(string subline) {
@@ -382,5 +388,11 @@ int _reg::reg_condicional_if(string line, int &tipo) {
         tipo = REG_ELSE;
         return result.rm_eo;
     }
+    return FALSE_VALUE;
+}
+
+int _reg::reg_cast(string line){
+    if (reg_exec_all(line,REG_INT)==0)
+        return TRUE_VALUE;
     return FALSE_VALUE;
 }

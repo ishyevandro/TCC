@@ -25,7 +25,6 @@ _var::_var(string x)//construtor com string da var passada.
 _var& _var::operator=(const _var &recebe)//recebe uma variavel para ir para o vetor de funcao ou variavel
 {
     _var *aux = new _var;
-    _var *percorre_pilha;
     aux->variavel = recebe.variavel;
     this->n_var++;
     return *this;
