@@ -5,14 +5,14 @@
       <df name="autom4te.cache">
       </df>
       <df name="src">
-        <in>classe_arquivo.C</in>
-        <in>classe_arquivo.h</in>
         <in>classe_aspas.C</in>
         <in>classe_aspas.h</in>
+        <in>classe_codigo.C</in>
+        <in>classe_codigo.h</in>
         <in>classe_funcao.C</in>
         <in>classe_funcao.h</in>
-        <in>classe_intermediaria.C</in>
-        <in>classe_intermediaria.h</in>
+        <in>classe_linha.C</in>
+        <in>classe_linha.h</in>
         <in>classe_reg.C</in>
         <in>classe_reg.h</in>
         <in>classe_var.C</in>
@@ -123,13 +123,6 @@
           </incDir>
         </ccTool>
       </folder>
-      <item path="src/classe_arquivo.C" ex="false" tool="1" flavor2="4">
-        <ccTool>
-          <incDir>
-            <pElem>/usr/include/gio-unix-2.0</pElem>
-          </incDir>
-        </ccTool>
-      </item>
       <item path="src/classe_aspas.C" ex="false" tool="1" flavor2="4">
         <ccTool>
           <incDir>
@@ -140,13 +133,6 @@
       <item path="src/classe_funcao.C" ex="true" tool="1" flavor2="0">
       </item>
       <item path="src/classe_funcao.h" ex="true" tool="3" flavor2="0">
-      </item>
-      <item path="src/classe_intermediaria.C" ex="false" tool="1" flavor2="4">
-        <ccTool>
-          <incDir>
-            <pElem>/usr/include/gio-unix-2.0/</pElem>
-          </incDir>
-        </ccTool>
       </item>
       <item path="src/classe_reg.C" ex="false" tool="1" flavor2="4">
         <ccTool>

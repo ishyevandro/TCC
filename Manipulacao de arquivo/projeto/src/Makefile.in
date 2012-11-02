@@ -49,8 +49,8 @@ CONFIG_CLEAN_VPATH_FILES =
 am__installdirs = "$(DESTDIR)$(bindir)" "$(DESTDIR)$(TCCdir)"
 PROGRAMS = $(bin_PROGRAMS)
 am_TCC_OBJECTS = TCC-main.$(OBJEXT) TCC-editor.$(OBJEXT) \
-	TCC-classe_arquivo.$(OBJEXT) TCC-classe_var.$(OBJEXT) \
-	TCC-classe_reg.$(OBJEXT) TCC-classe_intermediaria.$(OBJEXT) \
+	TCC-classe_codigo.$(OBJEXT) TCC-classe_var.$(OBJEXT) \
+	TCC-classe_reg.$(OBJEXT) TCC-classe_linha.$(OBJEXT) \
 	TCC-classe_aspas.$(OBJEXT)
 TCC_OBJECTS = $(am_TCC_OBJECTS)
 am__DEPENDENCIES_1 =
@@ -198,8 +198,8 @@ top_srcdir = @top_srcdir@
 AM_CXXFLAGS = -I. 
 AM_LDFLAGS = -mwindows
 TCCdir = ${prefix}
-TCC_SOURCES = main.C editor.C classe_arquivo.C classe_var.C classe_reg.C classe_intermediaria.C classe_aspas.C
-TCC_HEADERS = editor.h classe_arquivo.h classe_var.h classe_reg.h classe_intermediaria.h classe_aspas.h variavel.h
+TCC_SOURCES = main.C editor.C classe_codigo.C classe_var.C classe_reg.C classe_linha.C classe_aspas.C
+TCC_HEADERS = editor.h classe_codigo.h classe_var.h classe_reg.h classe_linha.h classe_aspas.h variavel.h
 TCC_CPPFLAGS = $(GTKMM_CFLAGS) $(BSL_CFLAGS) $(EX_CFLAGS) $(CPPFLAGS)
 TCC_LDADD = $(GTKMM_LIBS) $(BSL_LIBS) $(EX_LIBS) $(LDFLAGS) $(BOOST_REGEX_LIB)
 all: all-am
@@ -283,9 +283,9 @@ mostlyclean-compile:
 distclean-compile:
 	-rm -f *.tab.c
 
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/TCC-classe_arquivo.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/TCC-classe_aspas.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/TCC-classe_intermediaria.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/TCC-classe_codigo.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/TCC-classe_linha.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/TCC-classe_reg.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/TCC-classe_var.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/TCC-editor.Po@am__quote@
@@ -333,19 +333,19 @@ TCC-editor.obj: editor.C
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(TCC_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o TCC-editor.obj `if test -f 'editor.C'; then $(CYGPATH_W) 'editor.C'; else $(CYGPATH_W) '$(srcdir)/editor.C'; fi`
 
-TCC-classe_arquivo.o: classe_arquivo.C
-@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(TCC_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT TCC-classe_arquivo.o -MD -MP -MF $(DEPDIR)/TCC-classe_arquivo.Tpo -c -o TCC-classe_arquivo.o `test -f 'classe_arquivo.C' || echo '$(srcdir)/'`classe_arquivo.C
-@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/TCC-classe_arquivo.Tpo $(DEPDIR)/TCC-classe_arquivo.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='classe_arquivo.C' object='TCC-classe_arquivo.o' libtool=no @AMDEPBACKSLASH@
+TCC-classe_codigo.o: classe_codigo.C
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(TCC_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT TCC-classe_codigo.o -MD -MP -MF $(DEPDIR)/TCC-classe_codigo.Tpo -c -o TCC-classe_codigo.o `test -f 'classe_codigo.C' || echo '$(srcdir)/'`classe_codigo.C
+@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/TCC-classe_codigo.Tpo $(DEPDIR)/TCC-classe_codigo.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='classe_codigo.C' object='TCC-classe_codigo.o' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(TCC_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o TCC-classe_arquivo.o `test -f 'classe_arquivo.C' || echo '$(srcdir)/'`classe_arquivo.C
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(TCC_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o TCC-classe_codigo.o `test -f 'classe_codigo.C' || echo '$(srcdir)/'`classe_codigo.C
 
-TCC-classe_arquivo.obj: classe_arquivo.C
-@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(TCC_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT TCC-classe_arquivo.obj -MD -MP -MF $(DEPDIR)/TCC-classe_arquivo.Tpo -c -o TCC-classe_arquivo.obj `if test -f 'classe_arquivo.C'; then $(CYGPATH_W) 'classe_arquivo.C'; else $(CYGPATH_W) '$(srcdir)/classe_arquivo.C'; fi`
-@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/TCC-classe_arquivo.Tpo $(DEPDIR)/TCC-classe_arquivo.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='classe_arquivo.C' object='TCC-classe_arquivo.obj' libtool=no @AMDEPBACKSLASH@
+TCC-classe_codigo.obj: classe_codigo.C
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(TCC_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT TCC-classe_codigo.obj -MD -MP -MF $(DEPDIR)/TCC-classe_codigo.Tpo -c -o TCC-classe_codigo.obj `if test -f 'classe_codigo.C'; then $(CYGPATH_W) 'classe_codigo.C'; else $(CYGPATH_W) '$(srcdir)/classe_codigo.C'; fi`
+@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/TCC-classe_codigo.Tpo $(DEPDIR)/TCC-classe_codigo.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='classe_codigo.C' object='TCC-classe_codigo.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(TCC_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o TCC-classe_arquivo.obj `if test -f 'classe_arquivo.C'; then $(CYGPATH_W) 'classe_arquivo.C'; else $(CYGPATH_W) '$(srcdir)/classe_arquivo.C'; fi`
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(TCC_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o TCC-classe_codigo.obj `if test -f 'classe_codigo.C'; then $(CYGPATH_W) 'classe_codigo.C'; else $(CYGPATH_W) '$(srcdir)/classe_codigo.C'; fi`
 
 TCC-classe_var.o: classe_var.C
 @am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(TCC_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT TCC-classe_var.o -MD -MP -MF $(DEPDIR)/TCC-classe_var.Tpo -c -o TCC-classe_var.o `test -f 'classe_var.C' || echo '$(srcdir)/'`classe_var.C
@@ -375,19 +375,19 @@ TCC-classe_reg.obj: classe_reg.C
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(TCC_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o TCC-classe_reg.obj `if test -f 'classe_reg.C'; then $(CYGPATH_W) 'classe_reg.C'; else $(CYGPATH_W) '$(srcdir)/classe_reg.C'; fi`
 
-TCC-classe_intermediaria.o: classe_intermediaria.C
-@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(TCC_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT TCC-classe_intermediaria.o -MD -MP -MF $(DEPDIR)/TCC-classe_intermediaria.Tpo -c -o TCC-classe_intermediaria.o `test -f 'classe_intermediaria.C' || echo '$(srcdir)/'`classe_intermediaria.C
-@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/TCC-classe_intermediaria.Tpo $(DEPDIR)/TCC-classe_intermediaria.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='classe_intermediaria.C' object='TCC-classe_intermediaria.o' libtool=no @AMDEPBACKSLASH@
+TCC-classe_linha.o: classe_linha.C
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(TCC_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT TCC-classe_linha.o -MD -MP -MF $(DEPDIR)/TCC-classe_linha.Tpo -c -o TCC-classe_linha.o `test -f 'classe_linha.C' || echo '$(srcdir)/'`classe_linha.C
+@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/TCC-classe_linha.Tpo $(DEPDIR)/TCC-classe_linha.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='classe_linha.C' object='TCC-classe_linha.o' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(TCC_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o TCC-classe_intermediaria.o `test -f 'classe_intermediaria.C' || echo '$(srcdir)/'`classe_intermediaria.C
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(TCC_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o TCC-classe_linha.o `test -f 'classe_linha.C' || echo '$(srcdir)/'`classe_linha.C
 
-TCC-classe_intermediaria.obj: classe_intermediaria.C
-@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(TCC_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT TCC-classe_intermediaria.obj -MD -MP -MF $(DEPDIR)/TCC-classe_intermediaria.Tpo -c -o TCC-classe_intermediaria.obj `if test -f 'classe_intermediaria.C'; then $(CYGPATH_W) 'classe_intermediaria.C'; else $(CYGPATH_W) '$(srcdir)/classe_intermediaria.C'; fi`
-@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/TCC-classe_intermediaria.Tpo $(DEPDIR)/TCC-classe_intermediaria.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='classe_intermediaria.C' object='TCC-classe_intermediaria.obj' libtool=no @AMDEPBACKSLASH@
+TCC-classe_linha.obj: classe_linha.C
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(TCC_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT TCC-classe_linha.obj -MD -MP -MF $(DEPDIR)/TCC-classe_linha.Tpo -c -o TCC-classe_linha.obj `if test -f 'classe_linha.C'; then $(CYGPATH_W) 'classe_linha.C'; else $(CYGPATH_W) '$(srcdir)/classe_linha.C'; fi`
+@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/TCC-classe_linha.Tpo $(DEPDIR)/TCC-classe_linha.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='classe_linha.C' object='TCC-classe_linha.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(TCC_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o TCC-classe_intermediaria.obj `if test -f 'classe_intermediaria.C'; then $(CYGPATH_W) 'classe_intermediaria.C'; else $(CYGPATH_W) '$(srcdir)/classe_intermediaria.C'; fi`
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(TCC_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o TCC-classe_linha.obj `if test -f 'classe_linha.C'; then $(CYGPATH_W) 'classe_linha.C'; else $(CYGPATH_W) '$(srcdir)/classe_linha.C'; fi`
 
 TCC-classe_aspas.o: classe_aspas.C
 @am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(TCC_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT TCC-classe_aspas.o -MD -MP -MF $(DEPDIR)/TCC-classe_aspas.Tpo -c -o TCC-classe_aspas.o `test -f 'classe_aspas.C' || echo '$(srcdir)/'`classe_aspas.C

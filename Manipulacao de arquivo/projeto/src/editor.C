@@ -192,7 +192,7 @@ bool EDITOR::relogio() {
 
 void EDITOR::aplicar() {
     int pos;
-    this->A = new _arq;
+    this->A = new _codigo;
     string codigo;
     Panalise = TProcess.get_buffer();
     codigo = Panalise->get_text();
@@ -210,7 +210,7 @@ void EDITOR::aplicar() {
 
 void EDITOR::abrir() {
     ifstream arquivo;
-    string texto, aux, clas_arq;
+    string texto, aux, clas_codigo;
     int resultado;
 
     Gtk::FileChooserDialog dialog("Abrir arquivo...", Gtk::FILE_CHOOSER_ACTION_OPEN);

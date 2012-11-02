@@ -2,21 +2,35 @@
 // $i [  'JUDAS'  ] = htmlspecialchars  (  htmlspecialchars  ($_POST ['POST DO I'])   ) >= $b;
 //$cd = "0 < {$i['JUDAS']}";
 
-$j = string_azul($_GET ['GET DO J'], $k);
+switch ($k) {
+    case 10:
+        $j = $_GET['SWITCH 10'];
+        break;
+    case 11:
+        $j = $_GET['SWITCH 11'];
+        break;
+    case 13:
+        $j = $_GET['SWITCH 12'];
+        break;
+}
+
+
+
+
+//$j = (int) $_GET['SEMCAST'] . $_GET['CAST'];
 $i = $j;
 $a = $_POST['POSTAAA'];
 if (Jesus == 1) {
     $segunda_var = $_GET['EVANDRO'];
     $terceira_var = $j;
     $quarta_var = $a;
-}
-else if (Jesus == 2)
+} else if (Jesus == 2)
     $a = $_GET['LEANDRO'];
-else{
+else {
     $terceiro_else = $_GET['ALESSANDRO'];
 }
 $JESUS = chiquinha($j) . $i;
-$k = $JESUS + $x;
+$k = $JESUS . $x;
 $k .= htmlspecialchars($j) . $segunda_var . $terceira_var . $terceiro_else . $a;
 $y = mysql_query($k, $link);
 $x = $y;

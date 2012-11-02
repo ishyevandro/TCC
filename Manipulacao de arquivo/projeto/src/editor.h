@@ -12,7 +12,7 @@
 #include <libex.h>
 #include <bancosl.h>
 #include <config.h>
-#include "classe_arquivo.h"
+#include "classe_codigo.h"
 
 #ifndef __EDITOR_H__
 #define __EDITOR_H__ 1
@@ -22,7 +22,7 @@ class EDITOR : public Gtk::Window
 	public:
 		EDITOR();
 		~EDITOR();
-		_arq *A;
+		_codigo *A;
 	protected:
 		Gtk::VBox Principal;
 		Gtk::HBox *H_Conteudo, H_Menu, H_ToolBar;

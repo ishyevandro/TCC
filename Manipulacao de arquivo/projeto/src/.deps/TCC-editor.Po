@@ -1057,7 +1057,7 @@ TCC-editor.o: editor.C editor.h /usr/include/c++/4.6/iostream \
  /usr/include/c++/4.6/x86_64-linux-gnu/./bits/basic_file.h \
  /usr/include/c++/4.6/x86_64-linux-gnu/./bits/c++io.h \
  /usr/include/c++/4.6/bits/fstream.tcc /usr/include/sqlite3.h ../config.h \
- classe_arquivo.h classe_var.h classe_reg.h /usr/include/boost/regex.h \
+ classe_codigo.h classe_var.h classe_reg.h /usr/include/boost/regex.h \
  /usr/include/boost/cregex.hpp /usr/include/boost/regex/config.hpp \
  /usr/include/boost/regex/user.hpp /usr/include/boost/config.hpp \
  /usr/include/boost/config/user.hpp \
@@ -1077,7 +1077,7 @@ TCC-editor.o: editor.C editor.h /usr/include/c++/4.6/iostream \
  /usr/include/boost/cstdint.hpp \
  /usr/lib/gcc/x86_64-linux-gnu/4.6.1/include/stdint.h \
  /usr/include/stdint.h /usr/include/boost/regex/v4/error_type.hpp \
- variavel.h classe_intermediaria.h classe_aspas.h
+ variavel.h classe_linha.h classe_aspas.h
 
 editor.h:
 
@@ -3431,7 +3431,7 @@ editor.h:
 
 ../config.h:
 
-classe_arquivo.h:
+classe_codigo.h:
 
 classe_var.h:
 
@@ -3485,6 +3485,6 @@ classe_reg.h:
 
 variavel.h:
 
-classe_intermediaria.h:
+classe_linha.h:
 
 classe_aspas.h:

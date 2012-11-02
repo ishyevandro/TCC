@@ -5,8 +5,8 @@
 #include <iostream>
 using namespace std;
 
-#define DISPLAY_ERROR 1
-
+#define DISPLAY_ERROR 0
+#define ERROR -10
 #define FALSE_VALUE -1
 #define REG_P_G 0
 #define REG_P_G_V 7// nao esta sendo utilizado
@@ -20,7 +20,7 @@ using namespace std;
 #define REG_NUMBER 7
 #define REG_ASPAS 8
 #define REG_FUNCTION 9
-
+#define REG_PONTO_VIRGULA 10
 /*operadores utilizados para passar algum valor ha variavel exemplo "="*/
 #define REG_OPERATOR_NORMAL 20
 #define REG_OPERATOR_SOMA 21
@@ -67,6 +67,13 @@ using namespace std;
 #define REG_IF 70
 #define REG_ELSEIF 71
 #define REG_ELSE 72
+#define REG_SWITCH 73
+#define REG_CASE 74
+#define REG_BREAK 75
+#define REG_ENDIF 76
+#define REG_ENDSWITCH 77
+#define REG_LOOP 78
+#define REG_LOOP_DO 79
 
 /*Deteccao de CAST*/
 #define REG_INT 80
@@ -101,6 +108,8 @@ public:
     int reg_tag_php (string, int);
     int reg_condicional_if (string, int &);
     int reg_cast(string);
+    int reg_laco (string, int &);
+    int reg_break_condicionais (string, int);
 //verificacao de funcoes
     
 };

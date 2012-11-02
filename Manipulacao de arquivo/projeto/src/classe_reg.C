@@ -178,17 +178,33 @@ void _reg::reg_comp()//verificar se sera assim mesmo
     if (reg_comp_all("^([Ee][Ll][Ss][Ee][Ii][Ff]|[Ee][Ll][Ss][Ee] *[Ii][Ff])", REG_ELSEIF) != 0) {
         cout << "Erro na montagem: Expressao de parentese final" << endl;
     }
-    if (reg_comp_all("^(else)", REG_ELSE) != 0) {
+    if (reg_comp_all("^([Ee][Ll][Ss][Ee])", REG_ELSE) != 0) {
         cout << "Erro na montagem: Expressao de parentese final" << endl;
     }
-    
+
+    if (reg_comp_all("^(switch)", REG_SWITCH) != 0) {
+        cout << "Erro na montagem: Expressao de switch" << endl;
+    }
+    if (reg_comp_all("^(case)", REG_CASE) != 0) {
+        cout << "Erro na montagem: Expressao de case" << endl;
+    }
+    if (reg_comp_all("^(break)", REG_BREAK) != 0) {
+        cout << "Erro na montagem: expressao break";
+    }
+    if (reg_comp_all("^(while)|^(for)|^(foreach)", REG_LOOP) != 0) {
+        cout << "Erro na montagem: expressao break";
+    }
+    if (reg_comp_all("^(do)", REG_LOOP_DO) != 0) {
+        cout << "Erro na montagem: expressao break";
+    }
     /*Deteccao de CAST dentro de aspas*/
-    if (reg_comp_all("( *int *\\))|( *integer *\\))|( *float *\\))|( *real *\\))|( *double *\\)) ",REG_INT)!= 0)
-        cout <<"Erro na montagem: Expressao regular cast"<<endl;
+    if (reg_comp_all("( *int *\\))|( *integer *\\))|( *float *\\))|( *real *\\))|( *double *\\)) ", REG_INT) != 0)
+        cout << "Erro na montagem: Expressao regular cast" << endl;
 }
 
 /*executa todas as expressoes regulares*/
 int _reg::reg_exec_all(string verify, int type) {
+    // cout << "warning" << type << endl;
     return regexec(&first[type], verify.c_str(), (size_t) 1, &result, 0);
 }
 
@@ -218,10 +234,10 @@ int _reg::mount_reg_get_or_post(string line, string variables)//verifica se na l
             cout << "Recompilar mount_reg_get_or_post erro"; //this->variables_with_p_or_g<<line<<endl;
     }
     if (reg_exec_all(line, REG_P_G) == 0) {//verifica se tem post ou get
-      //  cout << "REG_MOUNT:" << line << endl << this->variables_with_p_or_g << endl;
+        //  cout << "REG_MOUNT:" << line << endl << this->variables_with_p_or_g << endl;
         return TRUE_VALUE;
     } else {
-       // cout << "FALSE_VALUE:" << line <<endl << this->variables_with_p_or_g << endl;
+        // cout << "FALSE_VALUE:" << line <<endl << this->variables_with_p_or_g << endl;
         return FALSE_VALUE;
     }
 }
@@ -267,7 +283,7 @@ int _reg::what_is_first_string(string line) {//AQUI ESTA O POSSIVEL ERRO
         return REG_POS_OPERATOR_CAT;
     else if (reg_exec_all(line, REG_POS_OPERATOR_MAT) == 0)
         return REG_POS_OPERATOR_MAT;
-    else if (reg_exec_all(line, REG_PARENTESE_I)==0)
+    else if (reg_exec_all(line, REG_PARENTESE_I) == 0)
         return REG_PARENTESE_I;
 }
 
@@ -378,21 +394,54 @@ int _reg::reg_condicional_if(string line, int &tipo) {
     if (reg_exec_all(line, REG_IF) == 0) {
         tipo = REG_IF;
         return result.rm_eo;
-    }
-    if (reg_exec_all(line, REG_ELSEIF) == 0) {
+    } else if (reg_exec_all(line, REG_ELSEIF) == 0) {
         tipo = REG_ELSEIF;
         return result.rm_eo;
-    }
+    } else if (reg_exec_all(line, REG_SWITCH) == 0) {
+        tipo = REG_SWITCH;
+        return result.rm_eo;
+    } else if (reg_exec_all(line, REG_CASE) == 0) {
+        cout << line << endl << line << endl << endl << endl << endl << endl;
+        tipo = REG_CASE;
+        return result.rm_eo;
+    } else
+        return FALSE_VALUE;
+}
 
-    if (reg_exec_all(line, REG_ELSE) == 0) {
-        tipo = REG_ELSE;
+int _reg::reg_laco(string line, int &tipo) {
+    if (reg_exec_all(line, REG_LOOP) == 0) {
+        tipo = REG_LOOP;
+        return result.rm_eo;
+    } else if (reg_exec_all(line, REG_LOOP_DO) == 0) {
+        tipo = REG_LOOP_DO;
         return result.rm_eo;
     }
     return FALSE_VALUE;
 }
 
-int _reg::reg_cast(string line){
-    if (reg_exec_all(line,REG_INT)==0)
+int _reg::reg_cast(string line) {
+    if (reg_exec_all(line, REG_INT) == 0)
         return TRUE_VALUE;
+    return FALSE_VALUE;
+}
+
+int _reg::reg_break_condicionais(string line, int tipo) {
+    int procura;
+    switch (tipo) {
+        case REG_IF:
+        case REG_ELSE:
+        case REG_ELSEIF:
+            procura = REG_ENDIF;
+            break;
+        case REG_SWITCH:
+            procura = REG_ENDSWITCH;
+            break;
+        case REG_CASE:
+            procura = REG_BREAK;
+            break;
+
+    }
+    if (reg_exec_all(line, procura) == 0)
+        return result.rm_so;
     return FALSE_VALUE;
 }
