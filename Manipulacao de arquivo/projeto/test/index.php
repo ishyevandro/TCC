@@ -4,7 +4,8 @@
 
 switch ($k) {
     case 10:
-        $j = $_GET['SWITCH 10'];
+        $j = $_GET['SWITCH 10'];//XSS
+        $j = $_GET['DOBRO OU NADA'];
         break;
     case 11:
         $j = $_GET['SWITCH 11'];
@@ -32,7 +33,7 @@ else {
 $JESUS = chiquinha($j) . $i;
 $k = $JESUS . $x;
 $k .= htmlspecialchars($j) . $segunda_var . $terceira_var . $terceiro_else . $a;
-$y = mysql_query($k, $link);
+$y = pg_query("$link aqui tem muita coisa a ser feita"+ 100,$k);
 $x = $y;
 ?>
 //$j   =   '100'; 

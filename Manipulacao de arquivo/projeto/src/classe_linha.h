@@ -15,9 +15,8 @@ class _linha {
 public:
     vector <_var> vetor_de_variaveis;
     _reg *reg;
-    // _aspas *aspas;
     _linha *irmao, *pai, *filho;
-    int vet_num, colchete, dois_pontos, id, id_irmao_original; //, n_funcao;
+    int vet_num, colchete, dois_pontos, id, id_irmao_original, xss; //, n_funcao;
     int tipo_de_condicional;
     BANCOSL *conexao;
     string no;
@@ -26,7 +25,7 @@ public:
     ~_linha();
     //int get_line_to_analyse(string , vector<_var>&, int &, _reg);
     //int get_line_to_analyse(string , int &, _reg);
-    int verifica_linha(string, string &, int);
+    int verifica_linha(string, string &, int, int);
     void remove_space(string&);
     int analisa_linha(string);
     string string_of_var_to_reg();
@@ -40,6 +39,7 @@ public:
     int type_of_operator(string &);
     int operador_normal(string, string);
     int operador_cat(string, string);
+    int operador_mat(string,string);
     int pos_operador(string &, _var &, int);
     int retorna_elementos_dentro_de_parentese(string);
     int proximo_operador(string);

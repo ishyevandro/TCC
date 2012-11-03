@@ -64,7 +64,7 @@
           <buildCommandWorkingDir>.</buildCommandWorkingDir>
           <buildCommand>${MAKE} -f Makefile</buildCommand>
           <cleanCommand>${MAKE} -f Makefile clean</cleanCommand>
-          <executablePath></executablePath>
+          <executablePath>src/TCC</executablePath>
         </makeTool>
       </makefileType>
       <item path="../../../../../Desktop/integrado/tcc-evandro-1.0.1/src/classe_arquivo.C"

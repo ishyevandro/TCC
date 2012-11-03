@@ -12,7 +12,7 @@ public:
 	//ifstream new_file;
         string codigo;
         string debug;
-        int tag_php, id;
+        int tag_php, id, xss;
         _linha aux, *no_corrente;
 	_aspas *aspas;
 	_reg *reg;

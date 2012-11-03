@@ -29,6 +29,7 @@ using namespace std;
 #define REG_OPERATOR_DIV 24
 #define REG_OPERATOR_RES 25
 #define REG_OPERATOR_CAT 26
+#define REG_OPERATOR_MAT 27
 
 /*Operadores de comparacao utilizados geralmente em if ou como retorno de 1 ou 0*/
 #define REG_OPERATOR_COMPARE 27
@@ -53,6 +54,7 @@ using namespace std;
 #define REG_ASPAS_D_F 46
 #define REG_ASPAS_S_F 47
 #define REG_VAR_ASPAS 45
+#define REG_XSS 48
 #define MAX_REG 100
 
 /*Deteccao de parentese*/
@@ -110,6 +112,7 @@ public:
     int reg_cast(string);
     int reg_laco (string, int &);
     int reg_break_condicionais (string, int);
+    int xss (string);
 //verificacao de funcoes
     
 };

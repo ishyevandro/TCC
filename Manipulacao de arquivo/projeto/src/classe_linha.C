@@ -21,22 +21,23 @@ void _linha::display_error(string prnt) {
         cout << this->no << prnt << endl;
 }
 
-int _linha::verifica_linha(string line, string &debug, int irmao) {
+int _linha::verifica_linha(string line, string &debug, int irmao, int verifica_xss) {
     int n;
+    this->xss = verifica_xss;
     cout << this->no << endl;
     cout << line << endl;
     if (this->filho != NULL)
-        this->filho->verifica_linha(line, debug, 1);
+        this->filho->verifica_linha(line, debug, 1, verifica_xss);
     if (irmao == 1) {
         if (this->irmao != NULL)
-            this->irmao->verifica_linha(line, debug, 1);
+            this->irmao->verifica_linha(line, debug, 1, verifica_xss);
     }
     remove_space(line);
     n = reg->what_is_first_string(line);
     if (n == REG_VARIABLE) {
         analisa_linha(line);
     } else {
-        cout << "FUNCAO DIRETO" << endl;
+        verifica_funcao(line);
         return -1;
     }
     debug += this->seguranca_retorno;
@@ -74,8 +75,8 @@ int _linha::analisa_linha(string line) {
                 operador_cat(line/*2, array_of_vars_in_array,*/, nova_variavel);
                 break;
                 //case REG_OPERATOR_SOMA REG_OPERATOR_SUB REG_OPERATOR_DIV REG_OPERATOR_RES:;
-            default:
-                cout << "operadores de some aprender a usar switch" << endl;
+            case REG_OPERATOR_MAT:
+                operador_mat(line, nova_variavel);
                 break;
         }
         remove_space(line);
@@ -145,7 +146,7 @@ string _linha::primeira_variavel(string &line, int &cast, _var &nova_variavel) {
         parentese = FALSE_VALUE;
         remove_space(line);
         tipo_de_string = this->reg->what_is_first_string(line);
-        cout << line << endl;
+        // cout << line << endl;
         if (tipo_de_string == REG_VARIABLE) {//#ERRADDO
             display_error("primeira_variavel fim VARIAVEL");
             return retorna_variavel(line);
@@ -153,8 +154,6 @@ string _linha::primeira_variavel(string &line, int &cast, _var &nova_variavel) {
             display_error("primeira_variavel fim FUNCAO");
             nova_string = retorna_funcao(line);
             if (nova_string.empty()) {
-                cout << "####ERRO de sintaxe" << endl;
-                cout << line << endl;
                 return nova_string;
             }
             verifica_funcao(nova_string); //{analise no lugar errado}
@@ -170,11 +169,8 @@ string _linha::primeira_variavel(string &line, int &cast, _var &nova_variavel) {
             if (tipo_de_string == TRUE_VALUE) {
                 cast = 1;
                 line = line.substr(pos, line.length());
-                cout << "TRUE_CAST" << line << endl;
                 return primeira_variavel(line, cast, nova_variavel);
             } else {
-                cout << "FALSE_CAST" << endl;
-                cout << line << endl;
                 pos = retorna_elementos_dentro_de_parentese(line);
                 if (pos != string::npos) {
                     nova_string = line.substr(0, pos);
@@ -188,8 +184,6 @@ string _linha::primeira_variavel(string &line, int &cast, _var &nova_variavel) {
                     }
                     prox = proximo_operador(line); //ate aqui eu faco apenas a transformacao do parentese de dentro em um mini linha para analise
                     if (prox == FALSE_VALUE) {
-                        cout << line << endl;
-                        cout << "linha com erro de sintaxe" << endl;
                         exit(1);
                     } else if (prox == REG_OPERATOR_COMPARE) {
                         remove_operador_intermediario(line);
@@ -204,8 +198,8 @@ string _linha::primeira_variavel(string &line, int &cast, _var &nova_variavel) {
                         pos_operador(nova_string, nova_variavel, 1);
                     } else
                         pos_operador(nova_string, nova_variavel, 0);
-                    cout << "Chama pos operador aqui: " << endl << line << endl;
-                    cout << nova_string << endl << line << endl;
+                    //     cout << "Chama pos operador aqui: " << endl << line << endl;
+                    //       cout << nova_string << endl << line << endl;
                     parentese = TRUE_VALUE;
                 } else
                     cout << "comeca colchete mas nao terminar" << endl;
@@ -369,7 +363,6 @@ int _linha::operador_normal(string subline, string nova_variavel) {//##reg_vetor
 }
 
 int _linha::operador_cat(string subline, string nova_variavel) {
-
     _var nova_var;
     string reg_string_de_var_com_g_p;
     display_error("Operador_cat inicio");
@@ -377,6 +370,21 @@ int _linha::operador_cat(string subline, string nova_variavel) {
     nova_var.n_var = 0;
     adiciona_get_ou_post(nova_var, nova_var.variavel, 0);
     pos_operador(subline, nova_var, 0);
+    adiciona_ou_remove_nova_variavel_ao_vetor(nova_var);
+    return 0;
+}
+
+int _linha::operador_mat(string subline, string nova_variavel) {
+    _var nova_var;
+    string reg_string_de_var_com_g_p;
+    display_error("Operador_cat inicio");
+    cout << "NAO DEVERIA ESTAR AQUI" << endl;
+    nova_var.variavel = nova_variavel;
+    nova_var.n_var = 0;
+    cout << nova_variavel << " operador " << subline << endl;
+    //exit (1);
+    adiciona_get_ou_post(nova_var, nova_var.variavel, 1);
+    pos_operador(subline, nova_var, 1);
     adiciona_ou_remove_nova_variavel_ao_vetor(nova_var);
     return 0;
 }
@@ -736,6 +744,7 @@ int _linha::adiciona_get_ou_post(_var &add, string subline, int cast) {//vai ser
     int pos, n;
     string string_guardar, vet_var_p_g;
     display_error("adiciona_get_ou_post");
+    cout << "CAST DO ADICIONA GET OU POST" << cast << endl;
     remove_space(subline);
     vet_var_p_g = string_of_var_to_reg();
     if (reg->reg_segunda_parte_linha(subline) == TRUE_VALUE) {//verifica se o primeiro elemento 'e um get ou post
@@ -786,6 +795,7 @@ int _linha::add_var_array(string new_string) {//insercao de variavel no vetor de
 int _linha::verifica_funcao(string funcao) {
     string func, variavel_a_analisar, funcao_impressao;
     string sql;
+    _var analisa;
     char *SQL;
     vector <string> linha;
     char buffer[64];
@@ -808,34 +818,75 @@ int _linha::verifica_funcao(string funcao) {
     if (this->conexao->query_result != 3) {
         for (resultado = this->conexao->resultados.begin(); resultado < this->conexao->resultados.end(); resultado++) {
             linha = *resultado;
-            cout << linha.at(0) << endl;
-            cout << linha.at(1) << endl;
             if (func.compare(linha.at(1)) == 0) {
-                cout << this->no << endl << endl << endl;
                 n_parametros = count_char(funcao, ',');
                 n_parametros++;
                 if (n_parametros == 1) {
-                    variavel_a_analisar = primeira_variavel(funcao, cast, nova_variavel);
-                    cout << variavel_a_analisar << "FIN" << endl;
+                    pos = funcao.find_last_of(")");
+                    if (pos != string::npos) {
+                        variavel_a_analisar = funcao.substr(0, pos);
+                        variavel_a_analisar += ";";
+                        cout << variavel_a_analisar << endl;
+                    }
+                    //variavel_a_analisar = primeira_variavel(funcao, cast, nova_variavel);
+                    //cout << variavel_a_analisar << "FIN" << endl;
                 } else {
-                    n = 0;
+                    n = 1;
                     while (n < atoi(linha.at(0).c_str())) {
                         n++;
-                        variavel_a_analisar = primeira_variavel(funcao, cast, nova_variavel);
-                        remove_space(funcao);
+                        while (funcao[0] != ',') {
+                            variavel_a_analisar = primeira_variavel(funcao, cast, nova_variavel);
+                            remove_space(funcao);
+                            if (funcao[0] != ',')
+                                funcao = funcao.substr(1, funcao.length());
+                        }
                         auxiliar = funcao.find_first_not_of(',');
                         if (auxiliar != string::npos)
                             funcao = funcao.substr(auxiliar, funcao.length());
-                        else {
-                            cout << "FUNCAO COM ERRO" << endl;
-                            exit(1);
+                        else
+                            cout << "WARNING ERRO DE SINTAXE" << endl;
+                        // if (auxiliar != string::npos)
+                        //     funcao = funcao.substr(auxiliar, funcao.length());
+                        // else {
+                        //     cout << "FUNCAO COM ERRO" << endl;
+                        //     exit(1);
+                        //  }
+                        cout << "dentro do while" << n << funcao << endl;
+                    }
+                    cout << "FORA DO WHILE" << funcao << endl;
+                    variavel_a_analisar.clear();
+                    while (funcao[0] != ')' && funcao[0] != ',') {
+                        variavel_a_analisar += primeira_variavel(funcao, cast, nova_variavel);
+                        remove_space(funcao);
+                        if (funcao[0] != ',' && funcao[0] != ')') {
+                            variavel_a_analisar += funcao.substr(0, 1);
+                            funcao = funcao.substr(1, funcao.length());
                         }
                     }
+                    cout << "DEPOIS DO WHILE" << variavel_a_analisar << endl;
+                    variavel_a_analisar += ";";
                 }
+                cout << "FORA DOS IFS VARIAVEL PASSADA PARA O POS_OPERADOR" << variavel_a_analisar << endl;
+                pos_operador(variavel_a_analisar, analisa, 0);
+                cout << analisa.n_var << endl;
+                analisa.variavel = "Passada para a funcao";
+               // exit(1);
                 imprime_vetor();
-                pos = procura_variavel_no_vetor(variavel_a_analisar);
-                cout << pos << variavel_a_analisar << endl;
+                /*1pos = procura_variavel_no_vetor(variavel_a_analisar);
+                //1cout << pos << variavel_a_analisar << endl;
                 if (pos != FALSE_VALUE) {
+                    sprintf(buffer, "%d", this->id_irmao_original);
+                    cout << "AQUIAQUIAQUIAQUIAQUIAQUIAQUIAQUIAQUIAQUIAQUIAQUIAQUIAQUIAQUI" << endl << this->no << this->id_irmao_original << endl << buffer << endl << endl << endl << endl << endl;
+                    this->seguranca_retorno = "FUNCAO ANALISADA:";
+                    this->seguranca_retorno += funcao_impressao;
+                    this->seguranca_retorno += "\nNo: ";
+                    this->seguranca_retorno += this->no;
+                    this->seguranca_retorno += "\n";
+                    this->seguranca_retorno += "ID_IRMAO:";
+                    this->seguranca_retorno += buffer;
+                    this->seguranca_retorno += "\n";
+                 */
+                if (analisa.n_var > 0) {
                     sprintf(buffer, "%d", this->id_irmao_original);
                     cout << "AQUIAQUIAQUIAQUIAQUIAQUIAQUIAQUIAQUIAQUIAQUIAQUIAQUIAQUIAQUI" << endl << this->no << this->id_irmao_original << endl << buffer << endl << endl << endl << endl << endl;
                     this->seguranca_retorno = "FUNCAO ANALISADA:";
@@ -849,26 +900,29 @@ int _linha::verifica_funcao(string funcao) {
 
                     sql = "SELECT funcao FROM func_sec WHERE id_bd = 0 OR id_bd = ";
                     sql += linha.at(0);
-                    SQL = new char[sql.length()+1];
-                    strcpy (SQL, sql.c_str());
-                   // cout << sql << endl;
+                    SQL = new char[sql.length() + 1];
+                    strcpy(SQL, sql.c_str());
+                    cout << sql << endl;
                     this->conexao->executar(SQL, 2);
                     delete SQL;
-                    funcao_mysql(this->vetor_de_variaveis[pos]);
+                    funcao_mysql(analisa);
+                    cout << "DEPOIS DA ANALISA_FUNCAO_MYSQL" << endl;
+                    break;
                     //    cout <<"SEG FAULT" << endl;
-                  /*  if (func[0] == 'm')
-                        funcao_mysql(this->vetor_de_variaveis[pos]);
-                    else if (func[0] == 'p')
-                        funcao_postgre(this->vetor_de_variaveis[pos]);
-                    else
-                        funcao_padrao(this->vetor_de_variaveis[pos], 1);
-                    imprime_elemento(this->vetor_de_variaveis[pos]);
-                    */// cout << this->seguranca_retorno << endl;
+                    /*  if (func[0] == 'm')
+                          funcao_mysql(this->vetor_de_variaveis[pos]);
+                      else if (func[0] == 'p')
+                          funcao_postgre(this->vetor_de_variaveis[pos]);
+                      else
+                          funcao_padrao(this->vetor_de_variaveis[pos], 1);
+                      imprime_elemento(this->vetor_de_variaveis[pos]);
+                     */// cout << this->seguranca_retorno << endl;
                 }
                 retorno = 1;
             }
         }
     }
+    cout << "ANTES DO RETURN DA VERIFICA_FUNCAO" << endl;
     display_error("fim verifica_funcao");
     return retorno;
 }
@@ -928,7 +982,7 @@ int _linha::novo_no(string nome, int colchete, int id, int tipo) {
         auxiliar = this->filho;
         novo_no = new _linha;
         novo_no->irmao = auxiliar;
-        auxiliar->tipo_de_condicional = tipo;
+        novo_no->tipo_de_condicional = tipo;
         this->filho = novo_no;
         novo_no->pai = this;
         auxiliar = novo_no; //1
@@ -992,46 +1046,48 @@ int _linha::funcao_mysql(_var valor_analisado) {
     int i, pos, retorno, retorno_absoluto = 2;
     vector <string> linha;
     vector<vector<string> >::iterator resultado;
-    //cout <<"SEG FAULT" << endl;
+    string aux_retorno;
+    cout << "SEG FAULT" << endl;
     for (i = 0; i < valor_analisado.n_var; i++) {
-        retorno = funcao_padrao(valor_analisado, i);
-        cout << valor_analisado.vect[i].funcao << endl;
+        retorno_absoluto = 0;
         for (resultado = this->conexao->resultados.begin(); resultado < this->conexao->resultados.end(); resultado++) {
+            retorno = 0;
             linha = *resultado;
+            cout << "cout da linha do banco: " << linha.at(0) << endl;
             pos = valor_analisado.vect[i].funcao.find(linha.at(0));
-            if (pos != string::npos) {
-                this->seguranca_retorno += "A variavel " + valor_analisado.variavel + " possui o valor de " + valor_analisado.vect[i].variavel + " e foi tratada por " + linha.at(0);
+            if (pos != string::npos && retorno == 0 && retorno_absoluto != 1) {
+                aux_retorno = "A variavel " + valor_analisado.variavel + " possui o valor de " + valor_analisado.vect[i].variavel + " e foi tratada por " + linha.at(0) + ".\n";
                 retorno = 1;
+                retorno_absoluto = 1;
             }
-            if (valor_analisado.vect[i].cast == 0 && retorno == 1) {
-                this->seguranca_retorno += " porem caso esta variavel nao esteja dentro de aspas e possivel ocorrer injection.\n";
-            } else if (retorno == 1)
-                this->seguranca_retorno += ".\n";
-            if (retorno == 0) {
-                this->seguranca_retorno += "A variavel " + valor_analisado.variavel + " possui o " + valor_analisado.vect[i].variavel + " pode estar insegura.\n";
-                retorno_absoluto = 0;
+            else if (valor_analisado.vect[i].cast == 1) {
+                aux_retorno += " Foi realizado cast no valor " + valor_analisado.vect[i].variavel + ".\n";
+                retorno = 1;
+                retorno_absoluto = 1;
+            }
+            else if (retorno == 0 && retorno_absoluto == 0) {
+                aux_retorno = "A variavel " + valor_analisado.variavel + " possui o " + valor_analisado.vect[i].variavel + " e pode estar insegura.\n";
             }
         }
-        /*pos = valor_analisado.vect[i].funcao.find("mysql_escape_string");
-        if (pos != string::npos) {
-            this->seguranca_retorno += "A variavel " + valor_analisado.variavel + " possui o valor de " + valor_analisado.vect[i].variavel + " e foi tratada por mysql_escape_string";
-            retorno = 1;
-        }
-        pos = valor_analisado.vect[i].funcao.find("mysql_real_escape_string");
-        if (pos != string::npos) {
-            this->seguranca_retorno += "A variavel " + valor_analisado.variavel + " possui o valor de " + valor_analisado.vect[i].variavel + " e foi tratada por mysql_real_escape_string";
-            retorno = 1;
-        }
-        if (valor_analisado.vect[i].cast == 0 && retorno == 1) {
-            this->seguranca_retorno += " porem caso esta variavel nao esteja dentro de aspas e possivel ocorrer injection.\n";
-        } else if (retorno == 1)
-            this->seguranca_retorno += ".\n";
-
-        if (retorno == 0) {
-            this->seguranca_retorno += "A variavel " + valor_analisado.variavel + " possui o " + valor_analisado.vect[i].variavel + " pode estar insegura.\n";
-            retorno_absoluto = 0;
-        } */
+        this->seguranca_retorno += aux_retorno;
     }
+    cout << "THIS xss" << this->xss << endl<< endl<< endl<< endl<< endl<< endl<< endl<< endl;
+    if (this->xss == TRUE_VALUE) {
+        
+        this->conexao->executar("SELECT funcao from func_sec WHERE tipo = 2", 2);
+        for (i = 0; i < valor_analisado.n_var; i++) {
+            for (resultado = this->conexao->resultados.begin(); resultado < this->conexao->resultados.end(); resultado++) {
+                linha = *resultado;
+                pos = valor_analisado.vect[i].funcao.find(linha.at(0));
+                if (pos != string::npos) {
+                    this->seguranca_retorno += "Foi utilizado funca anti armazenamento de XSS. (" + linha.at(0) + "na variavel: " + valor_analisado.vect[i].variavel + ").\n";
+                } else {
+                    this->seguranca_retorno += "A variavel " + valor_analisado.vect[i].variavel + " esta vulneravel a XSS.\n";
+                }
+            }
+        }
+    }
+    cout << "ANTES DO RETURN" << endl;
     return retorno_absoluto;
 }
 

@@ -200,6 +200,8 @@ void _reg::reg_comp()//verificar se sera assim mesmo
     /*Deteccao de CAST dentro de aspas*/
     if (reg_comp_all("( *int *\\))|( *integer *\\))|( *float *\\))|( *real *\\))|( *double *\\)) ", REG_INT) != 0)
         cout << "Erro na montagem: Expressao regular cast" << endl;
+    if (reg_comp_all("^([Xx][Ss][Ss])", REG_XSS) != 0)
+        cout << "Erro na montagem: XSS" << endl;
 }
 
 /*executa todas as expressoes regulares*/
@@ -247,13 +249,13 @@ int _reg::reg_to_operator(string line) {
     if (reg_exec_all(line, REG_OPERATOR_NORMAL) == 0)
         return REG_OPERATOR_NORMAL;
     if (reg_exec_all(line, REG_OPERATOR_SOMA) == 0)
-        return REG_OPERATOR_SOMA;
+        return REG_OPERATOR_MAT;
     if (reg_exec_all(line, REG_OPERATOR_SUB) == 0)
-        return REG_OPERATOR_SUB;
+        return REG_OPERATOR_MAT;
     if (reg_exec_all(line, REG_OPERATOR_MULT) == 0)
-        return REG_OPERATOR_MULT;
+        return REG_OPERATOR_MAT;
     if (reg_exec_all(line, REG_OPERATOR_DIV) == 0)
-        return REG_OPERATOR_DIV;
+        return REG_OPERATOR_MAT;
     if (reg_exec_all(line, REG_OPERATOR_CAT) == 0)
         return REG_OPERATOR_CAT;
     else
@@ -443,5 +445,11 @@ int _reg::reg_break_condicionais(string line, int tipo) {
     }
     if (reg_exec_all(line, procura) == 0)
         return result.rm_so;
+    return FALSE_VALUE;
+}
+
+int _reg::xss(string line){
+    if (reg_exec_all (line, REG_XSS) == 0)
+        return TRUE_VALUE;
     return FALSE_VALUE;
 }

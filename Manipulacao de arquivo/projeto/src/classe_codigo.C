@@ -45,21 +45,22 @@ int _codigo::aspas_duplas(string &linha) {
     inicio = reg->reg_verifica_aspasd(linha, 0);
     if (linha.empty())
         return FALSE_VALUE;
-    //cout << "inicio_linha: " << linha << endl;
     if (inicio != FALSE_VALUE) {
         tipo = "d";
         inicio_aspas = linha.substr(inicio + 1, linha.length());
         while (fim == FALSE_VALUE) {
             fim = reg->reg_verifica_aspasd(inicio_aspas, 1);
             if (fim == FALSE_VALUE) {
-                cout << linha << endl;
+                cout <<"ja esta dentro de aspas duplas"<< linha << endl;
                 nova_linha(nlinha);
                 cout << "DENTRO DE ASPAS DUPLAS" << endl;
                 inicio_aspas += nlinha;
-                cout << inicio_aspas << endl;
+                cout <<"ESSA PORRA TAVA CERTA" << inicio_aspas << endl;
+                
             } else if (inicio_aspas[fim - 1] != '\\') {
                 retorno += inicio_aspas.substr(0, fim);
-                //cout << retorno << endl<<"_"<<inicio_aspas[fim]<<"_"<<inicio_aspas[fim-1]<<"_" <<inicio_aspas[fim-2] <<endl<<endl;
+                cout << "FOI VERIFICADO QUE ESTA COM COMENTARIO" << retorno << endl;
+                //exit (1);
                 linha = linha.substr(0, inicio);
                 //2 linha += this->no_corrente->aspas->novo_valor(retorno, tipo);
                 linha += this->aspas->novo_valor(retorno, tipo);
@@ -80,7 +81,7 @@ int _codigo::aspas_duplas(string &linha) {
 
 int _codigo::remove_comments(string &line) {
     int type, comments, remove_primeiro, retorno;
-    string comentario;
+    string comentario, verifica_xss;
     retorno = -1;
     if (verifica_comentario_dentro_de_aspas(line) == -1) {
         cout << line << endl;
@@ -88,8 +89,10 @@ int _codigo::remove_comments(string &line) {
         return 0;
     }
     type = reg->reg_comments(line);
-    //   cout << type << line << endl;
     if (type != FALSE_VALUE) {
+        verifica_xss = line.substr(type+2, line.length());
+        this->xss = reg->xss(verifica_xss);
+        //if (this->xss == TRUE_VALUE)exit (1);
         line = line.substr(0, type);
         retorno = 1;
     }
@@ -184,9 +187,9 @@ string _codigo::procura_fim_de_linha(string linha) {
             nova_linha(nlinha);
             cout << "DENTRO DE procura fim de linha" << no_corrente->no << endl;
             cout << no_corrente->no << "linha zero: " << linha << endl;
+            remove_comments(nlinha);
             aspas_duplas(nlinha);
             aspas_simples(nlinha);
-            remove_comments(nlinha);
             cout << no_corrente->no << "nlinha: " << nlinha << endl;
             linha += nlinha;
             cout << no_corrente->no << "linha: " << linha << endl;
@@ -256,6 +259,7 @@ int _codigo::verifica_tag(string &linha) {
     auxiliar.clear();
     display_errors("verifica_tag inicio: ");
     remove_comments(linha);
+    cout<<"removeu o comentario"<<endl;
     aspas_duplas(linha);
     aspas_simples(linha);
     linha = procura_fim_de_linha(linha);
@@ -275,8 +279,8 @@ int _codigo::verifica_tag(string &linha) {
             verifica_condicional(auxiliar);
             cout << this->no_corrente->colchete << endl;
             retorno.clear();
-            this->no_corrente->verifica_linha(auxiliar, retorno, 0);
-            //cout <<"DEBUG AQUI"<< this->debug << endl;
+            this->no_corrente->verifica_linha(auxiliar, retorno, 0, this->xss);
+            this->xss = FALSE_VALUE;
             this->debug += retorno;
         }
         this->no_corrente->remove_space(linha);
@@ -387,7 +391,7 @@ int _codigo::verifica_condicional(string &linha) {
                 apos_cond = this->reg->reg_condicional_if(linha, tipo);
             } while (apos_cond != FALSE_VALUE && tipo);
             //   cout << if_completo << endl << linha << endl;
-            this->no_corrente->novo_no(if_completo, 0, this->id, REG_CASE);
+            this->no_corrente->novo_no(if_completo, 1, this->id, REG_CASE);
             this->id++;
             cout << this->no_corrente->no<<endl;
             this->no_corrente = this->no_corrente->filho;
@@ -489,7 +493,7 @@ int _codigo::fim_condicao(string &line) {
         cout << "ENTROU AQUI dois pontos" << no_corrente->dois_pontos << endl;
 
     } else if (no_corrente->tipo_de_condicional == REG_CASE) {
-        cout <<"ENTROU NO LANCE DO CASE" << endl;
+        cout <<"ENTROU NO LANCE DO CASE" <<line <<endl;
         retorno = reg->reg_break_condicionais(line, REG_CASE);
         cout << line << endl << retorno << endl;
         if (retorno != FALSE_VALUE) {
@@ -498,6 +502,7 @@ int _codigo::fim_condicao(string &line) {
             this->no_corrente->colchete = 0;
             return TRUE_VALUE;
         }
+        else return FALSE_VALUE;
     }else
         cout<< "DEU MERDADEU MERDADEU MERDADEU MERDADEU MERDADEU MERDADEU MERDADEU MERDADEU MERDA"<<endl;
     cout << "FALSE VALUE" << line<< no_corrente->no << no_corrente->tipo_de_condicional << endl;
