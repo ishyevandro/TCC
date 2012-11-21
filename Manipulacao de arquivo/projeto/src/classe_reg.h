@@ -5,7 +5,7 @@
 #include <iostream>
 using namespace std;
 
-#define DISPLAY_ERROR 0
+#define DISPLAY_ERROR 1
 #define ERROR -10
 #define FALSE_VALUE -1
 #define REG_P_G 0
@@ -76,7 +76,7 @@ using namespace std;
 #define REG_ENDSWITCH 77
 #define REG_LOOP 78
 #define REG_LOOP_DO 79
-
+#define REG_INCLUDE 90
 /*Deteccao de CAST*/
 #define REG_INT 80
 
@@ -113,6 +113,7 @@ public:
     int reg_laco (string, int &);
     int reg_break_condicionais (string, int);
     int xss (string);
+    int reg_include (string);
 //verificacao de funcoes
     
 };

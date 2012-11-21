@@ -17,24 +17,19 @@ _codigo::_codigo()
     debug.clear();
 }
 
-int _codigo::linha(string codigo_todo) {
+int _codigo::linha(string codigo_todo) {//1Metodo chamado pelo editor
     string linha;
     int pos;
     display_errors("metodo LINHA inicio");
-    this->codigo = codigo_todo;
-    aux.id = this->id;
-    id++;
-    apenas_php();
-    while (!this->codigo.empty()) {
-        //cout << "linha" << this->codigo << endl;
-        if (nova_linha(linha) == TRUE_VALUE)
-            verifica_tag(linha);
-        else
-            cout << "Improvavel entrar aqui" << endl;
+    this->codigo = codigo_todo;//Passa todo o codigo para um atributo codigo
+    aux.id = this->id;//atribui ao auxiliar o valor 0
+    id++;//incrementa para os ids dos outras condicionais
+    apenas_php();//Deixa no atributo codigo apenas o PHP
+    while (!this->codigo.empty()) {//loop para analisar todas as linhas
+        if (nova_linha(linha) == TRUE_VALUE)// se for falso o retorno significa que chegou ao fim do arquivo
+            verifica_tag(linha);//inicio das verificacoes
     }
     display_errors("metodo LINHA inicio");
-    cout << this->debug << endl << endl;
-    cout << no_corrente->no << endl;
 }
 
 int _codigo::aspas_duplas(string &linha) {
@@ -51,18 +46,12 @@ int _codigo::aspas_duplas(string &linha) {
         while (fim == FALSE_VALUE) {
             fim = reg->reg_verifica_aspasd(inicio_aspas, 1);
             if (fim == FALSE_VALUE) {
-                cout <<"ja esta dentro de aspas duplas"<< linha << endl;
                 nova_linha(nlinha);
-                cout << "DENTRO DE ASPAS DUPLAS" << endl;
                 inicio_aspas += nlinha;
-                cout <<"ESSA PORRA TAVA CERTA" << inicio_aspas << endl;
-                
+
             } else if (inicio_aspas[fim - 1] != '\\') {
                 retorno += inicio_aspas.substr(0, fim);
-                cout << "FOI VERIFICADO QUE ESTA COM COMENTARIO" << retorno << endl;
-                //exit (1);
                 linha = linha.substr(0, inicio);
-                //2 linha += this->no_corrente->aspas->novo_valor(retorno, tipo);
                 linha += this->aspas->novo_valor(retorno, tipo);
                 linha += inicio_aspas.substr(fim + 1, inicio_aspas.length());
             } else {
@@ -72,44 +61,37 @@ int _codigo::aspas_duplas(string &linha) {
             }
         }
         aspas_duplas(linha);
-        //cout << "linha aqui: " << linha << endl;
-        // exit(1);
     }
-    // cout << "ASPAS DUPLAS" <<linha << endl;
     return 1;
 }
 
-int _codigo::remove_comments(string &line) {
+int _codigo::remove_comments(string &line) {//remove comentarios da linha
     int type, comments, remove_primeiro, retorno;
     string comentario, verifica_xss;
     retorno = -1;
-    if (verifica_comentario_dentro_de_aspas(line) == -1) {
-        cout << line << endl;
+    if (verifica_comentario_dentro_de_aspas(line) == -1) {//verifica se o comentario nao esta dentro de aspas
         exit(1);
         return 0;
     }
-    type = reg->reg_comments(line);
+    type = reg->reg_comments(line);//procura pelo comentario simples "//"
     if (type != FALSE_VALUE) {
-        verifica_xss = line.substr(type+2, line.length());
-        this->xss = reg->xss(verifica_xss);
-        //if (this->xss == TRUE_VALUE)exit (1);
-        line = line.substr(0, type);
+        verifica_xss = line.substr(type + 2, line.length());//verifica se nao existe um XSS nesse ponto
+        this->xss = reg->xss(verifica_xss);//verificacao com expressao regular
+        line = line.substr(0, type);//retorna os caracteres antes do comentario
         retorno = 1;
     }
-    type = reg->reg_comments_(line, REG_COMMENTS_INI);
+    type = reg->reg_comments_(line, REG_COMMENTS_INI);//verifica comentarios com barra asterisco e procura o final do comentario
     if (type != FALSE_VALUE) {
         remove_primeiro = type - 2; //utilizado o remove_rpimeiro para remover a primeira forma de comentario ja que a reg_comments retorna a primeira posicao apos a cadeia de caracteres
         line = line.substr(0, remove_primeiro);
         comentario = line.substr(remove_primeiro, line.length());
-        type = FALSE_VALUE;
+        type = FALSE_VALUE;//enquanto o type for falso significa que nao foi encontrado o final do comentario
         while (type == FALSE_VALUE) {
-            type = reg->reg_comments_(comentario, REG_COMMENTS_FIM);
+            type = reg->reg_comments_(comentario, REG_COMMENTS_FIM);//procura o final do comentario procurando por asterisco barra
             if (type != FALSE_VALUE) {
                 line += comentario.substr(type, comentario.length());
-                ///cout <<"IMPRIME PORRA"<<comentario.substr(type, comentario.length())<<endl;
             } else {
                 nova_linha(comentario);
-                cout << "DENTRO DE remove comments" << endl;
             }
         }
     }
@@ -126,7 +108,6 @@ int _codigo::verifica_comentario_dentro_de_aspas(string line) {
         comentario2 = reg->reg_comments(line.substr(comentario2, line.length()));
     if (comentario != FALSE_VALUE || comentario2 != FALSE_VALUE) {
         aspas = reg->reg_verifica_aspasd(line, 0);
-        //cout<<aspas<<"!="<<comentario<<comentario2<<endl;
         if ((aspas < comentario || aspas < comentario2) && aspas != FALSE_VALUE && (comentario != FALSE_VALUE || comentario2 != FALSE_VALUE))
             return FALSE_VALUE;
     }
@@ -140,16 +121,13 @@ int _codigo::aspas_simples(string &linha) {
     retorno.clear();
     fim = -1;
     inicio = reg->reg_verifica_aspass(linha, 0);
-    //cout <<"INICIO ASPAS_SIMPLES: "<< linha << endl;
     if (inicio != FALSE_VALUE) {
         tipo = "s";
         inicio_aspas = linha.substr(inicio + 1, linha.length());
         while (fim == FALSE_VALUE) {
             fim = reg->reg_verifica_aspass(inicio_aspas, 1);
             if (fim == FALSE_VALUE) {
-                // cout << "ASpas simples" << inicio_aspas << endl;
                 nova_linha(nlinha);
-                cout << "DENTRO DE ASPAS simples" << endl;
                 inicio_aspas += nlinha;
             } else {
                 retorno = inicio_aspas.substr(0, fim);
@@ -160,21 +138,10 @@ int _codigo::aspas_simples(string &linha) {
         }
         aspas_simples(linha);
     }
-    //  cout <<"ASPAS_SIMPLES:" <<linha << endl;
     return 1;
 }
 
-/*
-int main(int argc, char **argv) {
-    _codigo *A;
-    A = new _codigo;
-    A->open("/home/evandro/Dropbox/TCC/TCC/Manipulacao de arquivo/projeto/test/index.php");
-    delete A;
-    return 0;
-}*/
-
-
-
+/*Este metodo procura o final, ponto e virgula, de uma linha*/
 string _codigo::procura_fim_de_linha(string linha) {
     int pos;
     string nlinha;
@@ -183,18 +150,13 @@ string _codigo::procura_fim_de_linha(string linha) {
     do {
         pos = linha.find_first_of(';');
         if (pos == string::npos) {
-            //  cout << "procura_fim_de_linha" << endl;
             nova_linha(nlinha);
-            cout << "DENTRO DE procura fim de linha" << no_corrente->no << endl;
-            cout << no_corrente->no << "linha zero: " << linha << endl;
             remove_comments(nlinha);
             aspas_duplas(nlinha);
             aspas_simples(nlinha);
-            cout << no_corrente->no << "nlinha: " << nlinha << endl;
             linha += nlinha;
-            cout << no_corrente->no << "linha: " << linha << endl;
         }
-    } while (pos == string::npos && !this->codigo.empty());
+    } while (pos == string::npos && !this->codigo.empty());//Enquanto nao for encontrado o fim de uma linha nao sai desse loop
     display_errors("Procura_fim_de_linha fim: ");
     return linha;
 }
@@ -207,16 +169,13 @@ string _codigo::replace_aspas(string linha) {
     nlinha = linha;
     display_errors("Replace_aspas inicio: ");
     while (analise == 1) {
-        cout << "entrou no replace!" << endl;
         pos = this->reg->reg_retorna_variavel_aspas(verifica, 1);
-        //cout << pos << endl;
         if (pos != FALSE_VALUE) {
             nlinha = verifica.substr(0, pos);
             verifica = verifica.substr(pos, verifica.length());
             pos = this->reg->reg_retorna_variavel_aspas(verifica, 0);
             if (pos != FALSE_VALUE) {
                 aspas = verifica.substr(0, pos);
-                cout << "SAIDA DAS ASPAS: " << aspas << endl;
                 if (aspas[aspas.length() - 1] == 'd') {
                     nlinha += '"';
                     tipo = 0;
@@ -227,11 +186,9 @@ string _codigo::replace_aspas(string linha) {
                 verifica = verifica.substr(pos, verifica.length());
                 //2retorno = this->no_corrente->aspas->busca_valor(aspas);
                 retorno = this->aspas->busca_valor(aspas);
-                cout << retorno << endl;
                 if (!retorno.empty())
                     nlinha += retorno;
                 else {
-                    cout << "EXIT REPLACE_ASPAS";
                     exit(-1);
                 }
                 if (tipo == 1)
@@ -245,47 +202,40 @@ string _codigo::replace_aspas(string linha) {
             analise = 0;
         }
     }
-    cout << "saiu do replace" << endl;
     this->aspas->call_clear();
     display_errors("Replace_aspas fim: ");
     return nlinha;
 }
 
-int _codigo::verifica_tag(string &linha) {
+/*Metodo que faz a distincao de linha comum e linha com condicionais ou lacos*/
+int _codigo::verifica_tag(string &linha) {//Faz a verificacao de analise futura
     int pos, tag, concatena, analisa_ou_nao, aux_cond;
     string auxiliar, retorno;
     tag = pos = 0;
     concatena = FALSE_VALUE;
     auxiliar.clear();
     display_errors("verifica_tag inicio: ");
-    remove_comments(linha);
-    cout<<"removeu o comentario"<<endl;
-    aspas_duplas(linha);
-    aspas_simples(linha);
-    linha = procura_fim_de_linha(linha);
-    cout << "completa: " << linha << endl;
+    remove_comments(linha);//remove comentarios da linha
+    aspas_duplas(linha);//remove aspas duplas
+    aspas_simples(linha);//remove aspas simples
+    linha = procura_fim_de_linha(linha);//verifica se a linha tem um ponto e virgula ao final
     do {
         no_corrente->remove_space(linha);
         pos = linha.find_first_of(";");
-        aux_cond = fim_condicao(linha);
-        cout << "COUT ANTES DO ERRO ALI NA FRENTE" << auxiliar << endl;
-        if (pos != string::npos && aux_cond != TRUE_VALUE) {
-            auxiliar = linha.substr(0, pos + 1);
-            cout << "COUT DENTRO DO IF" << auxiliar << endl;
-
-            linha = linha.substr(pos + 1, linha.length());
-            //  cout << "ANTES DE CONDICAO E REPLACE" << endl;
-            auxiliar = replace_aspas(auxiliar);
-            verifica_condicional(auxiliar);
-            cout << this->no_corrente->colchete << endl;
-            retorno.clear();
-            this->no_corrente->verifica_linha(auxiliar, retorno, 0, this->xss);
-            this->xss = FALSE_VALUE;
-            this->debug += retorno;
+        aux_cond = fim_condicao(linha);//verifica se e o final de uma condicional
+        if (pos != string::npos && aux_cond != TRUE_VALUE) {//se for encontrado o final de uma condicional nao entra aqui, e feito o devido tratamento para o objeto pai voltar a ser o no corrente para entao entrar nessa analise
+            auxiliar = linha.substr(0, pos + 1);//copia a linha ate o ponto e virgula
+            linha = linha.substr(pos + 1, linha.length());//a linha se torna o restante da linha, caso tenha mais de um codigo em uma unica linha.
+            auxiliar = replace_aspas(auxiliar);//retorna todas as aspas simples e duplas para a linha
+            verifica_condicional(auxiliar);//verificao se e uma condicional. Caso seja uma condicional e criado um novo objeto nesse metodo.
+            retorno.clear();//apaga o retorno antes de envia-lo, passado por referencia dessa forma o conteudo exibido no debug vem essa variavel
+            this->no_corrente->verifica_linha(auxiliar, retorno, 0, this->xss);//chamada de verificacao de linha
+            this->xss = FALSE_VALUE;//seta XSS como falso para o proximo envio.
+            this->debug += retorno;//adiciona o valor retornado, debug, a string que sera usada na aba debug
         }
-        this->no_corrente->remove_space(linha);
-        aux_cond = fim_condicao(linha);
-        if (this->no_corrente->colchete == 0 && this->no_corrente->pai != NULL  /*&& 1&& this->no_corrente->tipo_de_condicional != REG_ELSE*/) {
+        this->no_corrente->remove_space(linha);//sempre remove espaco em branco para ser feito a analise correta
+        aux_cond = fim_condicao(linha);//verifica se e o final da condicao
+        if (this->no_corrente->colchete == 0 && this->no_corrente->pai != NULL ) {//verifica se acabou a condicao e se pode ser retornado para o no pai
             concatena = compara_pai(this->no_corrente); //reaproveitamento da variavel concatena
             if (concatena == FALSE_VALUE)
                 cout << "SOU DIFERENTE DO MEU PAI: " << this->no_corrente->id << this->no_corrente->no << endl;
@@ -294,37 +244,36 @@ int _codigo::verifica_tag(string &linha) {
                 //1 experimental remove_objeto_da_arvore(this->no_corrente->id, NULL);
             }
             if (this->no_corrente->tipo_de_condicional == REG_ELSE/*2 remove_obje da arvore == FALSE_VALUE*/) {//1
-                this->no_corrente->copia_para_pai();
+                this->no_corrente->copia_para_pai();//caso seja else e copiado todo o valor para o pai
             }
             if (this->no_corrente->pai != NULL)
                 this->no_corrente = this->no_corrente->pai;
 
         }
-        cout << "PASSOU DOS IF`S" << endl;
-    } while (pos != string::npos);
+    } while (pos != string::npos);//loop ate chegar ao final da linha, nao encontra ponto e virgula
     display_errors("verifica_tag fim: ");
 }
 
 int _codigo::nova_linha(string &linha) {
     int pos;
     display_errors("nova_linha: ");
-    pos = this->codigo.find_first_of("\n");
-    if (pos != string::npos) {
-        linha = this->codigo.substr(0, pos);
-        this->codigo = this->codigo.substr(pos + 1, this->codigo.length());
-        return TRUE_VALUE;
-    } else if (this->codigo.length() != 0) {
+    pos = this->codigo.find_first_of("\n");//procura pelo primeiro fim de linha
+    if (pos != string::npos) {//verifica se e uma posicao valida
+        linha = this->codigo.substr(0, pos);//atribui a variavel linha a linha corrente
+        this->codigo = this->codigo.substr(pos + 1, this->codigo.length());//anda com o codigo para ficar posterior a linha retirada
+        return TRUE_VALUE;//retorna verdadeiro
+    } else if (this->codigo.length() != 0) {//se nao encontra o fim de linha ele copia todo o valor dentro da variavel e limpa o codigo simbolizando o fim do codigo
         linha = this->codigo.substr(0, this->codigo.length());
         this->codigo.clear();
         return TRUE_VALUE;
     } else {
-        cout << "fim_de arquivo" << endl;
-        this->codigo.clear();
+        this->codigo.clear();//apenas limpa o codigo
     }
-    return FALSE_VALUE;
     display_errors("nova_linha fim: ");
+    return FALSE_VALUE;//retorna falso dando a entender que nao existe mais codigo
 }
 
+/*Original FUNCIONA CORRETAMENTE*/
 int _codigo::verifica_condicional(string &linha) {
     int apos_cond, tipo, pos, colchete;
     string if_completo, auxiliar_nome;
@@ -353,11 +302,8 @@ int _codigo::verifica_condicional(string &linha) {
                 this->id++;
                 this->no_corrente = this->no_corrente->filho;
                 this->no_corrente->tipo_de_condicional = REG_ELSE;
-                cout << "continuacao do else" << endl;
             }
         } else if (tipo == REG_SWITCH) {
-            cout << "SWITCH ACHADO" << endl;
-            cout << linha << endl;
             if_completo += auxiliar_nome;
             if_completo += linha.substr(0, apos_cond);
             linha = linha.substr(apos_cond, linha.length());
@@ -370,34 +316,25 @@ int _codigo::verifica_condicional(string &linha) {
                 this->id++;
                 this->no_corrente = this->no_corrente->filho;
             }
-            //     cout << if_completo << endl;
             this->no_corrente->remove_space(linha);
             apos_cond = this->reg->reg_condicional_if(linha, tipo);
         }
         if (tipo == REG_CASE && no_corrente->tipo_de_condicional == REG_SWITCH) {
             if_completo += auxiliar_nome;
-            cout << "CASE ACHADO" << endl;
-            cout << linha << endl;
-            do {//cout << linha << endl << linha.substr(0, apos_cond - 1);
+            do {
                 apos_cond = linha.find_first_of(":");
                 if (apos_cond != string::npos) {
                     if_completo += linha.substr(0, apos_cond + 1);
                     linha = linha.substr(apos_cond + 1, linha.length());
-                } else {
-                    cout << "Nao possui iniciador de CASE \":\"" << endl;
+                } else 
                     return ERROR;
-                }
                 no_corrente->remove_space(linha);
                 apos_cond = this->reg->reg_condicional_if(linha, tipo);
             } while (apos_cond != FALSE_VALUE && tipo);
-            //   cout << if_completo << endl << linha << endl;
             this->no_corrente->novo_no(if_completo, 1, this->id, REG_CASE);
             this->id++;
-            cout << this->no_corrente->no<<endl;
             this->no_corrente = this->no_corrente->filho;
             this->no_corrente->tipo_de_condicional = REG_CASE;
-            cout <<"NAO VAI DAR MERDANAO VAI DAR MERDANAO VAI DAR MERDANAO VAI DAR MERDANAO VAI DAR MERDA" << this->no_corrente->no << this->no_corrente->tipo_de_condicional<<endl;
-
         }
         verifica_condicional(linha);
         return tipo;
@@ -409,17 +346,15 @@ int _codigo::verifica_pos_condicional(string &linha) {
     this->no_corrente->remove_space(linha);
     if (linha[0] == '{') {
         linha = linha.substr(1, linha.length());
-        cout << linha << endl;
         return 1;
     } else if (linha[0] == ':') {
         linha = linha.substr(1, linha.length());
         return -1;
     }
-    cout << "NAO POSSUI COLCHETES" << endl;
     return 0;
 }
 
-int _codigo::compara_pai(_linha *corrente) {
+int _codigo::compara_pai(_linha *corrente) {//verifica se o filho e igual ao pai
     _linha *pai;
     int i, j;
     if (corrente->pai == NULL)
@@ -442,7 +377,7 @@ int _codigo::compara_pai(_linha *corrente) {
     return TRUE_VALUE;
 }
 
-int _codigo::remove_objeto_da_arvore(int procura, _linha *raiz) {
+int _codigo::remove_objeto_da_arvore(int procura, _linha *raiz) {//nao sendo utilizada, seu intuito era remover um objeto quando fosse igual ao pai apos a analisa.
     int removido;
     _linha *pai, *auxiliar, *irmao, *remove;
     remove = this->no_corrente;
@@ -472,44 +407,34 @@ int _codigo::remove_objeto_da_arvore(int procura, _linha *raiz) {
         }
         delete remove;
     } else {
-        // cout << "TEM QUE ENTRAR AQUI" << remove->no << endl;
         pai->filho = NULL;
         delete remove;
     }
     return TRUE_VALUE;
 }
 
-int _codigo::fim_condicao(string &line) {
+int _codigo::fim_condicao(string &line) {//verifica o final da condicao
     int retorno;
     no_corrente->remove_space(line);
-    cout << line << endl;
     if (line[0] == '}' && no_corrente->colchete > 0) {
         this->no_corrente->colchete--;
         line = line.substr(1, line.length());
-        cout << line << endl << "true value" << endl;
         fim_condicao(line);
         return TRUE_VALUE;
     } else if (no_corrente->dois_pontos > 0 && no_corrente->tipo_de_condicional != REG_CASE) {
-        cout << "ENTROU AQUI dois pontos" << no_corrente->dois_pontos << endl;
 
     } else if (no_corrente->tipo_de_condicional == REG_CASE) {
-        cout <<"ENTROU NO LANCE DO CASE" <<line <<endl;
         retorno = reg->reg_break_condicionais(line, REG_CASE);
-        cout << line << endl << retorno << endl;
         if (retorno != FALSE_VALUE) {
             line = line.substr(retorno, line.length());
-            cout << line << endl;
             this->no_corrente->colchete = 0;
             return TRUE_VALUE;
-        }
-        else return FALSE_VALUE;
-    }else
-        cout<< "DEU MERDADEU MERDADEU MERDADEU MERDADEU MERDADEU MERDADEU MERDADEU MERDADEU MERDA"<<endl;
-    cout << "FALSE VALUE" << line<< no_corrente->no << no_corrente->tipo_de_condicional << endl;
+        } else return FALSE_VALUE;
+    }
     return FALSE_VALUE;
 }
 
-int _codigo::apenas_php() {
+int _codigo::apenas_php() {//torna o atributo codigo apenas conteudo PHP. Retirando HTMl e qualquer script cliente side
     string aux, auxiliar;
     int pos, tag, concatena;
     pos = tag = concatena = 0;
@@ -524,7 +449,7 @@ int _codigo::apenas_php() {
                 tag_php = 1;
                 if (concatena != FALSE_VALUE)
                     concatena = 1;
-            } else if (tag_php == 1) {//falta uma variavel aqui PARA ANALISE FUTURA!!!
+            } else if (tag_php == 1) {
                 auxiliar += aux.substr(0, pos);
                 aux = aux.substr(pos, aux.length());
                 concatena = 0;
@@ -536,7 +461,7 @@ int _codigo::apenas_php() {
     return TRUE_VALUE;
 }
 
-int _codigo::verifica_laco(string &linha) {
+int _codigo::verifica_laco(string &linha) {//se for um laco ele simplesmente "pula o laco"
     int ret_reg, tipo;
     this->no_corrente->remove_space(linha);
     ret_reg = this->reg->reg_laco(linha, tipo);
@@ -544,10 +469,9 @@ int _codigo::verifica_laco(string &linha) {
         linha = linha.substr(ret_reg, linha.length());
         if (tipo == REG_LOOP) {
             ret_reg = this->no_corrente->retorna_elementos_dentro_de_parentese(linha);
-            if (ret_reg != FALSE_VALUE) {
+            if (ret_reg != FALSE_VALUE)
                 linha = linha.substr(ret_reg, linha.length());
-                cout << linha.substr(0, linha.length()) << endl;
-            }
+
         }
         this->no_corrente->remove_space(linha);
         if (linha[0] == '{') {

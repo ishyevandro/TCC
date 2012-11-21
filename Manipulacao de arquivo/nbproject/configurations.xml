@@ -23,6 +23,24 @@
           <in>main.C</in>
           <in>variavel.h</in>
         </df>
+        <df name="src2">
+          <in>classe_aspas.C</in>
+          <in>classe_aspas.h</in>
+          <in>classe_codigo.C</in>
+          <in>classe_codigo.h</in>
+          <in>classe_funcao.C</in>
+          <in>classe_funcao.h</in>
+          <in>classe_linha.C</in>
+          <in>classe_linha.h</in>
+          <in>classe_reg.C</in>
+          <in>classe_reg.h</in>
+          <in>classe_var.C</in>
+          <in>classe_var.h</in>
+          <in>editor.C</in>
+          <in>editor.h</in>
+          <in>main.C</in>
+          <in>variavel.h</in>
+        </df>
         <df name="test">
         </df>
         <in>config.h</in>

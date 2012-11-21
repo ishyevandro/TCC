@@ -202,6 +202,8 @@ void _reg::reg_comp()//verificar se sera assim mesmo
         cout << "Erro na montagem: Expressao regular cast" << endl;
     if (reg_comp_all("^([Xx][Ss][Ss])", REG_XSS) != 0)
         cout << "Erro na montagem: XSS" << endl;
+    if (reg_comp_all("^(include)|^(include_once)|^(require)|^(require_once)", REG_INCLUDE) != 0)
+        cout << "Erro na montagem: include" << endl;
 }
 
 /*executa todas as expressoes regulares*/
@@ -270,7 +272,7 @@ int _reg::reg_comments(string line) {
     return FALSE_VALUE;
 }
 
-int _reg::what_is_first_string(string line) {//AQUI ESTA O POSSIVEL ERRO
+int _reg::what_is_first_string(string line) {//retorna todos o que e a primeira string.
     if (reg_exec_all(line, REG_VARIABLE) == 0)
         return REG_VARIABLE;
     else if (reg_exec_all(line, REG_FUNCTION) == 0) {
@@ -450,6 +452,12 @@ int _reg::reg_break_condicionais(string line, int tipo) {
 
 int _reg::xss(string line){
     if (reg_exec_all (line, REG_XSS) == 0)
+        return TRUE_VALUE;
+    return FALSE_VALUE;
+}
+
+int _reg::reg_include (string line){
+    if (reg_exec_all (line, REG_INCLUDE)==0)
         return TRUE_VALUE;
     return FALSE_VALUE;
 }

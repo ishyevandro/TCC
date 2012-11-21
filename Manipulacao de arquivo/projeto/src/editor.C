@@ -1,3 +1,6 @@
+
+#include <gtk-2.0/gtk/gtkenums.h>
+
 //           editor.C
 //  Qui agosto 30 19:42:53 2012
 //  Copyright  2012  Alcione Ferreira
@@ -17,7 +20,6 @@ EDITOR::EDITOR() {
     this->set_title(this->titulo + " - " + this->caminho);
     this->maximize();
     this->signal_hide().connect(sigc::mem_fun(*this, &EDITOR::sair));
-    //this->signal_show ().connect (sigc::bind<int>(sigc::mem_fun(*this,&EDITOR::carregar_dados),1));
     this->Principal.set_homogeneous(false);
     this->Principal.set_spacing(0);
     H_Menu.set_homogeneous(false);
@@ -26,7 +28,7 @@ EDITOR::EDITOR() {
     {
         Gtk::Menu::MenuList& menulist = SM_Recente.items();
         //...
-        menulist.push_back(MenuElem(Glib::ustring("/home/alcione/C++/editor/ChangeLog1"), sigc::bind(sigc::mem_fun(*this, &EDITOR::testar), "/home/alcione/C++/editor/ChangeLog1"))); /* chamar função para abrir arquivo*/
+        //menulist.push_back(MenuElem(Glib::ustring("/home/alcione/C++/editor/ChangeLog1"), sigc::bind(sigc::mem_fun(*this, &EDITOR::testar), "/home/alcione/C++/editor/ChangeLog1"))); /* chamar função para abrir arquivo*/
     }
     {
         Gtk::Menu::MenuList& menulist = Menu_Arquivo.items();
@@ -45,38 +47,22 @@ EDITOR::EDITOR() {
     Principal.pack_start(H_Menu, false, false, 0);
     H_ToolBar.set_homogeneous(false);
     H_ToolBar.set_spacing(0);
-    TB_Novo.set_stock_id(Gtk::Stock::NEW);
-    TB_Novo.set_tooltip_text("Novo");
-    //TB_Novo.signal_clicked ().connect (sigc::mem_fun(*this,&EDITOR::novo));
-    ToolBar.append(TB_Novo);
-    TB_Abrir.set_stock_id(Gtk::Stock::OPEN);
-    TB_Abrir.set_tooltip_text("Abrir");
-    TB_Abrir.signal_clicked().connect(sigc::mem_fun(*this, &EDITOR::abrir));
-    ToolBar.append(TB_Abrir);
 
+    TB_Abrir.set_stock_id(Gtk::Stock::OPEN); //seta icone
+    TB_Abrir.set_tooltip_text("Abrir"); //seta o que ira aparecer ao passar o mouse encima
+    TB_Abrir.signal_clicked().connect(sigc::mem_fun(*this, &EDITOR::abrir)); //liga a uma funcao
+    ToolBar.append(TB_Abrir); //adiciona ao Toolbar
 
-    /*    TB_Verificar.set_stock_id(Gtk::Stock::OPEN);
-        TB_Verificar.set_tooltip_text("Verificar");
-        TB_Verificar.signal_clicked().connect(sigc::mem_fun(*this, &EDITOR::verifica));
-        ToolBar.append(TB_Verificar);
-     */
-
-    TB_Salvar.set_stock_id(Gtk::Stock::SAVE);
-    TB_Salvar.set_tooltip_text("Salvar");
-    TB_Salvar.set_sensitive(false);
-    //TB_Salvar.signal_clicked ().connect(sigc::bind<bool>(sigc::mem_fun(*this,&EDITOR::salvar),true));
-    ToolBar.append(TB_Salvar);
-    ToolBar.append(TB_Separador);
-    TB_Pesquisar.set_stock_id(Gtk::Stock::FIND);
-    TB_Pesquisar.set_tooltip_text("Procurar");
-    ToolBar.append(TB_Pesquisar);
-    TB_Aplicar.set_stock_id(Gtk::Stock::APPLY);
-    TB_Aplicar.set_tooltip_text("Aplicar");
+    TB_Aplicar.set_stock_id(Gtk::Stock::EXECUTE);
+    TB_Aplicar.set_tooltip_text("Verificar");
     TB_Aplicar.signal_clicked().connect(sigc::mem_fun(*this, &EDITOR::aplicar));
     ToolBar.append(TB_Aplicar);
-    TB_Imprimir.set_stock_id(Gtk::Stock::PRINT);
-    TB_Imprimir.set_tooltip_text("Imprimir");
-    ToolBar.append(TB_Imprimir);
+
+    TB_Inserir.set_stock_id(Gtk::Stock::PREFERENCES);
+    TB_Inserir.set_tooltip_text("Adicionar valor a base de dados");
+    TB_Inserir.signal_clicked().connect(sigc::mem_fun(*this, &EDITOR::base_de_dados), 1);
+    ToolBar.append(TB_Inserir);
+
     H_ToolBar.pack_start(ToolBar, true, true, 0);
     Principal.pack_start(H_ToolBar, false, false, 0);
     this->H_Conteudo = new Gtk::HBox(false, 0);
@@ -114,73 +100,6 @@ EDITOR::~EDITOR() {
     this->hide();
 }
 
-/*void EDITOR::carregar_dados(int dados)
-        {
-        string SQL, AUX;
-        char *sql, *aux;
-        vector<vector<string> >::iterator i;
-        vector<string> linha;
-
-        switch(dados)
-                {
-                case 1:
-                        {
-                        SQL.clear();
-                        SQL = "select estado from municipio group by estado order by estado";
-                        sql = new char[SQL.length()+1];
-                        strcpy(sql,SQL.c_str());
-                        this->conexao->executar(sql,2);
-                        if (this->conexao->query_result != 3)
-                                {
-                                this->Estado.clear();
-                                for (i = this->conexao->resultados.begin(); i < this->conexao->resultados.end(); i++)
-                                        {
-                                        linha = *i;
-                                        AUX.clear();
-                                        AUX = linha.at(0);
-                                        this->Estado.append_text (Glib::ustring(AUX));
-                                        }
-                                }
-                        else
-                                {
-                                this->Resposta.set_text(this->conexao->mensagem);
-                                }
-					
-                        break;
-                        }
-                case 2:
-                        {
-                        AUX.clear();
-                        AUX = this->Estado.get_active_text ();
-                        SQL.clear();
-                        SQL = "select nome from municipio where estado='"+AUX+"' order by nome";
-                        sql = new char[SQL.length()+1];
-                        strcpy(sql,SQL.c_str());
-                        this->conexao->executar(sql,2);
-                        if (this->conexao->query_result != 3)
-                                {
-                                this->Cidade.clear();
-                                for (i = this->conexao->resultados.begin(); i < this->conexao->resultados.end(); i++)
-                                        {
-                                        linha = *i;
-                                        AUX.clear();
-                                        AUX = linha.at(0);
-                                        this->Cidade.append_text (Glib::ustring(AUX));
-                                        }
-                                }
-                        else
-                                {
-                                this->Resposta.set_text(this->conexao->mensagem);
-                                }		
-                        break;
-                        }
-                }
-        }*/
-
-void EDITOR::testar(string teste) {
-    cout << teste << endl;
-}
-
 bool EDITOR::relogio() {
     string status;
     status.clear();
@@ -192,6 +111,7 @@ bool EDITOR::relogio() {
 
 void EDITOR::aplicar() {
     int pos;
+    char texto [100];
     this->A = new _codigo;
     string codigo;
     Panalise = TProcess.get_buffer();
@@ -203,8 +123,10 @@ void EDITOR::aplicar() {
     iter = PLog->erase(inicio, final);
     PLog->insert(iter, Glib::ustring(this->A->debug));
     TLog.set_buffer(PLog);
-
-
+    GtkWidget *message;
+    message = gtk_message_dialog_new(GTK_WINDOW(NULL), GTK_DIALOG_DESTROY_WITH_PARENT, GTK_MESSAGE_INFO, GTK_BUTTONS_OK, "Concluido. Favor verificar aba debug.");
+    gtk_dialog_run(GTK_DIALOG(message));
+    gtk_widget_destroy(message);
     delete this->A;
 }
 
@@ -246,7 +168,6 @@ void EDITOR::abrir() {
 
             //aplicar();
             modificado = false;
-            TB_Salvar.set_sensitive(false);
             break;
         }
         case Gtk::RESPONSE_CANCEL:
@@ -261,142 +182,12 @@ void EDITOR::abrir() {
     set_title(this->titulo + " - " + caminho);
 }
 
-/*void EDITOR::salvar (bool modo)
-        {
-        ofstream salva;
-        string aux;
-        int resultado;
-        if (modo)
-                {
-                if (caminho.compare("Sem nome") == 0)
-                        {
-                        salvar(false);
-                        }
-                else
-                        {
-                        salva.open(caminho.c_str());
-                        aux.clear();
-                        PTexto = TTexto.get_buffer ();
-                        aux = PTexto->get_text();
-                        salva << aux;
-                        salva.close();
-                        modificado = false;
-                        TB_Salvar.set_sensitive (false);
-                        set_title(titulo);
-                        }
-                }
-        else
-                {
-                Gtk::FileChooserDialog dialog("Salvar arquivo...",Gtk::FILE_CHOOSER_ACTION_SAVE);
-                dialog.set_transient_for(*this);
-                dialog.add_button(Gtk::Stock::CANCEL, Gtk::RESPONSE_CANCEL);
-                dialog.add_button(Gtk::Stock::OPEN, Gtk::RESPONSE_OK);
-                dialog.set_current_name (this->caminho);
-                resultado = dialog.run();
-                switch(resultado)
-                        {
-                        case Gtk::RESPONSE_OK:
-                                {
-                                this->caminho.clear();
-                                this->caminho = dialog.get_filename ();
-                                salvar(true);
-                                break;
-                                }
-                        default:
-                                {
-                                break;
-                                }
-                        }
-                }
-        set_title(titulo+" - "+caminho);
-        }
-
-void EDITOR::foi_modificado()
-        {
-        Glib::ustring aux;
-        if (!modificado)
-                {
-                TB_Salvar.set_sensitive (true);
-                modificado = true;
-                aux = this->titulo + " - "+this->caminho+"*";
-                cout << aux << endl;
-                set_title(aux);
-                }
-        aplicar ();
-        }*/
-
 void EDITOR::sair() {
-    /*int resposta;
-    Gtk::Dialog *pergunta;
-    if (this->modificado)
-            {
-            pergunta = new Gtk::Dialog("Salvar?",this);
-            pergunta->add_button("Sim",GTK_RESPONSE_YES);
-            pergunta->add_button(Glib::ustring("Não"),GTK_RESPONSE_NO);
-            resposta = pergunta->run();
-            switch(resposta)
-                    {
-                    case GTK_RESPONSE_YES:
-                            {
-                            this->salvar(true);
-                            break;
-                            }
-                    case GTK_RESPONSE_NO:
-                            {
-                            break;
-                            }
-                    default:
-                            {
-                            break;
-                            }
-                    }
-            pergunta->hide();
-            this->modificado = false;
-            }*/
     this->hide();
 }
 
-/*void EDITOR::novo()
-        {
-        int resposta;
-        Gtk::Dialog *pergunta;
-        if (this->modificado)
-                {
-                pergunta = new Gtk::Dialog("Salvar?",this);
-                pergunta->add_button("Sim",GTK_RESPONSE_YES);
-                pergunta->add_button(Glib::ustring("Não"),GTK_RESPONSE_NO);
-                resposta = pergunta->run();
-                switch(resposta)
-                        {
-                        case GTK_RESPONSE_YES:
-                                {
-                                this->salvar(true);
-                                break;
-                                }
-                        case GTK_RESPONSE_NO:
-                                {
-                                break;
-                                }
-                        default:
-                                {
-                                break;
-                                }
-                        }
-                pergunta->hide();
-                }
-        this->PTexto = this->TTexto.get_buffer ();
-        this->PTexto->get_bounds(this->inicio, this->final);
-        this->iter = this->PTexto->erase(this->inicio,this->final);
-        this->TTexto.set_buffer (this->PTexto);
-        this->modificado = false;
-        this->caminho.clear();
-        this->caminho = "Sem nome";
-        this->aplicar();
-        this->set_title(this->titulo +" - "+this->caminho);
-        }*/
+void EDITOR::base_de_dados() {
+    cout << "ta funcionando" << endl;
 
-void EDITOR::verifica() {
-    Panalise = TProcess.get_buffer();
-    cout << Panalise->get_text() << endl;
 
 }

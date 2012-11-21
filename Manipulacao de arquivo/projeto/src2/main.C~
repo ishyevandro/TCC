@@ -1,0 +1,14 @@
+/**
+  * Programa Exemplo do site Gtkmm
+  */
+
+#include <editor.h>
+#include "classe_arquivo.h"
+int main (int argc, char *argv[])
+	{
+  	//Shows the window and returns when it is closed.
+  	   	EDITOR janela;
+  	Gtk::Main kit(argc, argv);
+  	Gtk::Main::run(janela);
+  	return 0;
+	}

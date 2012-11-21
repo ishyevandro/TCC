@@ -60,11 +60,9 @@ public:
     void imprime_elemento(_var);
     int novo_no(string, int, int, int);
     void display_error(string);
-    int funcao_mysql(_var);
-    int funcao_postgre(_var);
-    int funcao_padrao(_var, int);
+    string funcao_mysql(_var, string);
     int adiciona_ou_remove_nova_variavel_ao_vetor(_var);
-    //int remove_comments(string&, _reg);
+    string imprime_todas_as_possibilidades (_var, int, string);
 };
 
 #endif
